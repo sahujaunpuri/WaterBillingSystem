@@ -20,6 +20,9 @@ class Customers extends CORE_Controller {
         $this->load->model('Customer_type_model');
         $this->load->model('Soa_settings_model');
         $this->load->model('Company_model');
+        $this->load->model('Nationality_model');
+        $this->load->model('Civil_status_model');
+        $this->load->model('Sex_model');
         $this->load->library('excel');
 
     }
@@ -37,6 +40,17 @@ class Customers extends CORE_Controller {
         $data['customer_type']=$this->Customer_type_model->get_list(
             'is_deleted=FALSE'
         );
+        $data['nationalities']=$this->Nationality_model->get_list(
+            'is_deleted=FALSE AND is_active=TRUE'
+        );
+
+        $data['civils']=$this->Civil_status_model->get_list(
+            'is_deleted=FALSE AND is_active=TRUE'
+        );
+
+        $data['sexes']=$this->Sex_model->get_list(
+            'is_deleted=FALSE AND is_active=TRUE'
+        );
 
         $data['departments'] = $this->Departments_model->get_list(array('departments.is_deleted'=>FALSE));
         $data['refcustomertype'] = $this->RefCustomerType_model->get_list(array('refcustomertype.is_deleted'=>FALSE));
@@ -53,7 +67,7 @@ class Customers extends CORE_Controller {
             case 'list':
                 $m_customers=$this->Customers_model;
 
-                $response['data']=$m_customers->get_list('is_active=TRUE AND is_deleted=FALSE');
+                $response['data']=$this->response_rows('customers.is_active=TRUE AND customers.is_deleted=FALSE');
 
                 echo json_encode($response);
 
@@ -91,6 +105,15 @@ class Customers extends CORE_Controller {
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
 
+                $m_customers->spouse_nationality_id=$this->input->post('spouse_nationality_id',TRUE);
+                $m_customers->spouse_occupation=$this->input->post('spouse_occupation',TRUE);
+                $m_customers->spouse_name=$this->input->post('spouse_name',TRUE);
+                $m_customers->tenant_birth_date=date('Y-m-d',strtotime($this->input->post('tenant_birth_date',TRUE)));
+                $m_customers->sex_id=$this->input->post('sex_id',TRUE);
+                $m_customers->civil_status_id=$this->input->post('civil_status_id',TRUE);
+                $m_customers->nationality_id=$this->input->post('nationality_id',TRUE);
+                $m_customers->date_move_in=date('Y-m-d',strtotime($this->input->post('date_move_in',TRUE)));
+                $m_customers->tenant_occupation=$this->input->post('tenant_occupation',TRUE);
                 $m_customers->set('date_created','NOW()');
                 $m_customers->posted_by_user=$this->session->user_id;
 
@@ -254,6 +277,17 @@ class Customers extends CORE_Controller {
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
                 $m_customers->customer_type_id=$this->input->post('customer_type_id',TRUE);
+
+                $m_customers->spouse_nationality_id=$this->input->post('spouse_nationality_id',TRUE);
+                $m_customers->spouse_occupation=$this->input->post('spouse_occupation',TRUE);
+                $m_customers->spouse_name=$this->input->post('spouse_name',TRUE);
+                $m_customers->tenant_birth_date=date('Y-m-d',strtotime($this->input->post('tenant_birth_date',TRUE)));
+                $m_customers->sex_id=$this->input->post('sex_id',TRUE);
+                $m_customers->civil_status_id=$this->input->post('civil_status_id',TRUE);
+                $m_customers->nationality_id=$this->input->post('nationality_id',TRUE);
+                $m_customers->date_move_in=date('Y-m-d',strtotime($this->input->post('date_move_in',TRUE)));
+                $m_customers->tenant_occupation=$this->input->post('tenant_occupation',TRUE);
+
                 $m_customers->set('date_modified','NOW()');
                 $m_customers->modified_by_user=$this->session->user_id;
 
@@ -317,7 +351,24 @@ class Customers extends CORE_Controller {
                 $m_company_info=$this->Company_model;
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
-                $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+                $data['customers']=$this->Customers_model->get_list('customers.is_active=TRUE AND customers.is_deleted=FALSE',
+                    'customers.*,
+                    n.nationality_name,
+                    ns.nationality_name spouse_nationality_name,
+                    civil_Status.civil_status_name,
+                    DATE_FORMAT(customers.date_move_in,"%m/%d/%Y") as date_move_in,
+                    DATE_FORMAT(customers.tenant_birth_date,"%m/%d/%Y") as tenant_birth_date,
+                    sex.sex_name
+                    ',
+                    array(
+                        array('nationality n','n.nationality_id = customers.nationality_id','left'),
+                        array('nationality ns','ns.nationality_id = customers.spouse_nationality_id','left'),
+                        array('civil_Status','civil_Status.civil_status_id = customers.civil_status_id','left'),
+                        array('sex','sex.sex_id = customers.sex_id','left')
+
+                        ),
+                    'customers.customer_name ASC'
+                    );
                     $this->load->view('template/customer_masterfile_content',$data);
 
             break;
@@ -329,7 +380,24 @@ class Customers extends CORE_Controller {
                 $m_company_info=$this->Company_model;
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
-                $customers=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+                $customers=$this->Customers_model->get_list('customers.is_active=TRUE AND customers.is_deleted=FALSE',
+                    'customers.*,
+                    n.nationality_name,
+                    ns.nationality_name spouse_nationality_name,
+                    civil_Status.civil_status_name,
+                    DATE_FORMAT(customers.date_move_in,"%m/%d/%Y") as date_move_in,
+                    DATE_FORMAT(customers.tenant_birth_date,"%m/%d/%Y") as tenant_birth_date,
+                    sex.sex_name
+                    ',
+                    array(
+                        array('nationality n','n.nationality_id = customers.nationality_id','left'),
+                        array('nationality ns','ns.nationality_id = customers.spouse_nationality_id','left'),
+                        array('civil_Status','civil_Status.civil_status_id = customers.civil_status_id','left'),
+                        array('sex','sex.sex_id = customers.sex_id','left')
+
+                        ),
+                    'customers.customer_name ASC'
+                    );
                 $excel->setActiveSheetIndex(0);
 
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
@@ -364,7 +432,14 @@ class Customers extends CORE_Controller {
                 $excel->getActiveSheet()->getColumnDimension('E')->setWidth('30');
                 $excel->getActiveSheet()->getColumnDimension('F')->setWidth('30');
                 $excel->getActiveSheet()->getColumnDimension('G')->setWidth('30');
-    
+                $excel->getActiveSheet()->getColumnDimension('H')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimension('I')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimension('J')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimension('K')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimension('L')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimension('M')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimension('N')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimension('O')->setWidth('30');
 
                  $style_header = array(
 
@@ -378,34 +453,61 @@ class Customers extends CORE_Controller {
                 );
 
 
-                $excel->getActiveSheet()->getStyle('A9:G9')->applyFromArray( $style_header );
+                $excel->getActiveSheet()->getStyle('A9:O9')->applyFromArray( $style_header );
 
                 $excel->getActiveSheet()->setCellValue('A9','Customer Name')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('B9','Contact Name')
+                $excel->getActiveSheet()->setCellValue('B9','Address')
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C9','Contact No')
+                $excel->getActiveSheet()->setCellValue('C9','Contact Person')
                                         ->getStyle('C9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D9','Address')
+                $excel->getActiveSheet()->setCellValue('D9','Contact No')
                                         ->getStyle('D9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('E9','Email Address')
                                         ->getStyle('E9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F9','TIN')
+                $excel->getActiveSheet()->setCellValue('F9','Sex')
                                         ->getStyle('F9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('G9','Birth Date')
+                                        ->getStyle('G9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('H9','Civil Status')
+                                        ->getStyle('H9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I9','Nationality')
+                                        ->getStyle('I9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('J9','TIN')
+                                        ->getStyle('J9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('K9','Date Move In')
+                                        ->getStyle('K9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('L9','Occupation')
+                                        ->getStyle('L9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('M9','Spouse Name')
+                                        ->getStyle('M9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('N9','Spouse Nationality')
+                                        ->getStyle('N9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('O9','Spouse Occupation')
+                                        ->getStyle('O9')->getFont()->setBold(TRUE);
+
 
                 $i=10;
 
 
-
                 foreach ($customers as $customer) {
-
-
+                    if($customer->date_move_in =='00/00/0000'){ $date_move_in = ''; }else{ $date_move_in = $customer->date_move_in;} ;
+                    if($customer->tenant_birth_date =='00/00/0000'){ $tenant_birth_date = ''; }else{ $tenant_birth_date = $customer->tenant_birth_date;} ;
                 $excel->getActiveSheet()->setCellValue('A'.$i,$customer->customer_name)
-                                        ->setCellValue('B'.$i,$customer->contact_name)
-                                        ->setCellValue('C'.$i,$customer->contact_no)
-                                        ->setCellValue('D'.$i,$customer->address)
+                                        ->setCellValue('B'.$i,$customer->address)
+                                        ->setCellValue('C'.$i,$customer->contact_name)
+                                        ->setCellValue('D'.$i,$customer->contact_no)
                                         ->setCellValue('E'.$i,$customer->email_address)
-                                        ->setCellValue('F'.$i,$customer->tin_no);
+                                        ->setCellValue('F'.$i,$customer->sex_name)
+                                        ->setCellValue('G'.$i,$tenant_birth_date)
+                                        ->setCellValue('H'.$i,$customer->civil_status_name)
+                                        ->setCellValue('I'.$i,$customer->nationality_name)
+                                        ->setCellValue('J'.$i,$customer->tin_no)
+                                        ->setCellValue('K'.$i,$date_move_in)
+                                        ->setCellValue('L'.$i,$customer->tenant_occupation)
+                                        ->setCellValue('M'.$i,$customer->spouse_name)
+                                        ->setCellValue('N'.$i,$customer->spouse_nationality_name)
+                                        ->setCellValue('O'.$i,$customer->spouse_occupation);
                 $i++;
 
                 }
@@ -447,12 +549,16 @@ class Customers extends CORE_Controller {
         return $this->Customers_model->get_list(
             $filter,
 
-            'customers.*,departments.department_name,refcustomertype.customer_type',
+            'customers.*,
+            DATE_FORMAT(customers.date_move_in,"%m/%d/%Y") as date_move_in,
+            DATE_FORMAT(customers.tenant_birth_date,"%m/%d/%Y") as tenant_birth_date,
+            departments.department_name,refcustomertype.customer_type',
 
             array(
                 array('departments','departments.department_id=customers.department_id','left'),
                 array('refcustomertype','refcustomertype.refcustomertype_id=customers.refcustomertype_id','left')
-            )
+            ),
+            'customers.customer_name ASC'
         );
     }
 }

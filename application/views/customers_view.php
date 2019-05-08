@@ -23,7 +23,6 @@
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/_all.css" rel="stylesheet">                   <!-- Custom Checkboxes / iCheck -->
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-    <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
     <?php echo $_switcher_settings; ?>
     <?php echo $_def_js_files; ?>
 
@@ -41,9 +40,7 @@
 
 
     <!-- Date range use moment.js same as full calendar plugin -->
-    <script src="assets/js/plugins/fullcalendar/moment.min.js"></script>
     <!-- Data picker -->
-    <script src="assets/js/plugins/datapicker/bootstrap-datepicker.js"></script>
 
     <!-- twitter typehead -->
     <script src="assets/plugins/twittertypehead/handlebars.js"></script>
@@ -61,7 +58,7 @@
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboCustomerType;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboCustomerType; var _cboNationality; var _cboCivilStatus; var _cboSex; var _cboSpouseNationality;
 
         /*$(document).ready(function(){
             $('#modal_filter').modal('show');
@@ -112,6 +109,28 @@
                 allowClear: false
             });
 
+            _cboNationality=$("#cbo_nationality").select2({
+                allowClear: false
+            });
+
+            _cboCivilStatus=$("#cbo_civil_status").select2({
+                allowClear: false
+            });
+
+            _cboSex=$("#cbo_sex").select2({
+                allowClear: false
+            });
+            _cboSpouseNationality=$("#cbo_spouse_nationality").select2({
+                allowClear: false
+            });
+
+            $('.date-picker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true
+            });
             //$('#contact_no').keypress(validateNumber);
      }();
 
@@ -166,6 +185,10 @@
                 $('#modal_create_customer').modal('show');
                 clearFields($('#frm_customer'));
                 $('#cbo_customer_type').select2('val', 0);
+                $('#cbo_nationality').select2('val', 0);
+                $('#cbo_spouse_nationality').select2('val', 0);
+                $('#cbo_civil_status').select2('val', 0);
+                $('#cbo_sex').select2('val', 1);
             });
 
              $('#btn_browse').click(function(event){
@@ -190,6 +213,10 @@
                     $('#branch').val(data.department_id);
                     $('#refcustomertype_id').val(data.refcustomertype_id);
                     _cboCustomerType.select2('val',data.customer_type_id);
+                    $('#cbo_nationality').select2('val', data.nationality_id);
+                    $('#cbo_spouse_nationality').select2('val', data.spouse_nationality_id);
+                    $('#cbo_civil_status').select2('val', data.civil_status_id);
+                    $('#cbo_sex').select2('val', data.sex_id);
                     $('#term').val(data.term);
 
                     //alert(data.term);
@@ -630,6 +657,12 @@
         #tbl_customers_filter{
             display: none;
         }
+
+        .modal-lg {
+          width: 95%;
+
+        }
+
     </style>
 </head>
 
@@ -894,7 +927,7 @@
                 </div>
             </div>
 
-            <div id="modal_create_customer" class="modal fade" role="dialog"><!--modal-->
+            <div id="modal_create_customer" class="modal fade" role="dialog" style="margin-top: 0;padding-top: 0"><!--modal-->
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:#2ecc71;">
@@ -905,11 +938,20 @@
                         <div class="modal-body">
                             <form id="frm_customer">
                                 <div class="row">
-                                    <div class="col-md-8">
+                                    <div class="col-md-4">
                                         <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Customer Name :</label>
+                                            Customer Code (Auto):
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-code"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control" placeholder="YYYY-XXXXX" readonly>
+                                                </div>
                                             </div>
+                                        </div>  
+                                        <div class="col-md-12">
+                                           <b class="required">* </b> Customer Name:
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
@@ -918,26 +960,9 @@
                                                     <input type="text" name="customer_name" class="form-control" placeholder="Customer Name" data-error-msg="Customer Name is required!" required>
                                                 </div>
                                             </div>
-                                        </div>
-
+                                        </div>                                    
                                         <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"></font> Contact Person :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-users"></i>
-                                                    </span>
-                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    
-                                        <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Address :</label>
-                                            </div>
+                                            <b class="required">* </b> Address:
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
@@ -947,53 +972,8 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <!-- <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"> Term :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-file-code-o"></i>
-                                                    </span>
-                                                    <input type="text" name="term" id="term" class="form-control" placeholder="Term in days">
-                                                </div>
-                                            </div>
-                                        </div> -->
-
-                                        <!-- <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;"> Credit Limit :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-file-code-o"></i>
-                                                    </span>
-                                                    <input type="text" name="credit_limit" id="credit_limit" class="form-control" placeholder="Credit Limit">
-                                                </div>
-                                            </div>
-                                        </div> -->
-                                    
                                         <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-envelope-o"></i>
-                                                    </span>
-                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    
-                                        <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Contact No :</label>
-                                            </div>
+                                                 Contact No :
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
@@ -1003,11 +983,117 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-12">
+                                            Email Address:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-envelope-o"></i>
+                                                    </span>
+                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                             Occupation :
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="tenant_occupation" class="form-control" placeholder="Occupation">
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">TIN :</label>
+                                            Date Move In :
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                     <span class="input-group-addon">
+                                                         <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                    <input type="text" name="date_move_in" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="MM/DD/YYYY">
+                                                </div>
                                             </div>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="col-md-12" >
+                                            Nationality:
+                                            <div style="padding: 5px 0px 5px 0px">
+                                            <select name="nationality_id" id="cbo_nationality" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($nationalities as $nationality){ ?>
+                                                    <option value="<?php echo $nationality->nationality_id; ?>"><?php echo $nationality->nationality_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Civil Status:
+                                            <div style="padding: 5px 0px 5px 0px">
+                                            <select name="civil_status_id" id="cbo_civil_status" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($civils as $civil){ ?>
+                                                    <option value="<?php echo $civil->civil_status_id; ?>"><?php echo $civil->civil_status_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12">
+                                            Sex:
+                                            <div style="padding: 5px 0px 5px 0px">
+                                            <select name="sex_id" id="cbo_sex" style="width: 100%">
+                                                <?php foreach($sexes as $sex){ ?>
+                                                    <option value="<?php echo $sex->sex_id; ?>"><?php echo $sex->sex_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+
+                                      
+
+
+                                        <div class="col-md-12">
+                                                Customer Type :
+                                            <div style="padding: 5px 0px 5px 0px;">
+                                            <select name="customer_type_id" id="cbo_customer_type" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($customer_type as $customer_type){ ?>
+                                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Contact Person:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Birth Date:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                     <span class="input-group-addon">
+                                                         <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                    <input type="text" name="tenant_birth_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="MM/DD/YYYY">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                                TIN :
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
@@ -1017,39 +1103,54 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="col-md-12">
-                                            <div class="col-md-4" id="label">
-                                                 <label class="control-label boldlabel" style="text-align:right;">Customer Type :</label>
+                                            If Married (Spouse):
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-user"></i>
+                                                    </span>
+                                                    <input type="text" name="spouse_name" class="form-control" placeholder="Spouse">
+                                                </div>
                                             </div>
-                                            <div class="col-md-8" style="padding: 0px;">
-                                            <select name="customer_type_id" id="cbo_customer_type" style="width: 100%">
+                                        </div>
+                                        <div class="col-md-12">
+                                            Spouse's Occupation:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="spouse_occupation" class="form-control" placeholder="Occupation">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div style="padding: 5px 0px 5px 0px;">
+                                            Spouse's Nationality:
+                                            <select name="spouse_nationality_id" id="cbo_spouse_nationality" style="width: 100%">
                                                 <option value="0">None</option>
-                                                <?php foreach($customer_type as $customer_type){ ?>
-                                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                                <?php foreach($nationalities as $nationality){ ?>
+                                                    <option value="<?php echo $nationality->nationality_id; ?>"><?php echo $nationality->nationality_name?></option>
                                                 <?php } ?>
                                             </select>
                                             </div>
                                         </div>
-
-
-
-
-                                    </div>
-
-                                    <div class="col-md-4">
+                                       
                                         <div class="col-md-12">
                                             <div class="col-md-12">
                                                 <label class="control-label boldlabel" style="text-align:left;padding-top:10px;"><i class="fa fa-user" aria-hidden="true" style="padding-right:10px;"></i>Customer's Photo</label>
                                                 <hr style="margin-top:0px !important;height:1px;background-color:black;">
                                             </div>
-                                            <div style="width:100%;height:350px;border:2px solid #34495e;border-radius:5px;">
+                                            <div style="width:100%;height:230px;border:2px solid #34495e;border-radius:5px;">
                                                 <center>
                                                     <img name="img_user" id="img_user" src="assets/img/anonymous-icon.png" height="140px;" width="140px;"></img>
                                                 </center>
                                                 <hr style="margin-top:0px !important;height:1px;background-color:black;">
                                                 <center>
-                                                     <button type="button" id="btn_browse" style="width:150px;margin-bottom:5px;" class="btn btn-primary">Browse Photo</button>
+                                                     <button type="button" id="btn_browse" style="width:150px;" class="btn btn-primary">Browse Photo</button>
                                                      <button type="button" id="btn_remove_photo" style="width:150px;" class="btn btn-danger">Remove</button>
                                                      <input type="file" name="file_upload[]" class="hidden">
                                                 </center> 

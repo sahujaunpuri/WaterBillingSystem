@@ -51,11 +51,20 @@
             <thead>
             <tr>
                 <th>Customer Name</th>
+                <th width="20%">Address</th>
                 <th>Contact Person</th>
                 <th>Contact No</th>
-                <th width="20%">Address</th>
                 <th>Email Address</th>
+                <th>Sex</th>
+                <th>Birth Date</th>
+                <th>Civil Status</th>
+                <th>Nationality</th>
                 <th>TIN</th>
+                <th>Date Move In</th>
+                <th>Occupation</th>
+                <th>Spouse Name</th>
+                <th>Spouse Nationality</th>
+                <th>Spouse Occupation</th>
             </tr>
             </thead>
             <tbody>
@@ -63,11 +72,20 @@
             <?php foreach ($customers as $customer) { ?>
             <tr>
                 <td><?php echo $customer->customer_name ?></td>
+                <td><?php echo $customer->address ?></td>
                 <td><?php echo $customer->contact_name ?></td>
                 <td><?php echo $customer->contact_no ?></td>
-                <td><?php echo $customer->address ?></td>
                 <td><?php echo $customer->email_address ?></td>
+                <td><?php echo $customer->sex_name ?></td>
+                <td><?php echo $customer->tenant_birth_date ?></td>
+                <td><?php echo $customer->civil_status_name ?></td>
+                <td><?php echo $customer->nationality_name ?></td>
                 <td><?php echo $customer->tin_no ?></td>
+                <td><?php echo $customer->date_move_in ?></td>
+                <td><?php echo $customer->tenant_occupation ?></td>
+                <td><?php echo $customer->spouse_name ?></td>
+                <td><?php echo $customer->spouse_nationality_name ?></td>
+                <td><?php echo $customer->spouse_occupation ?></td>
             </tr>
             <?php } ?>
 
