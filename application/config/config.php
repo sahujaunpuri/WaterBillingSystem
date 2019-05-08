@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 date_default_timezone_set('Asia/Manila');
-$config['base_url'] = 'http://'.$_SERVER['SERVER_NAME'].'/AccountingStandard2018';
+$config['base_url'] = 'http://'.$_SERVER['SERVER_NAME'].'/WaterBillingSystem';
 
 /*
 |--------------------------------------------------------------------------
@@ -369,7 +369,7 @@ $config['encryption_key'] = '';
 |
 */
 $config['sess_driver'] = 'files';
-$config['sess_cookie_name'] = 'ci_session_AC';
+$config['sess_cookie_name'] = 'ci_session_AC_waterBilling';
 $config['sess_expiration'] = 7200;
 $config['sess_save_path'] = NULL;
 $config['sess_match_ip'] = FALSE;
