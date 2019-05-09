@@ -94,6 +94,12 @@ class Templates extends CORE_Controller {
         $this->load->model('Bir_2551m_model');
         $this->load->model('Months_model');
 
+        $this->load->model('Matrix_commercial_model');
+        $this->load->model('Matrix_commercial_items_model');
+
+        $this->load->model('Matrix_residential_model');
+        $this->load->model('Matrix_residential_items_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -5272,6 +5278,67 @@ class Templates extends CORE_Controller {
 
                 break;
 
+
+
+
+            case 'commercial-matrix':
+                $m_company=$this->Company_model;
+                $company=$m_company->get_list();
+                $data['company_info']=$company[0];
+
+                $info = $this->Matrix_commercial_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE,'matrix_commercial_id'=>$filter_value));
+                $data['info'] = $info;
+                $data['items']=$this->Matrix_commercial_items_model->get_list(array('matrix_commercial_id'=>$filter_value));
+
+                //show only inside grid with menu button
+                if($type=='fullview'||$type==null){
+                    echo $this->load->view('template/commercial_matrix_content',$data,TRUE);
+                    echo $this->load->view('template/commercial_matrix_content_menus',$data,TRUE);
+                }
+
+                //preview on browser
+                if($type=='preview'){
+                    $file_name=$info[0]->matrix_commercial_code;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/commercial_matrix_content_w_header',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
+
+                break;
+
+
+            case 'residential-matrix':
+                $m_company=$this->Company_model;
+                $company=$m_company->get_list();
+                $data['company_info']=$company[0];
+
+                $info = $this->Matrix_residential_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE,'matrix_residential_id'=>$filter_value));
+                $data['info'] = $info;
+                $data['items']=$this->Matrix_residential_items_model->get_list(array('matrix_residential_id'=>$filter_value));
+
+                //show only inside grid with menu button
+                if($type=='fullview'||$type==null){
+                    echo $this->load->view('template/residential_matrix_content',$data,TRUE);
+                    echo $this->load->view('template/residential_matrix_content_menus',$data,TRUE);
+                }
+
+                //preview on browser
+                if($type=='preview'){
+                    $file_name=$info[0]->matrix_residential_code;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/residential_matrix_content_w_header',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
+
+                break;
 
         }
     }

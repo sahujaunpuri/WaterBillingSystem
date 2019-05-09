@@ -33,7 +33,14 @@
                         <li class="nav-separator"><span>Explore</span></li>
                         <li><a href="Dashboard"><i class="ti ti-home"></i><span>Dashboard</span>
 
+                        <li class="<?php echo (in_array('1',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-wallet"></i><span>Water Billing</span></a>
+                            <ul class="acc-menu">
+                                <li class="<?php echo (in_array('1-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Matrix_residential">Residential Rate Matrix</a></li>
+                                <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Matrix_commercial">Commercial Rate Matrix</a></li>
+                                <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="MeterInventory">Meter Inventory</a></li>
 
+                            </ul>
+                        </li>
                         <li class="<?php echo (in_array('1',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-wallet"></i><span>Financing</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('1-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="General_journal">General Journal</a></li>
