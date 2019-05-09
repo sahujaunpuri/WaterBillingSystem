@@ -64,6 +64,18 @@
             .bottom-10{
                 padding-bottom: 10px;
             }
+            .right{
+                text-align: right;
+            }
+
+            #tbl_meter_inventory_filter{
+                display: none;
+            }
+
+            .modal-lg {
+              width: 95%;
+
+            }
         </style>
 
     </head>
@@ -98,11 +110,28 @@
                                                     </div> -->
                                                     <div class="panel-body table-responsive">
                                                     <h2 class="h2-panel-heading">Meter Inventory</h2><hr>
+
+                                                         <div class="row">
+                                                            <div class="col-lg-3"><br>
+                                                                    <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title="New Meter" ><i class="fa fa-plus"></i>  New Meter</button>
+                                                            </div>
+                                                            <div class="col-lg-offset-3 col-lg-3" style="text-align: right;">
+                                                            &nbsp;<br>
+                                                                    <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print Meter Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
+                                                                    <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Export Meter Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
+                                                            </div>
+                                                            <div class="col-lg-3">
+                                                                    Search :<br />
+                                                                     <input type="text" id="searchbox_meter" class="form-control">
+                                                            </div>
+                                                        </div><br>
+
                                                         <table id="tbl_meter_inventory" class="table table-striped" cellspacing="0" width="100%">
                                                             <thead class="">
                                                             <tr>
                                                                 <th>Meter Code</th>
                                                                 <th>Serial No</th>
+                                                                <th>Description</th>
                                                                 <th>Current Assignee</th>
                                                                 <th><center>Action</center></th>
                                                             </tr>
@@ -115,48 +144,6 @@
                                                     <!-- <div class="panel-footer"></div> -->
                                                 </div>
                                             </div>
-                                            <!-- <div id="div_category_fields" style="display: none;">
-                                                <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
-                                                   <!-  <div class="panel-heading">
-                                                        <h2>Category Information</h2>
-                                                        <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body"}'></div>
-                                                    </div> -->
-
-                                                    <!-- <div class="panel-body">
-                                                    <h2>Categories</h2>
-                                                        <form id="frm_payment_method" role="form" class="form-horizontal row-border">
-                                                            <div class="form-group">
-                                                                <label class="col-md-2 col-md-offset-2 control-label"><strong>* Category Name :</strong></label>
-                                                                <div class="col-md-4">
-                                                                    <div class="input-group">
-                                                                        <span class="input-group-addon">
-                                                                            <i class="fa fa-users"></i>
-                                                                        </span>
-                                                                        <input type="text" name="category_name" class="form-control" placeholder="Category Name" data-error-msg="category name is required!" required>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label class="col-md-3 col-md-offset-1 control-label"><strong>* Category Description :</strong></label>
-                                                                <div class="col-md-4">
-                                                                    <textarea name="category_desc" class="form-control" data-error-msg="Category Description is required!" placeholder="Description" required></textarea>
-                                                                </div>
-                                                            </div><br/>
-                                                        </form>
-                                                    </div>
-
-                                                    <div class="panel-footer">
-                                                        <div class="row">
-                                                            <div class="col-sm-6 col-sm-offset-4">
-                                                                <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;""><span class=""></span>  Save Changes</button>
-                                                                <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> -->
-
                                         </div>
                                     </div>
                                 </div>
@@ -167,7 +154,7 @@
 
                 <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
                     <div class="modal-dialog modal-sm">
-                        <div class="modal-content"><!---content--->
+                        <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
                                 <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
@@ -181,7 +168,7 @@
                                 <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
                                 <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal">No</button>
                             </div>
-                        </div><!-content-->
+                        </div>
                     </div>
                 </div><!---modal-->
 
@@ -198,20 +185,20 @@
                                         <div class="">
                                             <div class="col-xs-12 bottom-10">
                                                 <div class="form-group">
-                                                    <label class="col-xs-12 col-md-3 control-label "><strong> &nbsp;&nbsp;&nbsp;Meter Code :</strong></label>
+                                                    <label class="col-xs-12 col-md-3 control-label right"><strong>Meter Code (Auto):</strong></label>
                                                     <div class="col-xs-12 col-md-9">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-code"></i>
                                                             </span>
-                                                            <input type="text" name="meter_code" class="form-control" placeholder="MC-YYYYMMDD-XXX"  readonly>
+                                                            <input type="text" name="meter_code" class="form-control" placeholder="MC-YYYYMMDD-XXX" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 bottom-10">
                                                 <div class="form-group">
-                                                    <label class="col-xs-12 col-md-3 control-label "><strong><font color="red">*</font> Serial No :</strong></label>
+                                                    <label class="col-xs-12 col-md-3 control-label right"><strong><font color="red">*</font> Serial No :</strong></label>
                                                     <div class="col-xs-12 col-md-9">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">
@@ -224,14 +211,14 @@
                                             </div>
                                             <div class="col-xs-12 bottom-10">
                                                 <div class="form-group">
-                                                    <label class="col-xs-12 col-md-3 control-label "><strong>&nbsp;&nbsp;&nbsp;Description :</strong></label>
+                                                    <label class="col-xs-12 col-md-3 control-label right"><strong>&nbsp;&nbsp;&nbsp;Description :</strong></label>
                                                     <div class="col-xs-12 col-md-9">
                                                         <textarea name="meter_description" placeholder="Description" class="form-control"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 bottom-10">
-                                                <label class="col-xs-12 col-md-3 control-label "><strong><font color="red">*</font> Customer :</strong></label>
+                                                <label class="col-xs-12 col-md-3 control-label right"><strong><font color="red">*</font> Customer :</strong></label>
                                                 <div class="col-xs-12 col-md-9">
                                                     <select name="customer_id" id="cbo_customer" class="form-control" data-error-msg="Customer is required!" style="width: 100%;">
                                                         <option value="0">[ Create New Customer ]</option>
@@ -253,43 +240,248 @@
                     </div>
                 </div>
 
-                <div id="modal_new_customer" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
-                <div class="modal-dialog">
+            <div id="modal_create_customer" class="modal fade" role="dialog" style="margin-top: 0;padding-top: 0"><!--modal-->
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
-                        <div class="modal-header" style="background: #2ecc71">
-                             <h2 id="department_title" class="modal-title" style="color:white;">Create New Department</h2>
+                        <div class="modal-header" style="background-color:#2ecc71;">
+                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                            <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>Customer Information</h4>
                         </div>
-                        <div class="modal-body">
-                            <form id="frm_customer" role="form" class="form-horizontal">
-                                <div class="row" style="margin: 1%;">
-                                    <div class="col-lg-12">
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                            <label class=""><font color="red">*</font> Department Name :</label>
-                                            <textarea name="department_name" class="form-control" data-error-msg="Department Name is required!" placeholder="Department name" required></textarea>
 
+                        <div class="modal-body">
+                            <form id="frm_customer">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="col-md-12">
+                                            Customer Code (Auto):
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-code"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control" placeholder="YYYY-XXXXX" readonly>
+                                                </div>
+                                            </div>
+                                        </div>  
+                                        <div class="col-md-12">
+                                           <b class="required">* </b> Customer Name:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="customer_name" class="form-control" placeholder="Customer Name" data-error-msg="Customer Name is required!" required>
+                                                </div>
+                                            </div>
+                                        </div>                                    
+                                        <div class="col-md-12">
+                                            <b class="required">* </b> Address:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-home"></i>
+                                                     </span>
+                                                     <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                                 Contact No :
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-phone"></i>
+                                                    </span>
+                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Email Address:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-envelope-o"></i>
+                                                    </span>
+                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                             Occupation :
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="tenant_occupation" class="form-control" placeholder="Occupation">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            Date Move In :
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                     <span class="input-group-addon">
+                                                         <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                    <input type="text" name="date_move_in" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="MM/DD/YYYY">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="col-md-12" >
+                                            Nationality:
+                                            <div style="padding: 5px 0px 5px 0px">
+                                            <select name="nationality_id" id="cbo_nationality" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($nationalities as $nationality){ ?>
+                                                    <option value="<?php echo $nationality->nationality_id; ?>"><?php echo $nationality->nationality_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Civil Status:
+                                            <div style="padding: 5px 0px 5px 0px">
+                                            <select name="civil_status_id" id="cbo_civil_status" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($civils as $civil){ ?>
+                                                    <option value="<?php echo $civil->civil_status_id; ?>"><?php echo $civil->civil_status_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12">
+                                            Sex:
+                                            <div style="padding: 5px 0px 5px 0px">
+                                            <select name="sex_id" id="cbo_sex" style="width: 100%">
+                                                <?php foreach($sexes as $sex){ ?>
+                                                    <option value="<?php echo $sex->sex_id; ?>"><?php echo $sex->sex_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+
+                                      
+
+
+                                        <div class="col-md-12">
+                                                Customer Type :
+                                            <div style="padding: 5px 0px 5px 0px;">
+                                            <select name="customer_type_id" id="cbo_customer_type" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($customer_type as $customer_type){ ?>
+                                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Contact Person:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Birth Date:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                     <span class="input-group-addon">
+                                                         <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                    <input type="text" name="tenant_birth_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="MM/DD/YYYY">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                                TIN :
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-file-code-o"></i>
+                                                    </span>
+                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
-
-                                <div class="row" style="margin: 1%;">
-                                    <div class="col-lg-12">
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                            <label class="">Department Description :</label>
-                                            <textarea name="department_desc" class="form-control" placeholder="Department Description"></textarea>
-
+                                    <div class="col-md-4">
+                                        <div class="col-md-12">
+                                            If Married (Spouse):
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-user"></i>
+                                                    </span>
+                                                    <input type="text" name="spouse_name" class="form-control" placeholder="Spouse">
+                                                </div>
+                                            </div>
                                         </div>
+                                        <div class="col-md-12">
+                                            Spouse's Occupation:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="spouse_occupation" class="form-control" placeholder="Occupation">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div style="padding: 5px 0px 5px 0px;">
+                                            Spouse's Nationality:
+                                            <select name="spouse_nationality_id" id="cbo_spouse_nationality" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($nationalities as $nationality){ ?>
+                                                    <option value="<?php echo $nationality->nationality_id; ?>"><?php echo $nationality->nationality_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="col-md-12">
+                                            <div class="col-md-12">
+                                                <label class="control-label boldlabel" style="text-align:left;padding-top:10px;"><i class="fa fa-user" aria-hidden="true" style="padding-right:10px;"></i>Customer's Photo</label>
+                                                <hr style="margin-top:0px !important;height:1px;background-color:black;">
+                                            </div>
+                                            <div style="width:100%;height:230px;border:2px solid #34495e;border-radius:5px;">
+                                                <center>
+                                                    <img name="img_user" id="img_user" src="assets/img/anonymous-icon.png" height="140px;" width="140px;"></img>
+                                                </center>
+                                                <hr style="margin-top:0px !important;height:1px;background-color:black;">
+                                                <center>
+                                                     <button type="button" id="btn_browse" style="width:150px;" class="btn btn-primary">Browse Photo</button>
+                                                     <button type="button" id="btn_remove_photo" style="width:150px;" class="btn btn-danger">Remove</button>
+                                                     <input type="file" name="file_upload[]" class="hidden">
+                                                </center> 
+                                            </div>
+                                        </div>   
                                     </div>
                                 </div>
                             </form>
                         </div>
+
                         <div class="modal-footer">
-                            <button id="btn_save_customer" class="btn btn-primary">Save</button>
-                            <button id="btn_cancel_customer" class="btn btn-default">Cancel</button>
+                            <button id="btn_save" type="button" class="btn" style="background-color:#2ecc71;color:white;">Save</button>
+                            <button id="btn_cancel" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                         </div>
-                    </div>
+                    </div><!---content---->
                 </div>
-            </div>
+            </div><!---modal-->
+
 
                 <footer role="contentinfo">
                     <div class="clearfix">
@@ -322,15 +514,19 @@
 
         var initializeControls=function(){
             dt=$('#tbl_meter_inventory').DataTable({
+                "fnInitComplete": function (oSettings, json) {
+                },
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
+                "pageLength": 15,
                 "ajax" : "MeterInventory/transaction/list",
                 "columns": [
                     { targets:[0],data: "meter_code" },
                     { targets:[1],data: "serial_no" },
-                    { targets:[2],data: "customer_name" },
+                    { targets:[2],data: "meter_description" },
+                    { targets:[3],data: "customer_name" },
                     {
-                        targets:[3],
+                        targets:[4],
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -348,11 +544,6 @@
 
             _cboCustomer.select2('val',null);
 
-            var createToolBarButton=function(){
-                var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Meter" >'+
-                    '<i class="fa fa-plus"></i> New Meter</button>';
-                $("div.toolbar").html(_btnNew);
-            }();
         }();
 
         var bindEventHandlers=(function(){
@@ -394,6 +585,20 @@
                     }
                 }
             } );
+
+            $("#searchbox_meter").keyup(function(){         
+                dt
+                    .search(this.value)
+                    .draw();
+            });
+
+            $('#btn_print').click(function(){
+               window.open('MeterInventory/transaction/print-masterfile');
+            });  
+
+            $('#btn_export').click(function(){
+               window.open('MeterInventory/transaction/export-masterfile');
+            }); 
 
             $('#btn_new').click(function(){
                 _txnMode="new";

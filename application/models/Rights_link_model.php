@@ -99,8 +99,8 @@ class Rights_link_model extends CORE_Model{
                                           (89,'16','16-1','Monthly Percentage Tax Return'),
                                           (90,'16','16-2','Quarterly Percentage Tax Return'),
                                           (91,'16','16-3','Certificate of Creditable Tax'),
-                                          (92,'6','6-14','Statement of Accounts Settings')
-
+                                          (92,'6','6-14','Statement of Accounts Settings'),
+                                          (93,'5','5-5','Meter Inventory Management')
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

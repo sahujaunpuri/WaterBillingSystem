@@ -10,6 +10,8 @@ class MeterInventory extends CORE_Controller {
         $this->load->model('Customers_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Company_model');
+        $this->load->library('excel');
     }
 
     public function index() {
@@ -146,6 +148,125 @@ class MeterInventory extends CORE_Controller {
                 echo json_encode($response);
 
                 break;
+
+            case 'print-masterfile':
+                $m_company_info=$this->Company_model;
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                $data['inventory']=$this->Meter_inventory_model->get_list('meter_inventory.is_active=TRUE AND meter_inventory.is_deleted=FALSE',
+                    'meter_inventory.*,customers.customer_name,',
+                    array(
+                        array('customers','customers.customer_id = meter_inventory.customer_id','left')
+
+                        ),
+                    'meter_inventory.meter_code ASC'
+                    );
+                    $this->load->view('template/meter_masterfile_content',$data);
+
+                break;
+
+            case 'export-masterfile':
+
+                $excel = $this->excel;
+
+                $m_company_info=$this->Company_model;
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+                $inventory=$this->Meter_inventory_model->get_list('meter_inventory.is_active=TRUE AND meter_inventory.is_deleted=FALSE',
+                    'meter_inventory.*,customers.customer_name,',
+                    array(
+                        array('customers','customers.customer_id = meter_inventory.customer_id','left')
+
+                        ),
+                    'meter_inventory.meter_code ASC'
+                    );
+                $excel->setActiveSheetIndex(0);
+
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A2:C2')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('40');
+
+                //name the worksheet
+                $excel->getActiveSheet()->setTitle("Meter Inventory Masterfile");
+                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->mergeCells('A1:B1');
+                $excel->getActiveSheet()->mergeCells('A2:C2');
+                $excel->getActiveSheet()->mergeCells('A3:B3');
+                $excel->getActiveSheet()->mergeCells('A4:B4');
+
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
+                                        ->setCellValue('A4',$company_info[0]->email_address);
+
+                $excel->getActiveSheet()->setCellValue('A6','Meter Inventory Masterfile')
+                                        ->getStyle('A6')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A7','')
+                                        ->getStyle('A7')->getFont()->setItalic(TRUE);
+                $excel->getActiveSheet()->setCellValue('A8','')
+                                        ->getStyle('A8')->getFont()->setItalic(TRUE);
+
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('25');
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('40');
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('40');
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('25');
+
+                 $style_header = array(
+
+                    'fill' => array(
+                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                        'color' => array('rgb'=>'CCFF99'),
+                    ),
+                    'font' => array(
+                        'bold' => true,
+                    )
+                );
+
+
+                $excel->getActiveSheet()->getStyle('A9:E9')->applyFromArray( $style_header );
+
+                $excel->getActiveSheet()->setCellValue('A9','Meter Code')
+                                        ->getStyle('A9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('B9','Serial No')
+                                        ->getStyle('B9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('C9','Description')
+                                        ->getStyle('C9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('D9','Current Assignee')
+                                        ->getStyle('D9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('E9','Date Created')
+                                        ->getStyle('E9')->getFont()->setBold(TRUE);
+
+                $i=10;
+
+
+                foreach ($inventory as $inventory) {
+                $excel->getActiveSheet()->setCellValue('A'.$i,$inventory->meter_code)
+                                        ->setCellValue('B'.$i,$inventory->serial_no)
+                                        ->setCellValue('C'.$i,$inventory->meter_description)
+                                        ->setCellValue('D'.$i,$inventory->customer_name)
+                                        ->setCellValue('E'.$i,$inventory->date_created);
+                $i++;
+
+                }
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename="Meter Inventory Masterfile '.date('M-d-Y',NOW()).'.xlsx"');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output');            
+                     
+            break;
        	}
     }
 }
