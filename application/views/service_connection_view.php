@@ -63,17 +63,17 @@
                 z-index: 999999;
             }
             .bottom-10{
-                padding-bottom: 10px;
+                padding-bottom: 10px!important;
             }
             .right{
                 text-align: right;
             }
 
-            #tbl_meter_inventory_filter{
+            #tbl_connection_filter{
                 display: none;
             }
 
-            .modal-lg {
+            .modal-customer {
               width: 95%;
 
             }
@@ -96,7 +96,7 @@
 
                             <ol class="breadcrumb" style="margin:0;">
                                 <li><a href="dashboard">Dashboard</a></li>
-                                <li><a href="MeterInventory">Meter Inventory</a></li>
+                                <li><a href="ServiceConnection">Connection Service</a></li>
                             </ol>
 
                             <div class="container-fluid">
@@ -110,11 +110,11 @@
                                                         <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Sales Person</b>
                                                     </div> -->
                                                     <div class="panel-body table-responsive">
-                                                    <h2 class="h2-panel-heading">Meter Inventory</h2><hr>
+                                                    <h2 class="h2-panel-heading">Connection Service</h2><hr>
 
                                                          <div class="row">
                                                             <div class="col-lg-3"><br>
-                                                                    <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title="New Meter" ><i class="fa fa-plus"></i>  New Meter</button>
+                                                                    <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title="New Meter" ><i class="fa fa-plus"></i>  New Connection</button>
                                                             </div>
                                                             <div class="col-lg-offset-3 col-lg-3" style="text-align: right;">
                                                             &nbsp;<br>
@@ -123,17 +123,18 @@
                                                             </div>
                                                             <div class="col-lg-3">
                                                                     Search :<br />
-                                                                     <input type="text" id="searchbox_meter" class="form-control">
+                                                                     <input type="text" id="searchbox_connection" class="form-control">
                                                             </div>
                                                         </div><br>
 
-                                                        <table id="tbl_meter_inventory" class="table table-striped" cellspacing="0" width="100%">
+                                                        <table id="tbl_connection" class="table table-striped" cellspacing="0" width="100%">
                                                             <thead class="">
                                                             <tr>
-                                                                <th>Meter Code</th>
-                                                                <th>Serial No</th>
-                                                                <th>Description</th>
-                                                                <th>Current Assignee</th>
+                                                                <th>Service No</th>
+                                                                <th>Account No</th>
+                                                                <th>Customer</th>
+                                                                <th>Meter Serial</th>
+                                                                <th>Connection Date</th>
                                                                 <th><center>Action</center></th>
                                                             </tr>
                                                             </thead>
@@ -173,18 +174,170 @@
                     </div>
                 </div><!---modal-->
 
-                <div id="modal_new_meter" class="modal fade" role="dialog">
-                    <div class="modal-dialog modal-md">
+                <div id="modal_new_connection" class="modal fade" role="dialog">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header" style="background-color:#2ecc71;">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-                                <h4 id="meter_title" class="modal-title" style="color: #ecf0f1;"><span id="modal_mode"></span></h4>
+                                <h4 id="connection_title" class="modal-title" style="color: #ecf0f1;"><span id="modal_mode"></span></h4>
                             </div>
                             <div class="modal-body">
                                 <div class="row">
-                                    <form id="frm_meter_inventory" role="form">
+                                    <form id="frm_connection" role="form">
                                         <div class="">
-                                            <div class="col-xs-12 bottom-10">
+
+                                            <div class="col-lg-12">
+                                                <div class="col-md-6">
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-3 control-label"><strong>Service No:</strong></label>
+                                                            <div class="col-xs-12 col-md-9">
+                                                                <div class="input-group">
+                                                                    <input type="text" name="service_no" class="form-control" placeholder="SN-YYYYMMDD-XXX" readonly>
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-code"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-3 control-label"><strong>Customer:</strong></label>
+                                                            <div class="col-xs-12 col-md-9">
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control" placeholder="Contract Name" readonly>
+                                                                    <input type="hidden" name="customer_id">
+                                                                    <span class="input-group-addon">
+                                                                        <a href="#" id="link_browse_po"><b>...</b></a>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-3 control-label"><strong>Account No:</strong></label>
+                                                            <div class="col-xs-12 col-md-9">
+                                                                <div class="input-group">
+                                                                    <input type="text" name="account_no" class="form-control" placeholder="ACC-YYYYMMDD-XXX" readonly>
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-code"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-12 control-label">
+                                                                <strong>Name to appear on receipt:</strong>
+                                                            </label>
+                                                            <div class="col-xs-12 col-md-12">
+                                                                <div class="input-group">
+                                                                    <textarea class="form-control" name="receipt_name" placeholder="Receipt Name"></textarea>
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-code"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-3 control-label">
+                                                                <strong>Contract Type:</strong>
+                                                            </label>
+                                                            <div class="col-xs-12 col-md-12">
+                                                                <select name="contract_type_id" id="cbo_contract_type" class="form-control" data-error-msg="Contract Type is required!" style="width: 100%;" required>
+                                                                    <?php foreach($contract_types as $contract_type) { ?>
+                                                                        <option value="<?php echo $contract_type->contract_type_id; ?>"><?php echo $contract_type->contract_type_name; ?></option>
+                                                                    <?php } ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-4 control-label"><strong>Date:</strong></label>
+                                                            <div class="col-xs-12 col-md-8">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-calendar"></i>
+                                                                    </span>
+                                                                    <input type="text" name="service_date" class="date-picker form-control" placeholder="MM/DD/YYYY">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-4 control-label"><strong>Connection Date:</strong></label>
+                                                            <div class="col-xs-12 col-md-8">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-calendar"></i>
+                                                                    </span>
+                                                                    <input type="text" name="connection_date" class="date-picker form-control" placeholder="MM/DD/YYYY">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-4 control-label"><strong>Meter Serial:</strong></label>
+                                                            <div class="col-xs-12 col-md-8">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-code"></i>
+                                                                    </span>
+                                                                    <input type="text" name="meter_serial" class="form-control" placeholder="Serial No">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-4 control-label"><strong>Target Date:</strong></label>
+                                                            
+                                                            <div class="col-xs-12 col-md-8">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-calendar"></i>
+                                                                    </span>
+                                                                    <input type="text" name="target_date" class="date-picker form-control" placeholder="MM/DD/YYYY">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-4 control-label"><strong>Target Time:</strong></label>
+                                                            
+                                                            <div class="col-xs-12 col-md-8">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-clock-o"></i>
+                                                                    </span>
+                                                                    <input type="text" name="target_time" class="time-picker form-control" placeholder="HH/MM">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+
+                                            
+
+                                            <!-- <div class="col-xs-12 bottom-10">
                                                 <div class="form-group">
                                                     <label class="col-xs-12 col-md-3 control-label right"><strong>Meter Code (Auto):</strong></label>
                                                     <div class="col-xs-12 col-md-9">
@@ -228,7 +381,7 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </form>
                                 </div>
@@ -242,7 +395,7 @@
                 </div>
 
             <div id="modal_new_customer" class="modal fade" role="dialog" style="margin-top: 0;padding-top: 0"><!--modal-->
-                <div class="modal-dialog modal-lg">
+                <div class="modal-dialog modal-lg modal-customer">
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:#2ecc71;">
                             <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
@@ -516,25 +669,25 @@
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboCustomer;
-        var _cboCustomerType; var _cboNationality; var _cboCivilStatus; var _cboSex; 
-        var _cboSpouseNationality;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; 
+        var _cboCustomer; var _cboContractType; var _cboRateType;
 
         var initializeControls=function(){
-            dt=$('#tbl_meter_inventory').DataTable({
+            dt=$('#tbl_connection').DataTable({
                 "fnInitComplete": function (oSettings, json) {
                 },
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "pageLength": 15,
-                "ajax" : "MeterInventory/transaction/list",
+                "ajax" : "ServiceConnection/transaction/list",
                 "columns": [
-                    { targets:[0],data: "meter_code" },
-                    { targets:[1],data: "serial_no" },
-                    { targets:[2],data: "meter_description" },
-                    { targets:[3],data: "customer_name" },
+                    { targets:[0],data: "service_no" },
+                    { targets:[1],data: "account_no" },
+                    { targets:[2],data: "customer_name" },
+                    { targets:[3],data: "meter_serial" },
+                    { targets:[4],data: "connection_date" },
                     {
-                        targets:[4],
+                        targets:[5],
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -545,32 +698,20 @@
                 ]
             });
 
-            _cboCustomer=$('#cbo_customer').select2({
-                placeholder: "Please Select Customer",
-                allowClear: true
-            });
+            // _cboCustomer=$('#cbo_customer').select2({
+            //     placeholder: "Please Select Customer",
+            //     allowClear: true
+            // });
 
-            _cboCustomer.select2('val',null);
+            // _cboCustomer.select2('val',null);
 
-            _cboCustomerType=$("#cbo_customer_type").select2({
-                allowClear: false
-            });
+            // _cboContractType=$("#cbo_contract_type").select2({
+            //     allowClear: false
+            // });
 
-            _cboNationality=$("#cbo_nationality").select2({
-                allowClear: false
-            });
-
-            _cboCivilStatus=$("#cbo_civil_status").select2({
-                allowClear: false
-            });
-
-            _cboSex=$("#cbo_sex").select2({
-                allowClear: false
-            });
-            
-            _cboSpouseNationality=$("#cbo_spouse_nationality").select2({
-                allowClear: false
-            });
+            // _cboRateType=$("#cbo_rate_type").select2({
+            //     allowClear: false
+            // });
 
             $('.date-picker').datepicker({
                 todayBtn: "linked",
@@ -585,19 +726,19 @@
         var bindEventHandlers=(function(){
             var detailRows = [];
 
-            _cboCustomer.on('select2:select', function(){
-                if (_cboCustomer.val() == 0) {
-                    clearFields($('#frm_customer'));
-                    $('#modal_new_customer').modal('show');
-                    $('#cbo_customer_type').select2('val', 0);
-                    $('#cbo_nationality').select2('val', 0);
-                    $('#cbo_spouse_nationality').select2('val', 0);
-                    $('#cbo_civil_status').select2('val', 0);
-                    $('#cbo_sex').select2('val', 1);
+            // _cboCustomer.on('select2:select', function(){
+            //     if (_cboCustomer.val() == 0) {
+            //         clearFields($('#frm_customer'));
+            //         $('#modal_new_customer').modal('show');
+            //         $('#cbo_customer_type').select2('val', 0);
+            //         $('#cbo_nationality').select2('val', 0);
+            //         $('#cbo_spouse_nationality').select2('val', 0);
+            //         $('#cbo_civil_status').select2('val', 0);
+            //         $('#cbo_sex').select2('val', 1);
 
-                    $('#modal_new_meter').modal('hide');
-                }
-            });
+            //         $('#modal_new_connection').modal('hide');
+            //     }
+            // });
 
              $('#btn_browse').click(function(event){
                     event.preventDefault();
@@ -635,11 +776,11 @@
             $('#btn_cancel_customer').on('click', function(){
                 $('#modal_new_customer').modal('hide');
                 $('#modal_new_customer_sp').modal('hide');
-                $('#modal_new_meter').modal('show');
+                $('#modal_new_connection').modal('show');
                 _cboCustomer.select2('val',null);
             });
 
-            $('#tbl_meter_inventory tbody').on( 'click', 'tr td.details-control', function () {
+            $('#tbl_connection tbody').on( 'click', 'tr td.details-control', function () {
                 var tr = $(this).closest('tr');
                 var row = dt.row( tr );
                 var idx = $.inArray( tr.attr('id'), detailRows );
@@ -661,7 +802,7 @@
                 }
             } );
 
-            $("#searchbox_meter").keyup(function(){         
+            $("#searchbox_connection").keyup(function(){         
                 dt
                     .search(this.value)
                     .draw();
@@ -677,13 +818,13 @@
 
             $('#btn_new').click(function(){
                 _txnMode="new";
-                clearFields($('#frm_meter_inventory'));
-                $('#meter_title').text('New Meter Inventory');
-                $('#modal_new_meter').modal('show');
-                _cboCustomer.select2('val',null);
+                clearFields($('#frm_connection'));
+                $('#connection_title').text('New Connection Service');
+                $('#modal_new_connection').modal('show');
+                // _cboCustomer.select2('val',null);
             });
 
-            $('#tbl_meter_inventory tbody').on('click','button[name="edit_info"]',function(){
+            $('#tbl_connection tbody').on('click','button[name="edit_info"]',function(){
                 _txnMode="edit";
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
@@ -700,11 +841,11 @@
 
                 _cboCustomer.select2('val',data.customer_id);
 
-                $('#meter_title').text('Edit Meter Inventory');
-                $('#modal_new_meter').modal('show');
+                $('#connection_title').text('Edit Meter Inventory');
+                $('#modal_new_connection').modal('show');
             });
 
-            $('#tbl_meter_inventory tbody').on('click','button[name="remove_info"]',function(){
+            $('#tbl_connection tbody').on('click','button[name="remove_info"]',function(){
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.meter_inventory_id;
@@ -719,7 +860,7 @@
             });
 
             $('#btn_cancel').click(function(){
-                $('#modal_new_meter').modal('hide');
+                $('#modal_new_connection').modal('hide');
             });
 
             $('#btn_save_customer').click(function(){
@@ -731,19 +872,19 @@
                         _cboCustomer.select2('val',customer.customer_id);
 
                         $('#modal_new_customer').modal('hide');
-                        $('#modal_new_meter').modal('show');
+                        $('#modal_new_connection').modal('show');
                         clearFields($('#frm_customer'));
                     });
                 }
             }); 
 
             $('#btn_save').click(function(){
-                if(validateRequiredFields($('#frm_meter_inventory'))){
+                if(validateRequiredFields($('#frm_connection'))){
                     if(_txnMode=="new"){
                         createMeterInventory().done(function(response){
                             showNotification(response);
                             dt.row.add(response.row_added[0]).draw();
-                            clearFields($('#frm_meter_inventory'));
+                            clearFields($('#frm_connection'));
 
                         }).always(function(){
                             showSpinningProgress($('#btn_save'));
@@ -752,12 +893,12 @@
                         updateMeterInventory().done(function(response){
                             showNotification(response);
                             dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                            clearFields($('#frm_meter_inventory'));
+                            clearFields($('#frm_connection'));
                         }).always(function(){
                             showSpinningProgress($('#btn_save'));
                         });
                     }
-                    $('#modal_new_meter').modal('hide');
+                    $('#modal_new_connection').modal('hide');
                 }
             });
         })();
@@ -803,7 +944,7 @@
         }
 
         var createMeterInventory=function(){
-            var _data=$('#frm_meter_inventory').serializeArray();
+            var _data=$('#frm_connection').serializeArray();
 
             return $.ajax({
                 "dataType":"json",
@@ -815,7 +956,7 @@
         };
 
         var updateMeterInventory=function(){
-            var _data=$('#frm_meter_inventory').serializeArray();
+            var _data=$('#frm_connection').serializeArray();
             _data.push({name : "meter_inventory_id" ,value : _selectedID});
 
             return $.ajax({

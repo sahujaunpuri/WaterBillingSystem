@@ -120,6 +120,7 @@
             _cboSex=$("#cbo_sex").select2({
                 allowClear: false
             });
+            
             _cboSpouseNationality=$("#cbo_spouse_nationality").select2({
                 allowClear: false
             });

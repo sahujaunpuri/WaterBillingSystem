@@ -1,20 +1,20 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class MeterInventory extends CORE_Controller {
+class ServiceConnection extends CORE_Controller {
 
     function __construct() {
         parent::__construct('');
         $this->validate_session();
+
+        $this->load->model('Service_connection_model');
         $this->load->model('Meter_inventory_model');
         $this->load->model('Customers_model');
+        $this->load->model('Contract_type_model');
+        $this->load->model('Rate_type_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Company_model');
-        $this->load->model('Customer_type_model');
-        $this->load->model('Nationality_model');
-        $this->load->model('Civil_status_model');
-        $this->load->model('Sex_model');
 
         $this->load->library('excel');
     }
@@ -26,28 +26,19 @@ class MeterInventory extends CORE_Controller {
         $data['_switcher_settings']=$this->load->view('template/elements/switcher','',TRUE);
         $data['_side_bar_navigation']=$this->load->view('template/elements/side_bar_navigation','',TRUE);
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
-        $data['title']='Meter Inventory Management';
+        $data['title']='Service Connection Management';
         $data['customers']=$this->Customers_model->get_list(
             array('customers.is_deleted'=>FALSE)
         );
-        $data['customer_type']=$this->Customer_type_model->get_list(
-            array('customer_type.is_deleted'=>FALSE)
+        $data['contract_types']=$this->Contract_type_model->get_list(
+            array('contract_types.is_deleted'=>FALSE,'contract_types.is_active'=>TRUE)
         );
-        $data['nationalities']=$this->Nationality_model->get_list(
-            array('nationality.is_deleted'=>FALSE,'nationality.is_active'=>TRUE)
+        $data['rate_types']=$this->Rate_type_model->get_list(
+            array('rate_types.is_deleted'=>FALSE,'rate_types.is_active'=>TRUE)
         );
-
-        $data['civils']=$this->Civil_status_model->get_list(
-            array('civil_status.is_deleted'=>FALSE,'civil_status.is_active'=>TRUE)
-        );
-
-        $data['sexes']=$this->Sex_model->get_list(
-            array('sex.is_deleted'=>FALSE,'sex.is_active'=>TRUE)
-        );
-
 
         (in_array('5-4',$this->session->user_rights)? 
-        $this->load->view('meter_inventory_view',$data)
+        $this->load->view('service_connection_view',$data)
         :redirect(base_url('dashboard')));
         
     }
@@ -56,13 +47,15 @@ class MeterInventory extends CORE_Controller {
     function transaction($txn=null) {
         switch($txn) {
             case 'list':
-                $m_meter_inventory=$this->Meter_inventory_model;
-                $response['data']=$m_meter_inventory->get_list(
-                    array('meter_inventory.is_deleted'=>FALSE,'meter_inventory.is_active'=>TRUE),
-                    'meter_inventory.*, customers.customer_id, customers.customer_name',
+                $m_connection=$this->Service_connection_model;
+                $response['data']=$m_connection->get_list(
+                    array('service_connection.is_deleted'=>FALSE,'service_connection.is_active'=>TRUE),
+                    'service_connection.*, customers.customer_id, customers.customer_name, contract_types.*, rate_types.*',
 
                     array(
-                        array('customers','customers.customer_id=meter_inventory.customer_id','left')
+                        array('customers','customers.customer_id=service_connection.customer_id','left'),
+                        array('contract_types','contract_types.contract_type_id=service_connection.contract_type_id','left'),
+                        array('rate_types','rate_types.rate_type_id=service_connection.rate_type_id','left')
                     )
                 );
                 echo json_encode($response);
