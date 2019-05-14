@@ -76,7 +76,7 @@ class CORE_Controller extends CI_Controller
         if(substr_count($num,".")>0){ //this a decimal number
             $arr=explode(".",$num);
             if($arr[1] > 0){
-                    return $this->convertNumberToWord($arr[0])." and ".$this->convertNumberToWord($arr[1])." centavos only ";
+                    return $this->convertNumberToWord($arr[0])." pesos and ".$this->convertNumberToWord($arr[1])." centavos only ";
                 } else{
                     return $this->convertNumberToWord($num)." pesos only";
                 }

@@ -38,7 +38,9 @@
                                 <li class="<?php echo (in_array('1-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Matrix_residential">Residential Rate Matrix</a></li>
                                 <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Matrix_commercial">Commercial Rate Matrix</a></li>
                                 <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="MeterInventory">Meter Inventory</a></li>
-
+                                <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Meter_reading_period">Meter Reading Period</a></li>
+                                <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="ServiceConnection">Service Connection</a></li>
+                                <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_disconnection">Service Disconnection</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('1',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-wallet"></i><span>Financing</span></a>
