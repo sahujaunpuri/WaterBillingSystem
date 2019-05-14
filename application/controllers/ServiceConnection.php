@@ -50,8 +50,7 @@ class ServiceConnection extends CORE_Controller {
                 $m_connection=$this->Service_connection_model;
                 $response['data']=$m_connection->get_list(
                     array('service_connection.is_deleted'=>FALSE,'service_connection.is_active'=>TRUE),
-                    'service_connection.*, customers.customer_id, customers.customer_name, contract_types.*, rate_types.*',
-
+                    'service_connection.*, customers.customer_id, customers.customer_name, contract_types.*, rate_types.*,date_format(connection_date,"%m/%d/%Y") as connection_date,date_format(service_date,"%m/%d/%Y") as service_date,date_format(target_date,"%m/%d/%Y") as target_date',
                     array(
                         array('customers','customers.customer_id=service_connection.customer_id','left'),
                         array('contract_types','contract_types.contract_type_id=service_connection.contract_type_id','left'),
@@ -63,33 +62,58 @@ class ServiceConnection extends CORE_Controller {
                 break;
 
             case 'create':
-                $m_meter_inventory=$this->Meter_inventory_model;
+                $m_connection=$this->Service_connection_model;
 
                 $customer_id = $this->input->post('customer_id',TRUE);
-                $m_meter_inventory->set('date_created','NOW()');
+                $meter_inventory_id = $this->input->post('meter_inventory_id',TRUE);
+                $meter_serial =$this->input->post('meter_serial',TRUE);
 
-                $m_meter_inventory->serial_no=$this->input->post('serial_no',TRUE);
-                $m_meter_inventory->meter_description=$this->input->post('meter_description',TRUE);
-                $m_meter_inventory->customer_id=$customer_id;
+                $service_date = date("Y-m-d",strtotime($this->input->post('service_date',TRUE)));
+                $connection_date = date("Y-m-d",strtotime($this->input->post('connection_date',TRUE)));
+                $target_date = date("Y-m-d",strtotime($this->input->post('target_date',TRUE)));
 
-                $m_meter_inventory->created_by=$this->session->user_id;
-                $m_meter_inventory->save();
+                $m_connection->set('date_created','NOW()');
+                $m_connection->customer_id=$customer_id;
+                $m_connection->meter_inventory_id=$meter_inventory_id;
+                $m_connection->service_date=$service_date;
+                $m_connection->connection_date=$connection_date;
+                $m_connection->meter_serial=$meter_serial;
+                $m_connection->receipt_name=$this->input->post('receipt_name',TRUE);
+                $m_connection->target_date=$target_date;
+                $m_connection->target_time=$this->input->post('target_time',TRUE);
+                $m_connection->contract_type_id=$this->input->post('contract_type_id',TRUE);
+                $m_connection->rate_type_id=$this->input->post('rate_type_id',TRUE);
+                $m_connection->initial_meter_reading=$this->input->post('initial_meter_reading',TRUE);
+                $m_connection->attended_by=$this->input->post('attended_by',TRUE);
+                $m_connection->created_by=$this->session->user_id;
+                $m_connection->save();
 
-                $meter_inventory_id=$m_meter_inventory->last_insert_id();
+                $connection_id=$m_connection->last_insert_id();
 
-                //update po meter code on formatted last insert id
-                $meter_code='MC-'.date('Ymd').'-'.$meter_inventory_id;
-                $m_meter_inventory->meter_code=$meter_code;
+                //update no on formatted last insert id
+                $service_no='SCN-'.date('Ymd').'-'.$connection_id;
+                $account_no='ACN-'.date('Ymd').'-'.$connection_id;
+
+                $m_connection->service_no=$service_no;
+                $m_connection->account_no=$account_no;
+                $m_connection->current_id=$connection_id;
+                $m_connection->modify($connection_id);
+
+                // Updating Meter Inventory Status
+                $m_meter_inventory = $this->Meter_inventory_model;
+                $m_meter_inventory->status_id=1; // Active Status
                 $m_meter_inventory->modify($meter_inventory_id);
 
                 $response['title']='Success!';
                 $response['stat']='success';
-                $response['msg']='Meter Inventory Information successfully created.';
-                $response['row_added']= $m_meter_inventory->get_list(
-                    $meter_inventory_id,
-                    'meter_inventory.*, customers.customer_id, customers.customer_name',
+                $response['msg']='Service Connection Information successfully created.';
+                $response['row_added']= $m_connection->get_list(
+                    $connection_id,
+                    'service_connection.*, customers.customer_id, customers.customer_name, contract_types.*, rate_types.*,date_format(connection_date,"%m/%d/%Y") as connection_date,date_format(service_date,"%m/%d/%Y") as service_date,date_format(target_date,"%m/%d/%Y") as target_date',
                     array(
-                        array('customers','customers.customer_id=meter_inventory.customer_id','left')
+                        array('customers','customers.customer_id=service_connection.customer_id','left'),
+                        array('contract_types','contract_types.contract_type_id=service_connection.contract_type_id','left'),
+                        array('rate_types','rate_types.rate_type_id=service_connection.rate_type_id','left')
                     )
                 );
 
@@ -98,8 +122,8 @@ class ServiceConnection extends CORE_Controller {
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
-                $m_trans->trans_type_id=68; // TRANS TYPE
-                $m_trans->trans_log='Created Meter Inventory: '.$meter_code.' - '.$customer[0]->customer_name;
+                $m_trans->trans_type_id=69; // TRANS TYPE
+                $m_trans->trans_log='Created New Connection: '.$service_no.' - '.$customer[0]->customer_name.' ('.$meter_serial.') ';
                 $m_trans->save();
 
                 echo json_encode($response);
@@ -107,21 +131,21 @@ class ServiceConnection extends CORE_Controller {
                 break;
 
             case 'delete':
-                $m_meter_inventory=$this->Meter_inventory_model;
-                $meter_inventory_id=$this->input->post('meter_inventory_id',TRUE);
+                $m_connection=$this->Service_connection_model;
+                $connection_id=$this->input->post('connection_id',TRUE);
 
-                $m_meter_inventory->is_deleted=1;
-                if($m_meter_inventory->modify($meter_inventory_id)){
+                $m_connection->is_deleted=1;
+                if($m_connection->modify($connection_id)){
                     $response['title']='Success!';
                     $response['stat']='success';
-                    $response['msg']='Meter Inventory information successfully deleted.';
+                    $response['msg']='Service Connection information successfully deleted.';
                     $m_trans=$this->Trans_model;
 
                     $m_trans->user_id=$this->session->user_id;
                     $m_trans->set('trans_date','NOW()');
                     $m_trans->trans_key_id=3; //CRUD
-                    $m_trans->trans_type_id=68; // TRANS TYPE
-                    $m_trans->trans_log='Deleted Meter Inventory: ID('.$meter_inventory_id.')';
+                    $m_trans->trans_type_id=69; // TRANS TYPE
+                    $m_trans->trans_log='Deleted Connection : ID('.$connection_id.')';
                     $m_trans->save();
 
                     echo json_encode($response);
@@ -130,35 +154,52 @@ class ServiceConnection extends CORE_Controller {
                 break;
 
             case 'update':
-                $m_meter_inventory=$this->Meter_inventory_model;
-                $meter_inventory_id=$this->input->post('meter_inventory_id',TRUE);
-
+                $m_connection=$this->Service_connection_model;
+                
+                $connection_id = $this->input->post('connection_id',TRUE);
                 $customer_id = $this->input->post('customer_id',TRUE);
+                $meter_inventory_id = $this->input->post('meter_inventory_id',TRUE);
+                $meter_serial =$this->input->post('meter_serial',TRUE);
+                $service_no =$this->input->post('service_no',TRUE);
 
-                $m_meter_inventory->serial_no=$this->input->post('serial_no',TRUE);
-                $m_meter_inventory->meter_description=$this->input->post('meter_description',TRUE);
-                $m_meter_inventory->customer_id=$customer_id;
+                $service_date = date("Y-m-d",strtotime($this->input->post('service_date',TRUE)));
+                $connection_date = date("Y-m-d",strtotime($this->input->post('connection_date',TRUE)));
+                $target_date = date("Y-m-d",strtotime($this->input->post('target_date',TRUE)));
 
-                $m_meter_inventory->modified_by=$this->session->user_id;
-                $m_meter_inventory->modify($meter_inventory_id);
+                $m_connection->customer_id=$customer_id;
+                $m_connection->meter_inventory_id=$meter_inventory_id;
+                $m_connection->service_date=$service_date;
+                $m_connection->connection_date=$connection_date;
+                $m_connection->meter_serial=$meter_serial;
+                $m_connection->receipt_name=$this->input->post('receipt_name',TRUE);
+                $m_connection->target_date=$target_date;
+                $m_connection->target_time=$this->input->post('target_time',TRUE);
+                $m_connection->contract_type_id=$this->input->post('contract_type_id',TRUE);
+                $m_connection->rate_type_id=$this->input->post('rate_type_id',TRUE);
+                $m_connection->initial_meter_reading=$this->input->post('initial_meter_reading',TRUE);
+                $m_connection->attended_by=$this->input->post('attended_by',TRUE);
+                $m_connection->modify($connection_id);
 
                 $response['title']='Success!';
                 $response['stat']='success';
-                $response['msg']='Meter Inventory Information successfully updated.';
-                $response['row_updated']= $m_meter_inventory->get_list(
-                    $meter_inventory_id,
-                    'meter_inventory.*, customers.customer_id, customers.customer_name',
+                $response['msg']='Service Connection Information successfully updated.';
+                $response['row_updated']= $m_connection->get_list(
+                    $connection_id,
+                    'service_connection.*, customers.customer_id, customers.customer_name, contract_types.*, rate_types.*,date_format(connection_date,"%m/%d/%Y") as connection_date,date_format(service_date,"%m/%d/%Y") as service_date,date_format(target_date,"%m/%d/%Y") as target_date',
                     array(
-                        array('customers','customers.customer_id=meter_inventory.customer_id','left')
+                        array('customers','customers.customer_id=service_connection.customer_id','left'),
+                        array('contract_types','contract_types.contract_type_id=service_connection.contract_type_id','left'),
+                        array('rate_types','rate_types.rate_type_id=service_connection.rate_type_id','left')
                     )
                 );
 
+                $customer = $this->Customers_model->get_list($customer_id);            
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
-                $m_trans->trans_type_id=68; // TRANS TYPE
-                $m_trans->trans_log='Updated Meter Inventory: ID('.$meter_inventory_id.')'; 
+                $m_trans->trans_type_id=69; // TRANS TYPE
+                $m_trans->trans_log='Updated Service Connection: '.$service_no.' - '.$customer[0]->customer_name.' ('.$meter_serial.') ';
                 $m_trans->save();
 
                 echo json_encode($response);

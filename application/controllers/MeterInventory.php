@@ -7,6 +7,7 @@ class MeterInventory extends CORE_Controller {
         parent::__construct('');
         $this->validate_session();
         $this->load->model('Meter_inventory_model');
+        $this->load->model('Meter_status_model');
         $this->load->model('Customers_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
@@ -30,9 +31,23 @@ class MeterInventory extends CORE_Controller {
         $data['customers']=$this->Customers_model->get_list(
             array('customers.is_deleted'=>FALSE)
         );
+
+        $data['customers']=$this->Customers_model->get_list(
+            array('customers.is_deleted'=>FALSE)
+        );
+
+        $data['nationalities']=$this->Nationality_model->get_list(  
+            array('nationality.is_deleted'=>FALSE,'nationality.is_active'=>TRUE)
+        );
+
+        $data['meter_status']=$this->Meter_status_model->get_list(  
+            array('meter_status.is_deleted'=>FALSE,'meter_status.is_active'=>TRUE)
+        );
+
         $data['customer_type']=$this->Customer_type_model->get_list(
             array('customer_type.is_deleted'=>FALSE)
         );
+
         $data['nationalities']=$this->Nationality_model->get_list(
             array('nationality.is_deleted'=>FALSE,'nationality.is_active'=>TRUE)
         );
@@ -53,20 +68,27 @@ class MeterInventory extends CORE_Controller {
     }
 
 
-    function transaction($txn=null) {
+    function transaction($txn=null,$filter_value=null) {
         switch($txn) {
             case 'list':
                 $m_meter_inventory=$this->Meter_inventory_model;
                 $response['data']=$m_meter_inventory->get_list(
                     array('meter_inventory.is_deleted'=>FALSE,'meter_inventory.is_active'=>TRUE),
-                    'meter_inventory.*, customers.customer_id, customers.customer_name',
+                    'meter_inventory.*, customers.customer_id, customers.customer_name, meter_status.status_name',
 
                     array(
-                        array('customers','customers.customer_id=meter_inventory.customer_id','left')
+                        array('customers','customers.customer_id=meter_inventory.customer_id','left'),
+                        array('meter_status','meter_status.meter_status_id=meter_inventory.meter_status_id','left'),
                     )
                 );
                 echo json_encode($response);
 
+                break;
+
+            case 'open':
+                $customer_id = $this->input->get('customer_id',TRUE);
+                $response['data']=$this->Meter_inventory_model->getMeter(1,$customer_id);
+                echo json_encode($response);
                 break;
 
             case 'create':
@@ -94,9 +116,10 @@ class MeterInventory extends CORE_Controller {
                 $response['msg']='Meter Inventory Information successfully created.';
                 $response['row_added']= $m_meter_inventory->get_list(
                     $meter_inventory_id,
-                    'meter_inventory.*, customers.customer_id, customers.customer_name',
+                    'meter_inventory.*, customers.customer_id, customers.customer_name, meter_status.status_name',
                     array(
-                        array('customers','customers.customer_id=meter_inventory.customer_id','left')
+                        array('customers','customers.customer_id=meter_inventory.customer_id','left'),
+                        array('meter_status','meter_status.meter_status_id=meter_inventory.meter_status_id','left'),
                     )
                 );
 
@@ -152,11 +175,13 @@ class MeterInventory extends CORE_Controller {
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Meter Inventory Information successfully updated.';
+                
                 $response['row_updated']= $m_meter_inventory->get_list(
                     $meter_inventory_id,
-                    'meter_inventory.*, customers.customer_id, customers.customer_name',
+                    'meter_inventory.*, customers.customer_id, customers.customer_name, meter_status.status_name',
                     array(
-                        array('customers','customers.customer_id=meter_inventory.customer_id','left')
+                        array('customers','customers.customer_id=meter_inventory.customer_id','left'),
+                        array('meter_status','meter_status.meter_status_id=meter_inventory.meter_status_id','left'),
                     )
                 );
 

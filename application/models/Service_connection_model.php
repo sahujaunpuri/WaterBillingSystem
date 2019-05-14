@@ -10,8 +10,6 @@ class Service_connection_model extends CORE_Model{
         // Call the Model constructor
         parent::__construct();
     }
-
-
 }
 
 ?>

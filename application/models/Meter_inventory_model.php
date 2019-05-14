@@ -12,6 +12,13 @@ class Meter_inventory_model extends CORE_Model{
         parent::__construct();
     }
 
+    function getMeter($status_id, $customer_id)
+    {
+        $query = $this->db->query("SELECT inv.*, c.customer_name FROM meter_inventory inv
+    					LEFT JOIN customers c ON c.customer_id = inv.customer_id WHERE inv.meter_status_id = $status_id
+    					".($customer_id==null?"":" AND inv.customer_id = ".$customer_id)."");
+        return $query->result();
+    }
 
 }
 

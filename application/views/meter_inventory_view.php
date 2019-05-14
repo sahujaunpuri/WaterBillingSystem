@@ -116,10 +116,22 @@
                                                             <div class="col-lg-3"><br>
                                                                     <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title="New Meter" ><i class="fa fa-plus"></i>  New Meter</button>
                                                             </div>
-                                                            <div class="col-lg-offset-3 col-lg-3" style="text-align: right;">
+                                                            <div class="col-lg-3" style="text-align: right;">
                                                             &nbsp;<br>
                                                                     <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print Meter Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
                                                                     <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Export Meter Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
+
+                                                            </div>
+                                                            <div class="col-lg-3">
+                                                                Status : <br />
+                                                                <select name="status_id" id="cbo_status" class="form-control" style="width: 100%;">
+                                                                    <option value="all">All</option>
+                                                                    <?php foreach($meter_status as $status){?>
+                                                                        <option value="<?php echo $status->meter_status_id; ?>">
+                                                                            <?php echo $status->status_name; ?>
+                                                                        </option>
+                                                                    <?php }?>
+                                                                </select>
                                                             </div>
                                                             <div class="col-lg-3">
                                                                     Search :<br />
@@ -134,6 +146,7 @@
                                                                 <th>Serial No</th>
                                                                 <th>Description</th>
                                                                 <th>Current Assignee</th>
+                                                                <th>Status</th>
                                                                 <th><center>Action</center></th>
                                                             </tr>
                                                             </thead>
@@ -533,8 +546,9 @@
                     { targets:[1],data: "serial_no" },
                     { targets:[2],data: "meter_description" },
                     { targets:[3],data: "customer_name" },
+                    { targets:[4],data: "status_name" },
                     {
-                        targets:[4],
+                        targets:[5],
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
