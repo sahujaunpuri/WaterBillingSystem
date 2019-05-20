@@ -8,6 +8,7 @@ class MeterInventory extends CORE_Controller {
         $this->validate_session();
         $this->load->model('Meter_inventory_model');
         $this->load->model('Meter_status_model');
+        $this->load->model('Service_connection_model');
         $this->load->model('Customers_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
@@ -72,22 +73,15 @@ class MeterInventory extends CORE_Controller {
         switch($txn) {
             case 'list':
                 $m_meter_inventory=$this->Meter_inventory_model;
-                $response['data']=$m_meter_inventory->get_list(
-                    array('meter_inventory.is_deleted'=>FALSE,'meter_inventory.is_active'=>TRUE),
-                    'meter_inventory.*, customers.customer_id, customers.customer_name, meter_status.status_name',
-
-                    array(
-                        array('customers','customers.customer_id=meter_inventory.customer_id','left'),
-                        array('meter_status','meter_status.meter_status_id=meter_inventory.meter_status_id','left'),
-                    )
-                );
+                $status_id = $this->input->get('status_id',TRUE);
+                $response['data']=$m_meter_inventory->getList($status_id);
                 echo json_encode($response);
 
                 break;
 
             case 'open':
                 $customer_id = $this->input->get('customer_id',TRUE);
-                $response['data']=$this->Meter_inventory_model->getMeter(1,$customer_id);
+                $response['data']=$this->Meter_inventory_model->getList(2,null,$customer_id,1);
                 echo json_encode($response);
                 break;
 
@@ -114,14 +108,7 @@ class MeterInventory extends CORE_Controller {
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Meter Inventory Information successfully created.';
-                $response['row_added']= $m_meter_inventory->get_list(
-                    $meter_inventory_id,
-                    'meter_inventory.*, customers.customer_id, customers.customer_name, meter_status.status_name',
-                    array(
-                        array('customers','customers.customer_id=meter_inventory.customer_id','left'),
-                        array('meter_status','meter_status.meter_status_id=meter_inventory.meter_status_id','left'),
-                    )
-                );
+                $response['row_added']= $m_meter_inventory->getList(null,$meter_inventory_id);
 
                 $customer = $this->Customers_model->get_list($customer_id);            
                 $m_trans=$this->Trans_model;
@@ -138,25 +125,33 @@ class MeterInventory extends CORE_Controller {
 
             case 'delete':
                 $m_meter_inventory=$this->Meter_inventory_model;
+                $m_connection=$this->Service_connection_model;
+
                 $meter_inventory_id=$this->input->post('meter_inventory_id',TRUE);
+                $validate = $m_connection->chck_meter($meter_inventory_id);
 
-                $m_meter_inventory->is_deleted=1;
-                if($m_meter_inventory->modify($meter_inventory_id)){
-                    $response['title']='Success!';
-                    $response['stat']='success';
-                    $response['msg']='Meter Inventory information successfully deleted.';
-                    $m_trans=$this->Trans_model;
+                if (count($validate) <= 0){
+                    $m_meter_inventory->is_deleted=1;
+                    if($m_meter_inventory->modify($meter_inventory_id)){
+                        $response['title']='Success!';
+                        $response['stat']='success';
+                        $response['msg']='Meter Inventory information successfully deleted.';
 
-                    $m_trans->user_id=$this->session->user_id;
-                    $m_trans->set('trans_date','NOW()');
-                    $m_trans->trans_key_id=3; //CRUD
-                    $m_trans->trans_type_id=68; // TRANS TYPE
-                    $m_trans->trans_log='Deleted Meter Inventory: ID('.$meter_inventory_id.')';
-                    $m_trans->save();
-
-                    echo json_encode($response);
+                        $m_trans=$this->Trans_model;
+                        $m_trans->user_id=$this->session->user_id;
+                        $m_trans->set('trans_date','NOW()');
+                        $m_trans->trans_key_id=3; //CRUD
+                        $m_trans->trans_type_id=68; // TRANS TYPE
+                        $m_trans->trans_log='Deleted Meter Inventory: ID('.$meter_inventory_id.')';
+                        $m_trans->save();
+                    }
+                }else{
+                        $response['title']='Cannot delete!';
+                        $response['stat']='error';
+                        $response['msg'] = 'This meter still has an active transaction.';
                 }
 
+                echo json_encode($response);
                 break;
 
             case 'update':
@@ -175,15 +170,7 @@ class MeterInventory extends CORE_Controller {
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Meter Inventory Information successfully updated.';
-                
-                $response['row_updated']= $m_meter_inventory->get_list(
-                    $meter_inventory_id,
-                    'meter_inventory.*, customers.customer_id, customers.customer_name, meter_status.status_name',
-                    array(
-                        array('customers','customers.customer_id=meter_inventory.customer_id','left'),
-                        array('meter_status','meter_status.meter_status_id=meter_inventory.meter_status_id','left'),
-                    )
-                );
+                $response['row_updated']= $m_meter_inventory->getList(null,$meter_inventory_id);
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -202,15 +189,8 @@ class MeterInventory extends CORE_Controller {
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
 
-                $data['inventory']=$this->Meter_inventory_model->get_list('meter_inventory.is_active=TRUE AND meter_inventory.is_deleted=FALSE',
-                    'meter_inventory.*,customers.customer_name,',
-                    array(
-                        array('customers','customers.customer_id = meter_inventory.customer_id','left')
-
-                        ),
-                    'meter_inventory.meter_code ASC'
-                    );
-                    $this->load->view('template/meter_masterfile_content',$data);
+                $data['inventory']=$this->Meter_inventory_model->getList($filter_value);
+                $this->load->view('template/meter_masterfile_content',$data);
 
                 break;
 
@@ -221,14 +201,7 @@ class MeterInventory extends CORE_Controller {
                 $m_company_info=$this->Company_model;
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
-                $inventory=$this->Meter_inventory_model->get_list('meter_inventory.is_active=TRUE AND meter_inventory.is_deleted=FALSE',
-                    'meter_inventory.*,customers.customer_name,',
-                    array(
-                        array('customers','customers.customer_id = meter_inventory.customer_id','left')
-
-                        ),
-                    'meter_inventory.meter_code ASC'
-                    );
+                $inventory=$this->Meter_inventory_model->getList($filter_value);
                 $excel->setActiveSheetIndex(0);
 
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');

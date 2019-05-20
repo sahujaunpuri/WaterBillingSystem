@@ -54,6 +54,10 @@
             to { -webkit-transform: rotate(360deg); }
         }
 
+        #tbl_disconnection_filter, #tbl_account_list_filter{
+                display: none;
+        }
+
     </style>
 
 </head>
@@ -70,26 +74,40 @@
         <div class="static-content-wrapper white-bg custom-background">
             <div class="static-content"  >
                 <div class="page-content"><!-- #page-content -->
-
                     <ol class="breadcrumb transparent-background" style="margin: 0;">
                         <li><a href="dashboard">Dashboard</a></li>
-                        <li><a href="departments">Disconnection Service</a></li>
+                        <li><a href="Service_disconnection">Disconnection Service</a></li>
                     </ol>
-
                     <div class="container-fluid">
                         <div data-widget-group="group1">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div id="div_department_list">
+                                    <div id="div_service_list">
                                         <div class="panel panel-default">
                                             <div class="panel-body table-responsive">
                                             <h2 class="h2-panel-heading">Disconnection Service</h2><hr>
-                                            <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Disconnection" ><i class="fa fa-plus"></i> New Disconnection</button>
-                                                <table id="tbl_departments" class="table table-striped" cellspacing="0" width="100%">
+                                                <div class="row">
+                                                    <div class="col-lg-3"><br>
+                                                            <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Disconnection" ><i class="fa fa-plus"></i> New Disconnection</button>
+                                                    </div>
+                                                    <div class="col-lg-offset-3 col-lg-3" style="text-align: right;">
+                                                    &nbsp;<br>
+                                                            <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print Connection Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
+                                                            <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Export Connection Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                            Search :<br />
+                                                             <input type="text" id="searchbox_disconnection" class="form-control">
+                                                    </div>
+                                                </div><br>
+                                                <table id="tbl_disconnection" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                     <tr>
-                                                        <th>Department Name</th>
-                                                        <th>Department Description</th>
+                                                        <th>Service No</th>
+                                                        <th>Contract No</th>
+                                                        <th>Account No</th>
+                                                        <th>Customer</th>
+                                                        <th>Date</th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -106,34 +124,45 @@
                 </div> <!-- #page-content -->
             </div>
 
-            <div id="modal_so_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+            <div id="modal_account_list" class="modal fade" role="dialog"><!--modal-->
                 <div class="modal-dialog" style="width: 80%;">
                     <div class="modal-content">
-                        <div class="modal-header ">
-                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                            <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Sales Order</h2>
+                        <div class="modal-header">
+                            <h2 class="modal-title" style="color: white;"><span id="modal_mode"></span>Account List</h2>
                         </div>
                         <div class="modal-body">
-                            <table id="tbl_so_list" class="table table-striped" cellspacing="0" width="100%">
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    Customer : 
+                                    <select class="form-control" name="customer_id" id="cbo_customer" style="width: 100%;">
+                                        <option value="">All</option>
+                                        <?php foreach($customers as $customer){?>
+                                            <option value="<?php echo $customer->customer_id; ?>">
+                                                <?php echo $customer->customer_name; ?>
+                                            </option>
+                                        <?php }?>
+                                    </select>
+                                </div>
+                                <div class="col-lg-offset-6 col-lg-3">
+                                    Search :<br />
+                                    <input type="text" id="searchbox_accounts" class="form-control">
+                                </div>
+                            </div><br>
+                            <table id="tbl_account_list" class="table table-striped" cellspacing="0" width="100%">
                                 <thead class="">
-                                <tr>
-                                    <th></th>
-                                    <th>SO#</th>
-                                    <th>Customer</th>
-                                    <th>Remarks</th>
-                                    <th>Order</th>
-                                    <th>Status</th>
-                                    <th><center>Action</center></th>
-                                </tr>
+                                    <tr>
+                                        <th>Account No</th>
+                                        <th>Customer</th>
+                                        <th>Service No</th>
+                                        <th>Serial No</th>
+                                        <th><center>Action</center></th>
+                                    </tr>
                                 </thead>
-                                <tbody>
-                                    <!-- Sales Order Content -->
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                         <div class="modal-footer">
-                  <!--           <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button> -->
-                            <button id="cancel_modal" class="btn btn-default" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+                            <button id="btn_cancel_account" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
                         </div>
                     </div><!---content---->
                 </div>
@@ -166,7 +195,7 @@
                              <h2 id="modal_title" class="modal-title" style="color:white;"></h2>
                         </div>
                         <div class="modal-body">
-                            <form id="frm_department" role="form" class="form-horizontal">
+                            <form id="frm_disconnection" role="form" class="form-horizontal">
                                 <div class="row" style="margin: 1%;">
                                     <div class="col-lg-6">
                                         <div class="form-group" style="margin-bottom:0px;">
@@ -183,19 +212,20 @@
                                 </div>
                                 <div class="row" style="margin: 1%;">
                                     <div class="col-lg-7" style="padding-left:0px;padding-right: 0px;"> 
-                                        <label><B class="required"> * </B> Connection Service No:</label> <br />
+                                        <label><B class="required"> * </B> Service No:</label> <br />
                                         <div class="input-group">
-                                            <input type="text" name="so_no" class="form-control" readonly>
-                                            <input type="text" name="connection_id" class="form-control" readonly>
+                                            <input type="text" name="service_no" class="form-control" readonly placeholder="Service No" required data-error-msg="Service No is required!">
+                                            <input type="hidden" name="connection_id" class="form-control" readonly placeholder="Connection ID" value="0">
+                                            <input type="hidden" name="previous_id" class="form-control" readonly placeholder="prev_id" value="0">
                                             <span class="input-group-addon">
-                                                <a href="#" id="link_browse" style="text-decoration: none;color:black;"><b>...</b></a>
+                                                <a href="#" id="link_browse_co" style="text-decoration: none;color:black;"><b>...</b></a>
                                             </span>
                                         </div>
                                     </div>
                                     <div class="col-lg-offset-1 col-lg-4">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class=""><B class="required"> * </B>Target Disconnection Date:</label>
-                                            <input type="text" name="date_disconnection_date" class="date-picker form-control" placeholder="Customer Name" data-error-msg="Customer Name is required!" required>
+                                            <input type="text" name="date_disconnection_date" class="date-picker form-control" placeholder="Target Disconnection Date" data-error-msg="Target Disconnection Date is required!" required>
                                         </div>
                                     </div>
                                 </div>
@@ -231,36 +261,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
-<!-- 
-
-                                <div class="row" style="margin: 1%;">
-                                    <div class="col-lg-12">
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                            <label class="">Delivery Address :</label>
-                                            <textarea name="delivery_address" class="form-control" placeholder="Delivery Address"></textarea>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
-                                <div class="row" style="margin: 1%;">
-                                    <div class="col-lg-12">
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                            <label class="">Please specify the default cost of this Branch when purchasing items (Optional) :</label>
-                                            <select name="default_cost" id="cbo_default_cost" class="form-control" data-error-msg="Item type is required." required>
-                                                <option value="1">Purchase Cost 1 (Luzon Area)</option>
-                                                <option value="2">Purchase Cost 2 (Viz-Min Area)</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div><br /><br /> -->
-
-
-
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -299,20 +299,29 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDisconnectionReason; var dt_so; 
+    var _cboCustomer;
 
     var initializeControls=function(){
-        dt=$('#tbl_departments').DataTable({
+
+        _cboCustomer=$("#cbo_customer").select2({
+            allowClear: false
+        });
+
+        dt=$('#tbl_disconnection').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "ajax" : "Departments/transaction/list",
+            "ajax" : "Service_disconnection/transaction/list",
             "language" : {
                 "searchPlaceholder": "Search"
             },
             "columns": [
-                { targets:[0],data: "department_name" },
-                { targets:[1],data: "department_desc" },
+                { targets:[0],data: "disconnection_code" },
+                { targets:[1],data: "service_no" },
+                { targets:[2],data: "account_no" },
+                { targets:[3],data: "customer_name" },
+                { targets:[4],data: "service_date" },
                 {
-                    targets:[2],
+                    targets:[5],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -323,33 +332,39 @@ $(document).ready(function(){
             ]
         });
 
-        dt_so=$('#tbl_so_list').DataTable({
+        dt_account=$('#tbl_account_list').DataTable({
             "bLengthChange":false,
-            "ajax" : "Sales_order/transaction/open",
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
+            "ajax" : {
+                "url" : "Service_disconnection/transaction/accounts",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "customer_id": $('#cbo_customer').select2('val')
+                        });
+                    }
+            }, 
             "columns": [
+                { targets:[0],data: "account_no" },
+                { targets:[1],data: "customer_name" },
+                { targets:[2],data: "service_no" },
+                { targets:[3],data: "serial_no" },
                 {
-                    "targets": [0],
-                    "class":          "details-control",
-                    "orderable":      false,
-                    "data":           null,
-                    "defaultContent": ""
-                },
-                { targets:[1],data: "so_no" },
-                { targets:[2],data: "customer_name" },
-                { targets:[3],data: "remarks" },
-                { targets:[4],data: "date_order" },
-                { targets:[5],data: "order_status" },
-                {
-                    targets:[6],
+                    targets:[4],
                     render: function (data, type, full, meta){
-                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i> Accept SO</button>';
+                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_account"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> Accept</button>';
                         return '<center>'+btn_accept+'</center>';
                     }
                 }
+
             ]
-        });
+        });        
 
         _cboDisconnectionReason=$("#cbo_disconnection_reason_id").select2({
+            minimumResultsForSearch: -1,
             allowClear: false
         });
 
@@ -390,17 +405,17 @@ $(document).ready(function(){
 
         $('#btn_new').click(function(){
             _txnMode="new";
-            clearFields($('#frm_department'));
+            clearFields($('#frm_disconnection'));
             $('.date-picker').datepicker('setDate', 'today');
             $('#modal_title').text('New Disconnection Service');
             $('#modal_new_disconnection').modal('show');
         });
 
-        $('#tbl_departments tbody').on('click','button[name="edit_info"]',function(){
+        $('#tbl_disconnection tbody').on('click','button[name="edit_info"]',function(){
             _txnMode="edit";
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.department_id;
+            _selectedID=data.disconnection_id;
 
             $('input,textarea,select').each(function(){
                 var _elem=$(this);
@@ -410,32 +425,63 @@ $(document).ready(function(){
                     }
                 });
             });
+
             $('#modal_title').text('Edit Disconnection Service');
             $('#modal_new_disconnection').modal('show');
-            //showList(false);
         });
 
-        $('#tbl_departments tbody').on('click','button[name="remove_info"]',function(){
+        $('#tbl_account_list > tbody').on('click','button[name="accept_account"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt_account.row(_selectRowObj).data();
+
+            $('input[name="service_no"]').val(data.service_no);
+            $('input[name="connection_id"]').val(data.connection_id);
+            $('input[name="customer_name"]').val(data.customer_name);
+            $('input[name="previous_id"]').val(data.previous_id);
+
+            $('#modal_account_list').modal('hide');
+            $('#modal_new_disconnection').modal('show');
+
+        }); 
+
+        $('#tbl_disconnection tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.department_id;
+            _selectedID=data.disconnection_id;
 
             $('#modal_confirmation').modal('show');
         });
 
+        _cboCustomer.on('change',function(){
+            $('#tbl_account_list tbody').html('<tr><td colspan="5"><center><br/><br /><br /></center></td></tr>');
+            dt_account.ajax.reload( null, false );
+        });
+
+        $("#searchbox_disconnection").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
+        $("#searchbox_accounts").keyup(function(){         
+            dt_account
+                .search(this.value)
+                .draw();
+        });
+
         $('#btn_yes').click(function(){
-            removeDepartment().done(function(response){
+            removeDisconnection().done(function(response){
                 showNotification(response);
                 dt.row(_selectRowObj).remove().draw();
             });
         });
 
-        $('#link_browse').click(function(){
-            $('#tbl_so_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
-            dt_so.ajax.reload( null, false );
+        $('#link_browse_co').click(function(){
+            $('#tbl_account_list tbody').html('<tr><td colspan="5"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+            dt_account.ajax.reload( null, false );
 
             $('#modal_new_disconnection').modal('hide');
-            $('#modal_so_list').modal('show');
+            $('#modal_account_list').modal('show');
         });
 
         $('input[name="file_upload[]"]').change(function(event){
@@ -470,23 +516,28 @@ $(document).ready(function(){
             clearFields();
             $('#modal_new_disconnection').modal('hide');
         });
+        
+        $('#btn_cancel_account').click(function(){
+            $('#modal_account_list').modal('hide');
+            $('#modal_new_disconnection').modal('show');
+        });
 
         $('#btn_save').click(function(){
-            if(validateRequiredFields()){
+            if(validateRequiredFields($('#frm_disconnection'))){
                 if(_txnMode=="new"){
                     createDisconnection().done(function(response){
                         showNotification(response);
-                        // dt.row.add(response.row_added[0]).draw();
-                        clearFields();
+                        dt.row.add(response.row_added[0]).draw();
+                        clearFields($('#frm_disconnection'));
+
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }else{
-                    updateDepartment().done(function(response){
+                    updateDisconnection().done(function(response){
                         showNotification(response);
                         dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                        clearFields();
-                        showList(true);
+                        clearFields($('#frm_disconnection'));
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
@@ -494,25 +545,39 @@ $(document).ready(function(){
                 $('#modal_new_disconnection').modal('hide');
             }
         });
+
     })();
 
-    var validateRequiredFields=function(){
+    var validateRequiredFields=function(f){
         var stat=true;
 
         $('div.form-group').removeClass('has-error');
-        $('input[required],textarea[required]','#frm_department').each(function(){
-            if($(this).val()==""){
-                showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
-                $(this).closest('div.form-group').addClass('has-error');
-                stat=false;
-                return false;
+        $('input[required],textarea[required],select[required]',f).each(function(){
+
+                if($(this).is('select')){
+                    if($(this).val()==null || $(this).val()==""){
+                        showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
+                        $(this).closest('div.form-group').addClass('has-error');
+                        $(this).focus();
+                        stat=false;
+                        return false;
+                    }
+                }else{
+                if($(this).val()=="" || $(this).val()== '0'){
+                    showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
+                    $(this).closest('div.form-group').addClass('has-error');
+                    $(this).focus();
+                    stat=false;
+                    return false;
+                }
             }
         });
+
         return stat;
     };
 
     var createDisconnection=function(){
-        var _data=$('#frm_department').serializeArray();
+        var _data=$('#frm_disconnection').serializeArray();
 
         return $.ajax({
             "dataType":"json",
@@ -523,34 +588,34 @@ $(document).ready(function(){
         });
     };
 
-    var updateDepartment=function(){
-        var _data=$('#frm_department').serializeArray();
-        _data.push({name : "department_id" ,value : _selectedID});
+    var updateDisconnection=function(){
+        var _data=$('#frm_disconnection').serializeArray();
+        _data.push({name : "disconnection_id" ,value : _selectedID});
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Departments/transaction/update",
+            "url":"Service_disconnection/transaction/update",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
 
-    var removeDepartment=function(){
+    var removeDisconnection=function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Departments/transaction/delete",
-            "data":{department_id : _selectedID}
+            "url":"Service_disconnection/transaction/delete",
+            "data":{disconnection_id : _selectedID}
         });
     };
 
     var showList=function(b){
         if(b){
-            $('#div_department_list').show();
+            $('#div_service_list').show();
             $('#div_department_fields').hide();
         }else{
-            $('#div_department_list').hide();
+            $('#div_service_list').hide();
             $('#div_department_fields').show();
         }
     };
@@ -568,8 +633,8 @@ $(document).ready(function(){
         $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
     };
 
-    var clearFields=function(){
-        $('input:not(.date-picker),input[required],textarea','#frm_department').val('');
+    var clearFields=function(f){
+        $('input:not(.date-picker),input[required],textarea',f).val('');
         $('form').find('input:first').focus();
     };
 
