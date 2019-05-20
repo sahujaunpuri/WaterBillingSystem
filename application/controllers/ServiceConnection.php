@@ -26,7 +26,7 @@ class ServiceConnection extends CORE_Controller {
         $data['_switcher_settings']=$this->load->view('template/elements/switcher','',TRUE);
         $data['_side_bar_navigation']=$this->load->view('template/elements/side_bar_navigation','',TRUE);
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
-        $data['title']='Service Connection Management';
+        $data['title']='Connection Service';
         $data['customers']=$this->Customers_model->get_list(
             array('customers.is_deleted'=>FALSE)
         );
@@ -48,15 +48,7 @@ class ServiceConnection extends CORE_Controller {
         switch($txn) {
             case 'list':
                 $m_connection=$this->Service_connection_model;
-                $response['data']=$m_connection->get_list(
-                    array('service_connection.is_deleted'=>FALSE,'service_connection.is_active'=>TRUE),
-                    'service_connection.*, customers.customer_id, customers.customer_name, contract_types.*, rate_types.*,date_format(connection_date,"%m/%d/%Y") as connection_date,date_format(service_date,"%m/%d/%Y") as service_date,date_format(target_date,"%m/%d/%Y") as target_date',
-                    array(
-                        array('customers','customers.customer_id=service_connection.customer_id','left'),
-                        array('contract_types','contract_types.contract_type_id=service_connection.contract_type_id','left'),
-                        array('rate_types','rate_types.rate_type_id=service_connection.rate_type_id','left')
-                    )
-                );
+                $response['data']=$m_connection->getList();
                 echo json_encode($response);
 
                 break;
@@ -66,7 +58,7 @@ class ServiceConnection extends CORE_Controller {
 
                 $customer_id = $this->input->post('customer_id',TRUE);
                 $meter_inventory_id = $this->input->post('meter_inventory_id',TRUE);
-                $meter_serial =$this->input->post('meter_serial',TRUE);
+                $serial_no =$this->input->post('serial_no',TRUE);
 
                 $service_date = date("Y-m-d",strtotime($this->input->post('service_date',TRUE)));
                 $connection_date = date("Y-m-d",strtotime($this->input->post('connection_date',TRUE)));
@@ -77,7 +69,6 @@ class ServiceConnection extends CORE_Controller {
                 $m_connection->meter_inventory_id=$meter_inventory_id;
                 $m_connection->service_date=$service_date;
                 $m_connection->connection_date=$connection_date;
-                $m_connection->meter_serial=$meter_serial;
                 $m_connection->receipt_name=$this->input->post('receipt_name',TRUE);
                 $m_connection->target_date=$target_date;
                 $m_connection->target_time=$this->input->post('target_time',TRUE);
@@ -101,21 +92,14 @@ class ServiceConnection extends CORE_Controller {
 
                 // Updating Meter Inventory Status
                 $m_meter_inventory = $this->Meter_inventory_model;
-                $m_meter_inventory->status_id=1; // Active Status
+                $m_meter_inventory->meter_status_id=1; // Active Status
+                $m_meter_inventory->is_new=0; // Active Status
                 $m_meter_inventory->modify($meter_inventory_id);
 
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Service Connection Information successfully created.';
-                $response['row_added']= $m_connection->get_list(
-                    $connection_id,
-                    'service_connection.*, customers.customer_id, customers.customer_name, contract_types.*, rate_types.*,date_format(connection_date,"%m/%d/%Y") as connection_date,date_format(service_date,"%m/%d/%Y") as service_date,date_format(target_date,"%m/%d/%Y") as target_date',
-                    array(
-                        array('customers','customers.customer_id=service_connection.customer_id','left'),
-                        array('contract_types','contract_types.contract_type_id=service_connection.contract_type_id','left'),
-                        array('rate_types','rate_types.rate_type_id=service_connection.rate_type_id','left')
-                    )
-                );
+                $response['row_added']= $m_connection->getList($connection_id);
 
                 $customer = $this->Customers_model->get_list($customer_id);            
                 $m_trans=$this->Trans_model;
@@ -123,7 +107,7 @@ class ServiceConnection extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
                 $m_trans->trans_type_id=69; // TRANS TYPE
-                $m_trans->trans_log='Created New Connection: '.$service_no.' - '.$customer[0]->customer_name.' ('.$meter_serial.') ';
+                $m_trans->trans_log='Created New Connection: '.$service_no.' - '.$customer[0]->customer_name.' ('.$serial_no.') ';
                 $m_trans->save();
 
                 echo json_encode($response);
@@ -159,8 +143,11 @@ class ServiceConnection extends CORE_Controller {
                 $connection_id = $this->input->post('connection_id',TRUE);
                 $customer_id = $this->input->post('customer_id',TRUE);
                 $meter_inventory_id = $this->input->post('meter_inventory_id',TRUE);
-                $meter_serial =$this->input->post('meter_serial',TRUE);
                 $service_no =$this->input->post('service_no',TRUE);
+
+                $prev_data = $m_connection->chck_meter(null,$connection_id);
+                $prev_meter_inventory_id = $prev_data[0]->meter_inventory_id;
+                $serial_no = $prev_data[0]->serial_no;
 
                 $service_date = date("Y-m-d",strtotime($this->input->post('service_date',TRUE)));
                 $connection_date = date("Y-m-d",strtotime($this->input->post('connection_date',TRUE)));
@@ -170,7 +157,6 @@ class ServiceConnection extends CORE_Controller {
                 $m_connection->meter_inventory_id=$meter_inventory_id;
                 $m_connection->service_date=$service_date;
                 $m_connection->connection_date=$connection_date;
-                $m_connection->meter_serial=$meter_serial;
                 $m_connection->receipt_name=$this->input->post('receipt_name',TRUE);
                 $m_connection->target_date=$target_date;
                 $m_connection->target_time=$this->input->post('target_time',TRUE);
@@ -180,18 +166,22 @@ class ServiceConnection extends CORE_Controller {
                 $m_connection->attended_by=$this->input->post('attended_by',TRUE);
                 $m_connection->modify($connection_id);
 
+                // Updating Previous Meter Inventory Status
+                $m_meter_inventory = $this->Meter_inventory_model;
+                $m_meter_inventory->meter_status_id=2; // Inactive Status
+                $m_meter_inventory->is_new=1; // Is New Status
+                $m_meter_inventory->modify($prev_meter_inventory_id);
+
+                // Updating Meter Inventory Status
+                $m_meter_inventory = $this->Meter_inventory_model;
+                $m_meter_inventory->meter_status_id=1; // Active Status
+                $m_meter_inventory->is_new=0; // Is Not New Status
+                $m_meter_inventory->modify($meter_inventory_id);
+
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Service Connection Information successfully updated.';
-                $response['row_updated']= $m_connection->get_list(
-                    $connection_id,
-                    'service_connection.*, customers.customer_id, customers.customer_name, contract_types.*, rate_types.*,date_format(connection_date,"%m/%d/%Y") as connection_date,date_format(service_date,"%m/%d/%Y") as service_date,date_format(target_date,"%m/%d/%Y") as target_date',
-                    array(
-                        array('customers','customers.customer_id=service_connection.customer_id','left'),
-                        array('contract_types','contract_types.contract_type_id=service_connection.contract_type_id','left'),
-                        array('rate_types','rate_types.rate_type_id=service_connection.rate_type_id','left')
-                    )
-                );
+                $response['row_updated']= $m_connection->getList($connection_id);
 
                 $customer = $this->Customers_model->get_list($customer_id);            
                 $m_trans=$this->Trans_model;
@@ -199,7 +189,7 @@ class ServiceConnection extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=69; // TRANS TYPE
-                $m_trans->trans_log='Updated Service Connection: '.$service_no.' - '.$customer[0]->customer_name.' ('.$meter_serial.') ';
+                $m_trans->trans_log='Updated Service Connection: '.$service_no.' - '.$customer[0]->customer_name.' ('.$serial_no.') ';
                 $m_trans->save();
 
                 echo json_encode($response);

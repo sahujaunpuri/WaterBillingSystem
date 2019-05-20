@@ -196,7 +196,7 @@
                                                             <label class="col-xs-12 col-md-3 control-label"><strong>Service No:</strong></label>
                                                             <div class="col-xs-12 col-md-9">
                                                                 <div class="input-group">
-                                                                    <input type="text" name="service_no" class="form-control" placeholder="SCN-YYYYMMDD-XXX" readonly>
+                                                                    <input type="text" name="service_no" class="form-control" placeholder="SCN-YYYYMMDD-XXXX" readonly>
                                                                     <span class="input-group-addon">
                                                                         <i class="fa fa-code"></i>
                                                                     </span>
@@ -224,7 +224,7 @@
                                                             <label class="col-xs-12 col-md-3 control-label"><strong>Account No:</strong></label>
                                                             <div class="col-xs-12 col-md-9">
                                                                 <div class="input-group">
-                                                                    <input type="text" name="account_no" class="form-control" placeholder="ACN-YYYYMMDD-XXX" readonly>
+                                                                    <input type="text" name="account_no" class="form-control" placeholder="ACN-YYYYMMDD-XXXX" readonly>
                                                                     <span class="input-group-addon">
                                                                         <i class="fa fa-code"></i>
                                                                     </span>
@@ -268,7 +268,7 @@
                                                                     <span class="input-group-addon">
                                                                         <i class="fa fa-code"></i>
                                                                     </span>
-                                                                    <input type="text" id="serial_no" name="meter_serial" class="form-control" placeholder="Serial No" readonly>
+                                                                    <input type="text" id="serial_no" name="serial_no" class="form-control" placeholder="Serial No" readonly>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -396,7 +396,6 @@
                 <div class="modal-dialog" style="width: 80%;">
                     <div class="modal-content"><!---content--->
                         <div class="modal-header ">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
                             <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Meter Inventory</h4>
                         </div>
                         <div class="modal-body">
@@ -432,7 +431,7 @@
                             </table>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+                            <button type="button" id="btn_cancel_customer" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
                         </div>
                     </div><!---content---->
                 </div>
@@ -471,7 +470,7 @@
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; 
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectRowObjMeter;
         var _cboCustomer; var _cboContractType; var _cboRateType;
 
         var initializeControls=function(){
@@ -500,7 +499,7 @@
                     { targets:[0],data: "service_no" },
                     { targets:[1],data: "account_no" },
                     { targets:[2],data: "customer_name" },
-                    { targets:[3],data: "meter_serial" },
+                    { targets:[3],data: "serial_no" },
                     { targets:[4],data: "connection_date" },
                     {
                         targets:[5],
@@ -566,6 +565,8 @@
             $('#link_browse_cu').click(function(){
                 $('#tbl_meter_list tbody').html('<tr><td colspan="4"><center><br/><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
                 dt_meter.ajax.reload( null, false );
+
+                $('#modal_new_connection').modal('hide');
                 $('#modal_meter_list').modal('show');
             });
 
@@ -574,17 +575,18 @@
                 dt_meter.ajax.reload( null, false );
             });
 
-
             $('#tbl_meter_list > tbody').on('click','button[name="accept_customer"]',function(){
-                _selectRowObj=$(this).closest('tr');
-                var data=dt_meter.row(_selectRowObj).data();
+                _selectRowObjMeter=$(this).closest('tr');
+                var data=dt_meter.row(_selectRowObjMeter).data();
 
                 $('#customer_name').val(data.customer_name);
                 $('#receipt_name').val(data.customer_name);
                 $('#serial_no').val(data.serial_no);
                 $('input[name="customer_id"]').val(data.customer_id);
                 $('input[name="meter_inventory_id"]').val(data.meter_inventory_id);
+
                 $('#modal_meter_list').modal('hide');
+                $('#modal_new_connection').modal('show');
 
             }); 
 
@@ -622,8 +624,8 @@
                 });
 
             $('#btn_cancel_customer').on('click', function(){
-                $('#modal_new_customer').modal('hide');
-                $('#modal_new_customer_sp').modal('hide');
+
+                $('#modal_meter_list').modal('hide');
                 $('#modal_new_connection').modal('show');
             });
 

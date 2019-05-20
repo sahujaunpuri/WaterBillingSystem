@@ -77,6 +77,16 @@
               width: 95%;
 
             }
+            div.dataTables_processing{ 
+                position: absolute!important; 
+                top: 0%!important; 
+                right: -45%!important; 
+                left: auto!important; 
+                width: 100%!important; 
+                height: 40px!important; 
+                background: none!important; 
+                background-color: transparent!important; 
+            } 
         </style>
 
     </head>
@@ -109,7 +119,7 @@
                                                     <!-- <div class="panel-heading">
                                                         <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Sales Person</b>
                                                     </div> -->
-                                                    <div class="panel-body table-responsive">
+                                                    <div class="panel-body table-responsive" style="overflow-x:hidden">
                                                     <h2 class="h2-panel-heading">Meter Inventory</h2><hr>
 
                                                          <div class="row">
@@ -125,7 +135,7 @@
                                                             <div class="col-lg-3">
                                                                 Status : <br />
                                                                 <select name="status_id" id="cbo_status" class="form-control" style="width: 100%;">
-                                                                    <option value="all">All</option>
+                                                                    <option value="">All</option>
                                                                     <?php foreach($meter_status as $status){?>
                                                                         <option value="<?php echo $status->meter_status_id; ?>">
                                                                             <?php echo $status->status_name; ?>
@@ -529,35 +539,11 @@
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboCustomer;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboCustomer; var _cboStatus;
         var _cboCustomerType; var _cboNationality; var _cboCivilStatus; var _cboSex; 
         var _cboSpouseNationality;
 
         var initializeControls=function(){
-            dt=$('#tbl_meter_inventory').DataTable({
-                "fnInitComplete": function (oSettings, json) {
-                },
-                "dom": '<"toolbar">frtip',
-                "bLengthChange":false,
-                "pageLength": 15,
-                "ajax" : "MeterInventory/transaction/list",
-                "columns": [
-                    { targets:[0],data: "meter_code" },
-                    { targets:[1],data: "serial_no" },
-                    { targets:[2],data: "meter_description" },
-                    { targets:[3],data: "customer_name" },
-                    { targets:[4],data: "status_name" },
-                    {
-                        targets:[5],
-                        render: function (data, type, full, meta){
-                            var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                            var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-
-                            return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
-                        }
-                    }
-                ]
-            });
 
             _cboCustomer=$('#cbo_customer').select2({
                 placeholder: "Please Select Customer",
@@ -565,6 +551,11 @@
             });
 
             _cboCustomer.select2('val',null);
+
+            _cboStatus=$("#cbo_status").select2({
+                minimumResultsForSearch: -1,
+                allowClear: false
+            });
 
             _cboCustomerType=$("#cbo_customer_type").select2({
                 allowClear: false
@@ -586,6 +577,41 @@
                 allowClear: false
             });
 
+            dt=$('#tbl_meter_inventory').DataTable({
+                "dom": '<"toolbar">frtip',
+                "bLengthChange":false,
+                oLanguage: {
+                        sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+                },
+                processing : true,
+                // "pageLength": 15,
+                "ajax" : {
+                    "url" : "MeterInventory/transaction/list",
+                    "bDestroy": true,            
+                    "data": function ( d ) {
+                            return $.extend( {}, d, {
+                                "status_id": $('#cbo_status').select2('val')
+                            });
+                        }
+                }, 
+                "columns": [
+                    { targets:[0],data: "meter_code" },
+                    { targets:[1],data: "serial_no" },
+                    { targets:[2],data: "meter_description" },
+                    { targets:[3],data: "customer_name" },
+                    { targets:[4],data: "status_name" },
+                    {
+                        targets:[5],
+                        render: function (data, type, full, meta){
+                            var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                            var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+
+                            return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        }
+                    }
+                ]
+            });
+
             $('.date-picker').datepicker({
                 todayBtn: "linked",
                 keyboardNavigation: false,
@@ -598,6 +624,11 @@
 
         var bindEventHandlers=(function(){
             var detailRows = [];
+
+            _cboStatus.on('change',function(){
+                $('#tbl_meter_inventory tbody').html('<tr><td colspan="6"><center><br/><br /><br /></center></td></tr>');
+                dt.ajax.reload( null, false );
+            });
 
             _cboCustomer.on('select2:select', function(){
                 if (_cboCustomer.val() == 0) {
@@ -682,11 +713,11 @@
             });
 
             $('#btn_print').click(function(){
-               window.open('MeterInventory/transaction/print-masterfile');
+               window.open('MeterInventory/transaction/print-masterfile/'+_cboStatus.select2('val'));
             });  
 
             $('#btn_export').click(function(){
-               window.open('MeterInventory/transaction/export-masterfile');
+               window.open('MeterInventory/transaction/export-masterfile/'+_cboStatus.select2('val'));
             }); 
 
             $('#btn_new').click(function(){
@@ -728,7 +759,9 @@
             $('#btn_yes').click(function(){
                 removeMeterInventory().done(function(response){
                     showNotification(response);
-                    dt.row(_selectRowObj).remove().draw();
+                    if (response.stat == "success"){
+                        dt.row(_selectRowObj).remove().draw();
+                    }
                 });
             });
 

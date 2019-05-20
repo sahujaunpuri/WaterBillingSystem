@@ -8,32 +8,70 @@ class Service_disconnection_model extends CORE_Model {
         parent::__construct();
     }
 
-    function get_department_list($department_id=null) {
-        $sql="  SELECT
-                  a.*
+    function getList($disconnection_id=null,$customer_id=null,$status_id=null)
+    {
+        $query = $this->db->query("SELECT 
+                    sd.*,
+                    DATE_FORMAT(sd.service_date, '%m/%d/%Y') AS service_date,
+                    DATE_FORMAT(sd.date_disconnection_date, '%m/%d/%Y') AS date_disconnection_date,
+                    sc.service_no,
+                    sc.account_no,
+                    sc.meter_inventory_id,
+                    inv.serial_no,
+                    inv.customer_id,
+                    customers.customer_name,
+                    ct.contract_type_name,
+                    rt.rate_type_name
                 FROM
-                  departments as a
+                    service_disconnection sd
+                        LEFT JOIN
+                    service_connection sc ON sc.connection_id = sd.connection_id
+                        LEFT JOIN
+                    customers ON customers.customer_id = sc.customer_id
+                        LEFT JOIN 
+                    meter_inventory inv ON inv.meter_inventory_id = sc.meter_inventory_id
+                        LEFT JOIN
+                    contract_types ct ON ct.contract_type_id = sc.contract_type_id
+                        LEFT JOIN
+                    rate_types rt ON rt.rate_type_id = sc.rate_type_id
                 WHERE
-                    a.is_deleted=FALSE AND a.is_active=TRUE
-                ".($department_id==null?"":" AND a.department_id=$department_id")."
-            ";
-        return $this->db->query($sql)->result();
+                    sd.is_deleted = FALSE
+                        AND sd.is_active = TRUE
+                        ".($disconnection_id==null?"":" AND sd.disconnection_id=".$disconnection_id)."
+                        ".($customer_id==null?"":" AND sc.customer_id=".$customer_id)."
+                        ".($status_id==null?"":" AND sc.status_id=".$status_id)."
+                     ORDER BY sd.disconnection_id ASC");
+        return $query->result();
     }
 
-
-    function create_default_department(){
-
-        //return;
-        $sql="INSERT INTO
-                  departments(department_id,department_name,department_desc,date_created) VALUES (1,'Admin','',NOW())
-              ON DUPLICATE KEY UPDATE
-                departments.department_name=VALUES(departments.department_name),
-                departments.department_desc=VALUES(departments.department_desc);
-        ";
-        $this->db->query($sql);
-
+    function accounts($customer_id=null){
+        $query = $this->db->query("SELECT 
+                sc.*,
+                c.customer_name,
+                inv.serial_no,
+                (CASE 
+                    WHEN sc.status_id = 1
+                        THEN sc.service_no
+                    ELSE 
+                        (SELECT reconnection_code FROM service_reconnection WHERE reconnection_id = sc.current_id)
+                END) as service_no,
+                (CASE 
+                    WHEN sc.status_id = 1
+                        THEN sc.connection_id
+                    ELSE 
+                        (SELECT reconnection_id FROM service_reconnection WHERE reconnection_id = sc.current_id)
+                END) as previous_id
+            FROM
+                service_connection sc
+                LEFT JOIN meter_inventory inv ON inv.meter_inventory_id = sc.meter_inventory_id
+                LEFT JOIN customers c ON c.customer_id = inv.customer_id
+            WHERE
+                (sc.status_id = 1 OR sc.status_id = 3)
+                AND sc.is_deleted = FALSE
+                AND sc.is_active = TRUE
+                ".($customer_id==null?"":" AND sc.customer_id=".$customer_id)."");
+        return $query->result();
     }
-
 
 }
 ?>
