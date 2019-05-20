@@ -22,7 +22,6 @@
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
-    <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
     <style>
         .select2-container {
@@ -143,7 +142,9 @@
         #img_user {
             padding-bottom: 15px;
         }
-
+        .right_align{
+            text-align: right;
+        }
     </style>
 </head>
 
@@ -171,9 +172,6 @@
                                 <div class="col-md-12">
                                     <div id="div_charge_list">
                                         <div class="panel panel-default">
-<!--                                             <div class="panel-heading">
-                                                <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Services</b>
-                                            </div> -->
                                             <div class="panel-body table-responsive">
                                                 <h2 class="h2-panel-heading"> Charges</h2><hr>
                                             <div class="row-panel">
@@ -184,6 +182,7 @@
                                                       <!--   <th></th> -->
                                                         <th>PLU</th>
                                                         <th>Charge Description</th>
+                                                        <th>Charge Unit</th>
                                                         <th>Charge Amount</th>
                                                         <th><center>Action</center></th>
                                                     </tr>
@@ -263,22 +262,22 @@
             </div>
 
 
-            <div id="modal_create_service" class="modal fade" role="dialog"><!--modal-->
-                <div class="modal-dialog" style="width: 75%;">
+            <div id="modal_create_charges" class="modal fade" role="dialog"><!--modal-->
+                <div class="modal-dialog modal-md" style="">
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:#2ecc71;">
                             <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                            <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>Service Information</h4>
+                            <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>Charge Information</h4>
                         </div>
 
                         <div class="modal-body">
-                            <form id="frm_service">
+                            <form id="frm_charges">
                                 <div class="row">
 
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-12">
 
                                         <div class="form-group" style="margin-bottom:0px;">
-                                            <label class=""><b class="required">*</b>PLU / Service Code :</label>
+                                            <label class=""><b class="required">*</b>PLU / Charge Code :</label>
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-file-code-o"></i>
@@ -288,13 +287,13 @@
                                         </div>
 
                                         <div class="form-group" style="margin-bottom:0px;">
-                                                <label class=""><b class="required">*</b> Service Description :</label>
-                                                <textarea name="charge_desc" id="charge_desc" class="form-control" data-error-msg="Service Description is required." required></textarea>
+                                                <label class=""><b class="required">*</b> Charge Description :</label>
+                                                <textarea name="charge_desc" id="charge_desc" class="form-control" data-error-msg="Charge Description is required." required></textarea>
                                         </div>
 
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class=""><b class="required">*</b>Unit of Measurement  :</label>
-                                            <select name="service_unit" id="service_unit" class="indexing" data-error-msg="Unit is required." required>
+                                            <select name="charge_unit_id" id="charge_unit_id" class="indexing" data-error-msg="Unit is required." required>
                                              
                                                 <option value="0">[ Create Unit ]</option>
                                                 <?php
@@ -305,48 +304,16 @@
                                                 ?>
                                             </select>
                                         </div>
-
-                                    </div>
-
-
-
-                                    <div class="col-lg-4" style="margin:0px;">
-
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                                    <label class="">Link to Credit Account :</label>
-
-                                                    <select name="income_account_id" id="income_account_id" data-error-msg="Link to Account is required." required>
-                                                        <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
-                                                        <option value="0">None</option>
-                                                        <?php foreach($accounts as $account){ ?>
-                                                            <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
-                                                        <?php } ?>
-                                                    </select>
-
-                                        </div>
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                                    <label class="">Link to Debit Account :</label>
-
-                                                    <select name="expense_account_id" id="expense_account_id" data-error-msg="Link to Account is required." required>
-                                                        <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
-                                                        <option value="0">None</option>
-                                                        <?php foreach($accounts as $account){ ?>
-                                                            <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                        </div>
                                         <div class="form-group" style="">
-                                        <label>Service Amount</label>
+                                        <label>Charge Amount</label>
                                             <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-file-code-o"></i>
                                                     </span>
                                                     <input type="text" name="charge_amount" class="form-control numeric">
                                             </div>
+                                        </div>
                                     </div>
-
-
-
                                 </div>
                             </form>
                         </div>
@@ -412,12 +379,7 @@
 
     <!-- Select2 -->
     <script src="assets/plugins/select2/select2.full.min.js"></script>
-
-
-    <!-- Date range use moment.js same as full calendar plugin -->
-    <script src="assets/js/plugins/fullcalendar/moment.min.js"></script>
     <!-- Data picker -->
-    <script src="assets/js/plugins/datapicker/bootstrap-datepicker.js"></script>
 
     <!-- twitter typehead -->
     <script src="assets/plugins/twittertypehead/handlebars.js"></script>
@@ -436,29 +398,21 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; 
- var _cboMeasurement; var _cboCredit; var _cboDebit;
+ var _cboMeasurement; 
 
     
 
     var initializeControls=function() {
         dt=$('#tbl_charges').DataTable({
-            "fnInitComplete": function (oSettings, json) {
-                },
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
             "ajax" : "Charges/transaction/list",
             "columns": [
-                // {
-                //     "targets": [0],
-                //     "class":          "",
-                //     "orderable":      false,
-                //     "data":           null,
-                //     "defaultContent": ""
-                // },
                 { targets:[0],data: "charge_code" },
                 { targets:[1],data: "charge_desc" },
-                { targets:[2],data: "charge_amount" ,
+                { targets:[1],data: "charge_unit_name" },
+                {sClass:'right_align', targets:[2],data: "charge_amount" ,
                       render: $.fn.dataTable.render.number( ',', '.', 2 )
                 },
                 {
@@ -474,33 +428,17 @@ $(document).ready(function(){
 
             language: {
                          searchPlaceholder: "Search"
-                     },
-            "rowCallback":function( row, data, index ){
-
-                $(row).find('td').eq(4).attr({
-                    "align": "right"
-                });
-            }
-
+                     }
 
         });
 
         $('.numeric').autoNumeric('init',{mDec:2});
 
 
-        _cboMeasurement=$('#service_unit').select2({
-            placeholder: "Please select unit.",
-            allowClear: true
-        });
-
-        _cboCredit=$('#income_account_id').select2({
+        _cboMeasurement=$('#charge_unit_id').select2({
+            placeholder: "Please Select Unit.",
             allowClear: false
         });
-
-        _cboDebit=$('#expense_account_id').select2({
-            allowClear: false
-        });
-
 
     }();
     
@@ -512,36 +450,34 @@ $(document).ready(function(){
             if (_cboMeasurement.val() == 0) {
                 clearFields($('#frm_unit'));
                 $('#modal_units').modal('show');
-                $('#modal_create_service').modal('hide');
+                $('#modal_create_charges').modal('hide');
                 // alert('ha');
             }
         });
 
         $('#btn_cancel_unit').on('click', function(){
             $('#modal_units').modal('hide');
-            $('#modal_create_service').modal('show');
+            $('#modal_create_charges').modal('show');
             _cboMeasurement.select2('val',null);
         });
 
         $('#btn_new').click(function(){
             _txnMode="new";
-            $('#modal_create_service').modal('show');
-            clearFields($('#frm_service'));
+            $('#modal_create_charges').modal('show');
+            clearFields($('#frm_charges'));
             _cboMeasurement.select2('val',null);
-            _cboCredit.select2('val',0);
-            _cboDebit.select2('val',0);
 
         });
 
         $('#tbl_charges tbody').on('click','button[name="edit_info"]',function(){
             _txnMode="edit";
 
-            $('#modal_create_service').modal('show');
+            $('#modal_create_charges').modal('show');
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.service_id;
+            _selectedID=data.charge_id;
 
-            clearFields('#frm_service');
+            clearFields('#frm_charges');
              $('input,textarea,select').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
@@ -551,14 +487,7 @@ $(document).ready(function(){
                 });
             });
 
-
-
-            _cboMeasurement.select2('val',data.service_unit);
-
-            _cboCredit.select2('val',data.income_account_id);
-
-            _cboDebit.select2('val',data.expense_account_id);
-
+            _cboMeasurement.select2('val',data.charge_unit_id);
         });
 
 
@@ -571,13 +500,13 @@ $(document).ready(function(){
             $('#modal_confirmation').modal('show');
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.service_id;
+            _selectedID=data.charge_id;
 
         });
         
 
         $('#btn_yes').click(function(){
-            removeService().done(function(response){
+            removeCharge().done(function(response){
                 showNotification(response);
                 if(response.stat == 'success') {
                     dt.row(_selectRowObj).remove().draw();
@@ -587,29 +516,29 @@ $(document).ready(function(){
 
 
         $('#btn_cancel').click(function(){
-            $('#modal_create_service').modal('hide');
+            $('#modal_create_charges').modal('hide');
         });
 
         $('#btn_save').click(function(){
-            if(validateRequiredFields($('#frm_service'))){
+            if(validateRequiredFields($('#frm_charges'))){
                 if(_txnMode=="new"){
-                    createService().done(function(response){
+                    createCharge().done(function(response){
                         showNotification(response);
                         dt.row.add(response.row_added[0]).draw();
                      
                     }).always(function(){
-                        $('#modal_create_service').modal('toggle');
+                        $('#modal_create_charges').modal('toggle');
                         showSpinningProgress($('#btn_save'));
                     });
                     return;
                 }
                 if(_txnMode==="edit"){
-                    updateService().done(function(response){
+                    updateCharge().done(function(response){
                         showNotification(response);
                         dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                       
                     }).always(function(){
-                        $('#modal_create_service').modal('toggle');
+                        $('#modal_create_charges').modal('toggle');
                         showSpinningProgress($('#btn_save'));
                     });
                     return;
@@ -632,10 +561,10 @@ $(document).ready(function(){
                 }).done(function(response){
                     showNotification(response);
                     $('#modal_units').modal('hide');
-                    $('#modal_create_service').modal('show');
+                    $('#modal_create_charges').modal('show');
                     var _measurement=response.row_added[0];
-                    $('#service_unit').append('<option value="'+_measurement.charge_unit_id+'" selected>'+ _measurement.charge_unit_name + '</option>');
-                    $('#service_unit').select2('val',_measurement.charge_unit_id);
+                    $('#charge_unit_id').append('<option value="'+_measurement.charge_unit_id+'" selected>'+ _measurement.charge_unit_name + '</option>');
+                    $('#charge_unit_id').select2('val',_measurement.charge_unit_id);
                 }).always(function(){
                     showSpinningProgress(btn);
                 });
@@ -675,8 +604,8 @@ $(document).ready(function(){
         return stat;
     };
 
-    var createService=function(){
-        var _data=$('#frm_service').serializeArray();
+    var createCharge=function(){
+        var _data=$('#frm_charges').serializeArray();
        // _data.push({name : "is_tax_exempt" ,value : _isTaxExempt});
 
         return $.ajax({
@@ -688,10 +617,10 @@ $(document).ready(function(){
         });
     };
 
-    var updateService=function(){
-        var _data=$('#frm_service').serializeArray();
+    var updateCharge=function(){
+        var _data=$('#frm_charges').serializeArray();
         //_data.push({name : "is_tax_exempt" ,value : _isTaxExempt});
-        _data.push({name : "service_id" ,value : _selectedID});
+        _data.push({name : "charge_id" ,value : _selectedID});
 
         return $.ajax({ 
             "dataType":"json",
@@ -702,12 +631,12 @@ $(document).ready(function(){
         });
     };
 
-    var removeService=function(){
+    var removeCharge=function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
             "url":"Charges/transaction/delete",
-            "data":{service_id : _selectedID}
+            "data":{charge_id : _selectedID}
         });
     };
 

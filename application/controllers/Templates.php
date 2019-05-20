@@ -100,6 +100,15 @@ class Templates extends CORE_Controller {
         $this->load->model('Matrix_residential_model');
         $this->load->model('Matrix_residential_items_model');
 
+        $this->load->model('Other_charge_model');
+        $this->load->model('Other_charge_item_model');
+
+        $this->load->model('Meter_reading_input_model');
+        $this->load->model('Meter_reading_input_items_model');
+
+
+
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -5336,6 +5345,130 @@ class Templates extends CORE_Controller {
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output();
+                }
+
+                break;
+
+
+            case 'other-charge-dropdown': //delivery invoice
+                $m_info=$this->Other_charge_model;
+                $m_items=$this->Other_charge_item_model;
+                $type=$this->input->get('type',TRUE);
+                $info=$m_info->get_list(
+                    $filter_value,
+                    'other_charges.*,
+                    customers.customer_name,
+                    departments.department_name,
+                    service_connection.account_no,
+                    meter_inventory.serial_no,
+                    DATE_FORMAT(other_charges.date_invoice,"%m/%d/%Y") as date_invoice',
+                    array(
+                        array('departments','departments.department_id=other_charges.department_id','left'),
+                        array('service_connection','service_connection.connection_id=other_charges.connection_id','left'),
+                        array('meter_inventory','meter_inventory.meter_inventory_id=service_connection.meter_inventory_id','left'),
+                        array('customers','customers.customer_id=service_connection.customer_id','left')
+                    ),
+                    'other_charges.other_charge_id DESC'
+                    );
+
+                $data['charge_items']=$m_items->get_list(
+                    array('other_charge_id'=>$filter_value),
+                    array(
+                        'other_charges_items.*',
+                        'charges`.charge_code',
+                        'charges.charge_desc',
+                        'charge_unit.charge_unit_id',
+                        'charge_unit.charge_unit_name'
+                    ),
+                    array(
+                        array('charges','charges.charge_id=other_charges_items.charge_id','left'),
+                        array('charge_unit','charge_unit.charge_unit_id=other_charges_items.charge_unit_id','left')
+                    ),
+                    'other_charges_items.other_charge_item_id ASC'
+                );
+
+                $data['charge']=$info[0];
+
+                $m_company=$this->Company_model;
+                $company=$m_company->get_list();
+                $data['company_info']=$company[0];
+
+
+                if($type=='fullview'||$type==null){
+                    echo $this->load->view('template/other_charge_content',$data,TRUE);
+                    // echo $this->load->view('template/service_invoice_content_menus',$data,TRUE);
+                        }
+                if($type=='html'){
+                    $file_name=$info[0]->other_charge_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/other_charge_content',$data,TRUE);//load the template
+                    $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                    // echo $this->load->view('template/service_invoice_content',$data,TRUE);
+                }
+
+                break;
+
+            case 'meter-reading-input-dropdown': //delivery invoice
+                $type=$this->input->get('type',TRUE);
+                $info=$this->Meter_reading_input_model->get_list(
+                $filter_value,
+                'meter_reading_input.*,
+                meter_reading_period.*,
+                DATE_FORMAT(meter_reading_input.date_input,"%m/%d/%Y") as date_input,
+                months.month_name,
+                CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by',
+                array(
+                    array('meter_reading_period','meter_reading_period.meter_reading_period_id=meter_reading_input.meter_reading_period_id','left'),
+                    array('months','months.month_id=meter_reading_period.month_id','left'),
+                    array('user_accounts','user_accounts.user_id=meter_reading_input.posted_by_user','left')
+                )
+
+                );
+                $data['batch']=$info[0];
+                $data['input_items']=$this->Meter_reading_input_items_model->get_list(
+                    array('meter_reading_input_id'=>$filter_value),
+                    array(
+                        'meter_reading_input_items.connection_id',
+                        'meter_reading_input_items.previous_reading',
+                        'meter_reading_input_items.current_reading',
+                        'meter_reading_input_items.total_consumption',
+                        'service_connection.account_no',
+                        'customers.customer_name',
+                        'meter_inventory.serial_no'
+                    ),
+                    array(
+                        array('service_connection','service_connection.connection_id=meter_reading_input_items.connection_id','left'),
+                        array('customers','customers.customer_id=service_connection.customer_id','left'),
+                        array('meter_inventory','meter_inventory.meter_inventory_id=service_connection.meter_inventory_id','left'),
+                    ),
+                    'meter_reading_input_items.meter_reading_input_item_id ASC'
+                );
+
+                
+
+                $m_company=$this->Company_model;
+                $company=$m_company->get_list();
+                $data['company_info']=$company[0];
+
+
+                if($type=='fullview'||$type==null){
+                    echo $this->load->view('template/meter_reading_input_content',$data,TRUE);
+                    // echo $this->load->view('template/service_invoice_content_menus',$data,TRUE);
+                        }
+                if($type=='html'){
+                    $file_name=$info[0]->other_charge_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/meter_reading_input_content',$data,TRUE);//load the template
+                    $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                    // echo $this->load->view('template/service_invoice_content',$data,TRUE);
                 }
 
                 break;
