@@ -20,7 +20,7 @@ class Service_reconnection_model extends CORE_Model {
                     sc.account_no,
                     sc.meter_inventory_id,
                     c.customer_name,
-                    inv.customer_id,
+                    sc.customer_id,
                     ct.contract_type_name,
                     rt.rate_type_name
                 FROM
@@ -32,7 +32,7 @@ class Service_reconnection_model extends CORE_Model {
                         LEFT JOIN
                     meter_inventory inv ON inv.meter_inventory_id = sc.meter_inventory_id
                         LEFT JOIN
-                    customers c ON c.customer_id = inv.customer_id
+                    customers c ON c.customer_id = sc.customer_id
                         LEFT JOIN
                     contract_types ct ON ct.contract_type_id = sc.contract_type_id
                         LEFT JOIN
@@ -41,7 +41,7 @@ class Service_reconnection_model extends CORE_Model {
                     sr.is_deleted = FALSE
                         AND sr.is_active = TRUE
                         ".($reconnection_id==null?"":" AND sr.reconnection_id=".$reconnection_id)."
-                        ".($customer_id==null?"":" AND inv.customer_id=".$customer_id)."
+                        ".($customer_id==null?"":" AND sc.customer_id=".$customer_id)."
                      ORDER BY sr.reconnection_id ASC");
         return $query->result();
     }
@@ -53,10 +53,11 @@ class Service_reconnection_model extends CORE_Model {
                 DATE_FORMAT(sd.date_disconnection_date, '%m/%d/%Y') AS date_disconnection_date,
                 sd.disconnection_code,
                 sd.connection_id,
+                sd.disconnection_id,
                 sc.account_no,
                 sc.meter_inventory_id,
                 c.customer_name,
-                inv.customer_id,
+                sc.customer_id,
                 inv.serial_no,
                 ct.contract_type_name,
                 rt.rate_type_name
@@ -67,7 +68,7 @@ class Service_reconnection_model extends CORE_Model {
                     LEFT JOIN
                 meter_inventory inv ON inv.meter_inventory_id = sc.meter_inventory_id
                     LEFT JOIN
-                customers c ON c.customer_id = inv.customer_id
+                customers c ON c.customer_id = sc.customer_id
                     LEFT JOIN
                 contract_types ct ON ct.contract_type_id = sc.contract_type_id
                     LEFT JOIN
@@ -76,7 +77,7 @@ class Service_reconnection_model extends CORE_Model {
                 sc.is_deleted = FALSE
                     AND sc.is_active = TRUE
                     AND sc.status_id = 2
-                    ".($customer_id==null?"":" AND inv.customer_id=".$customer_id)."");
+                    ".($customer_id==null?"":" AND sc.customer_id=".$customer_id)."");
                     return $query->result();
     }
 

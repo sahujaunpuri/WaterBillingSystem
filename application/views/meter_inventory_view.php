@@ -160,9 +160,7 @@
                                                                 <th><center>Action</center></th>
                                                             </tr>
                                                             </thead>
-                                                            <tbody>
-
-                                                            </tbody>
+                                                            <tbody></tbody>
                                                         </table>
                                                     </div>
                                                     <!-- <div class="panel-footer"></div> -->
@@ -215,7 +213,7 @@
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-code"></i>
                                                             </span>
-                                                            <input type="text" name="meter_code" class="form-control" placeholder="MC-YYYYMMDD-XXX" readonly>
+                                                            <input type="text" name="meter_code" class="form-control" placeholder="MC-YYYYMMDD-XXXX" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -228,7 +226,7 @@
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-code"></i>
                                                             </span>
-                                                            <input type="text" name="serial_no" class="form-control" placeholder="Serial No" data-error-msg="Serial No. is required!" required>
+                                                            <input type="text" name="serial_no" id="serial_no" class="form-control" placeholder="Serial No" data-error-msg="Serial No. is required!" required>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -239,17 +237,6 @@
                                                     <div class="col-xs-12 col-md-9">
                                                         <textarea name="meter_description" placeholder="Description" class="form-control"></textarea>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 bottom-10">
-                                                <label class="col-xs-12 col-md-3 control-label right"><strong><font color="red">*</font> Customer :</strong></label>
-                                                <div class="col-xs-12 col-md-9">
-                                                    <select name="customer_id" id="cbo_customer" class="form-control" data-error-msg="Customer is required!" style="width: 100%;" required>
-                                                        <option value="0">[ Create New Customer ]</option>
-                                                        <?php foreach($customers as $customer) { ?>
-                                                            <option value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>
-                                                        <?php } ?>
-                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -263,250 +250,6 @@
                         </div>
                     </div>
                 </div>
-
-            <div id="modal_new_customer" class="modal fade" role="dialog" style="margin-top: 0;padding-top: 0"><!--modal-->
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header" style="background-color:#2ecc71;">
-                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                            <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>Customer Information</h4>
-                        </div>
-
-                        <div class="modal-body">
-                            <form id="frm_customer">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="col-md-12">
-                                            Customer Code (Auto):
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-code"></i>
-                                                    </span>
-                                                    <input type="text" class="form-control" placeholder="YYYY-XXXXX" readonly>
-                                                </div>
-                                            </div>
-                                        </div>  
-                                        <div class="col-md-12">
-                                           <b class="required">* </b> Customer Name:
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-users"></i>
-                                                    </span>
-                                                    <input type="text" name="customer_name" class="form-control" placeholder="Customer Name" data-error-msg="Customer Name is required!" required>
-                                                </div>
-                                            </div>
-                                        </div>                                    
-                                        <div class="col-md-12">
-                                            <b class="required">* </b> Address:
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-home"></i>
-                                                     </span>
-                                                     <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                                 Contact No :
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-phone"></i>
-                                                    </span>
-                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            Email Address:
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-envelope-o"></i>
-                                                    </span>
-                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                             Occupation :
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-users"></i>
-                                                    </span>
-                                                    <input type="text" name="tenant_occupation" class="form-control" placeholder="Occupation">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-12">
-                                            Date Move In :
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                     <span class="input-group-addon">
-                                                         <i class="fa fa-calendar"></i>
-                                                    </span>
-                                                    <input type="text" name="date_move_in" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="MM/DD/YYYY">
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="col-md-12" >
-                                            Nationality:
-                                            <div style="padding: 5px 0px 5px 0px">
-                                            <select name="nationality_id" id="cbo_nationality" style="width: 100%">
-                                                <option value="0">None</option>
-                                                <?php foreach($nationalities as $nationality){ ?>
-                                                    <option value="<?php echo $nationality->nationality_id; ?>"><?php echo $nationality->nationality_name?></option>
-                                                <?php } ?>
-                                            </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            Civil Status:
-                                            <div style="padding: 5px 0px 5px 0px">
-                                            <select name="civil_status_id" id="cbo_civil_status" style="width: 100%">
-                                                <option value="0">None</option>
-                                                <?php foreach($civils as $civil){ ?>
-                                                    <option value="<?php echo $civil->civil_status_id; ?>"><?php echo $civil->civil_status_name?></option>
-                                                <?php } ?>
-                                            </select>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="col-md-12">
-                                            Sex:
-                                            <div style="padding: 5px 0px 5px 0px">
-                                            <select name="sex_id" id="cbo_sex" style="width: 100%">
-                                                <?php foreach($sexes as $sex){ ?>
-                                                    <option value="<?php echo $sex->sex_id; ?>"><?php echo $sex->sex_name?></option>
-                                                <?php } ?>
-                                            </select>
-                                            </div>
-                                        </div>
-
-                                      
-
-
-                                        <div class="col-md-12">
-                                                Customer Type :
-                                            <div style="padding: 5px 0px 5px 0px;">
-                                            <select name="customer_type_id" id="cbo_customer_type" style="width: 100%">
-                                                <option value="0">None</option>
-                                                <?php foreach($customer_type as $customer_type){ ?>
-                                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
-                                                <?php } ?>
-                                            </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            Contact Person:
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-users"></i>
-                                                    </span>
-                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            Birth Date:
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                     <span class="input-group-addon">
-                                                         <i class="fa fa-calendar"></i>
-                                                    </span>
-                                                    <input type="text" name="tenant_birth_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="MM/DD/YYYY">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                                TIN :
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-file-code-o"></i>
-                                                    </span>
-                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="col-md-12">
-                                            If Married (Spouse):
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-user"></i>
-                                                    </span>
-                                                    <input type="text" name="spouse_name" class="form-control" placeholder="Spouse">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            Spouse's Occupation:
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-users"></i>
-                                                    </span>
-                                                    <input type="text" name="spouse_occupation" class="form-control" placeholder="Occupation">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div style="padding: 5px 0px 5px 0px;">
-                                            Spouse's Nationality:
-                                            <select name="spouse_nationality_id" id="cbo_spouse_nationality" style="width: 100%">
-                                                <option value="0">None</option>
-                                                <?php foreach($nationalities as $nationality){ ?>
-                                                    <option value="<?php echo $nationality->nationality_id; ?>"><?php echo $nationality->nationality_name?></option>
-                                                <?php } ?>
-                                            </select>
-                                            </div>
-                                        </div>
-                                       
-                                        <div class="col-md-12">
-                                            <div class="col-md-12">
-                                                <label class="control-label boldlabel" style="text-align:left;padding-top:10px;"><i class="fa fa-user" aria-hidden="true" style="padding-right:10px;"></i>Customer's Photo</label>
-                                                <hr style="margin-top:0px !important;height:1px;background-color:black;">
-                                            </div>
-                                            <div style="width:100%;height:230px;border:2px solid #34495e;border-radius:5px;">
-                                                <center>
-                                                    <img name="img_user" id="img_user" src="assets/img/anonymous-icon.png" height="140px;" width="140px;"></img>
-                                                </center>
-                                                <hr style="margin-top:0px !important;height:1px;background-color:black;">
-                                                <center>
-                                                     <button type="button" id="btn_browse" style="width:150px;" class="btn btn-primary">Browse Photo</button>
-                                                     <button type="button" id="btn_remove_photo" style="width:150px;" class="btn btn-danger">Remove</button>
-                                                     <input type="file" name="file_upload[]" class="hidden">
-                                                </center> 
-                                            </div>
-                                        </div>   
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button id="btn_save_customer" type="button" class="btn" style="background-color:#2ecc71;color:white;">Save</button>
-                            <button id="btn_cancel_customer" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </div><!---content---->
-                </div>
-            </div><!---modal-->
-
-
                 <footer role="contentinfo">
                     <div class="clearfix">
                         <ul class="list-unstyled list-inline pull-left">
@@ -539,41 +282,12 @@
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboCustomer; var _cboStatus;
-        var _cboCustomerType; var _cboNationality; var _cboCivilStatus; var _cboSex; 
-        var _cboSpouseNationality;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboStatus;
 
         var initializeControls=function(){
 
-            _cboCustomer=$('#cbo_customer').select2({
-                placeholder: "Please Select Customer",
-                allowClear: true
-            });
-
-            _cboCustomer.select2('val',null);
-
             _cboStatus=$("#cbo_status").select2({
                 minimumResultsForSearch: -1,
-                allowClear: false
-            });
-
-            _cboCustomerType=$("#cbo_customer_type").select2({
-                allowClear: false
-            });
-
-            _cboNationality=$("#cbo_nationality").select2({
-                allowClear: false
-            });
-
-            _cboCivilStatus=$("#cbo_civil_status").select2({
-                allowClear: false
-            });
-
-            _cboSex=$("#cbo_sex").select2({
-                allowClear: false
-            });
-            
-            _cboSpouseNationality=$("#cbo_spouse_nationality").select2({
                 allowClear: false
             });
 
@@ -630,60 +344,6 @@
                 dt.ajax.reload( null, false );
             });
 
-            _cboCustomer.on('select2:select', function(){
-                if (_cboCustomer.val() == 0) {
-                    clearFields($('#frm_customer'));
-                    $('#modal_new_customer').modal('show');
-                    $('#cbo_customer_type').select2('val', 0);
-                    $('#cbo_nationality').select2('val', 0);
-                    $('#cbo_spouse_nationality').select2('val', 0);
-                    $('#cbo_civil_status').select2('val', 0);
-                    $('#cbo_sex').select2('val', 1);
-
-                    $('#modal_new_meter').modal('hide');
-                }
-            });
-
-             $('#btn_browse').click(function(event){
-                    event.preventDefault();
-                    $('input[name="file_upload[]"]').click();
-             });
-
-            $('#btn_remove_photo').click(function(event){
-                event.preventDefault();
-                $('img[name="img_user"]').attr('src','assets/img/anonymous-icon.png');
-            });
-
-            $('input[name="file_upload[]"]').change(function(event){
-                    var _files=event.target.files;
-                    var data=new FormData();
-                    $.each(_files,function(key,value){
-                        data.append(key,value);
-                    });
-
-                    console.log(_files);
-
-                    $.ajax({
-                        url : 'Customers/transaction/upload',
-                        type : "POST",
-                        data : data,
-                        cache : false,
-                        dataType : 'json',
-                        processData : false,
-                        contentType : false,
-                        success : function(response){
-                            $('img[name="img_user"]').attr('src',response.path);
-                        }
-                    });
-                });
-
-            $('#btn_cancel_customer').on('click', function(){
-                $('#modal_new_customer').modal('hide');
-                $('#modal_new_customer_sp').modal('hide');
-                $('#modal_new_meter').modal('show');
-                _cboCustomer.select2('val',null);
-            });
-
             $('#tbl_meter_inventory tbody').on( 'click', 'tr td.details-control', function () {
                 var tr = $(this).closest('tr');
                 var row = dt.row( tr );
@@ -725,7 +385,6 @@
                 clearFields($('#frm_meter_inventory'));
                 $('#meter_title').text('New Meter Inventory');
                 $('#modal_new_meter').modal('show');
-                _cboCustomer.select2('val',null);
             });
 
             $('#tbl_meter_inventory tbody').on('click','button[name="edit_info"]',function(){
@@ -742,8 +401,6 @@
                         }
                     });
                 });
-
-                _cboCustomer.select2('val',data.customer_id);
 
                 $('#meter_title').text('Edit Meter Inventory');
                 $('#modal_new_meter').modal('show');
@@ -769,42 +426,36 @@
                 $('#modal_new_meter').modal('hide');
             });
 
-            $('#btn_save_customer').click(function(){
-                if(validateRequiredFields($('#frm_customer'))){
-                    createCustomer().done(function(response){
-                        var customer=response.row_added[0];
-
-                        $('#cbo_customer').append('<option value="'+ customer.customer_id +'">'+ customer.customer_name +'</option>');
-                        _cboCustomer.select2('val',customer.customer_id);
-
-                        $('#modal_new_customer').modal('hide');
-                        $('#modal_new_meter').modal('show');
-                        clearFields($('#frm_customer'));
-                    });
-                }
-            }); 
-
             $('#btn_save').click(function(){
                 if(validateRequiredFields($('#frm_meter_inventory'))){
                     if(_txnMode=="new"){
                         createMeterInventory().done(function(response){
                             showNotification(response);
-                            dt.row.add(response.row_added[0]).draw();
-                            clearFields($('#frm_meter_inventory'));
-
+                            if (response.stat == "success"){
+                                dt.row.add(response.row_added[0]).draw();
+                                clearFields($('#frm_meter_inventory'));
+                                $('#modal_new_meter').modal('hide');
+                            }else{
+                                $('#serial_no').focus();
+                            }
                         }).always(function(){
                             showSpinningProgress($('#btn_save'));
                         });
                     }else{
                         updateMeterInventory().done(function(response){
                             showNotification(response);
-                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                            clearFields($('#frm_meter_inventory'));
+                            if (response.stat == "success"){
+                                dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                                clearFields($('#frm_meter_inventory'));
+                                $('#modal_new_meter').modal('hide');
+                            }else{
+                                $('#serial_no').focus(); 
+                            }
+
                         }).always(function(){
                             showSpinningProgress($('#btn_save'));
                         });
                     }
-                    $('#modal_new_meter').modal('hide');
                 }
             });
         })();
@@ -836,18 +487,6 @@
 
         return stat;
     };
-
-
-        var createCustomer=function(){
-            var _dataCustomer=$('#frm_customer').serializeArray();
-
-            return $.ajax({
-                "dataType":"json",
-                "type":"POST",
-                "url":"Customers/transaction/create",
-                "data":_dataCustomer
-            });
-        }
 
         var createMeterInventory=function(){
             var _data=$('#frm_meter_inventory').serializeArray();
@@ -928,7 +567,5 @@
     });
 
     </script>
-
     </body>
-
 </html>

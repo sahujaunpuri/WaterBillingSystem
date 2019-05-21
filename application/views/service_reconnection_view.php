@@ -187,7 +187,7 @@
                     </div>
                 </div>
             </div><!---modal-->
-            <div id="modal_new_reconnection" class="modal fade" role="dialog">
+            <div id="modal_new_reconnection" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header" style="background: #2ecc71">
@@ -200,7 +200,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class="">Service Reconnection No (Auto):</label>
-                                            <input type="text" class="form-control" placeholder="SRN-YYYYMMDD-XXXX" readonly>
+                                            <input type="text" class="form-control" name="reconnection_code" placeholder="SRN-YYYYMMDD-XXXX" readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-lg-offset-2">
@@ -218,6 +218,7 @@
                                             <input type="hidden" name="disconnection_id" class="form-control" readonly placeholder="Disconnection ID" value="0">
                                             <span class="input-group-addon">
                                                 <a href="#" id="link_browse_disc" style="text-decoration: none;color:black;"><b>...</b></a>
+                                                <i class="fa fa-code" id="sn_icon"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -428,6 +429,8 @@ $(document).ready(function(){
             $('.date-picker').datepicker('setDate', 'today');
             $('#modal_title').text('New Reconnection Service');
             $('#modal_new_reconnection').modal('show');
+            $('#link_browse_disc').show();
+            $('#sn_icon').hide();
         });
 
         $('#tbl_reconnection tbody').on('click','button[name="edit_info"]',function(){
@@ -452,6 +455,8 @@ $(document).ready(function(){
                 });
             });
 
+            $('#link_browse_disc').hide();
+            $('#sn_icon').show();
             $('#modal_title').text('Edit Reconnection Service');
             $('#modal_new_reconnection').modal('show');
         });

@@ -15,7 +15,6 @@ class Service_connection_model extends CORE_Model{
     	$query = $this->db->query("SELECT 
 		    sc.*,
 		    inv.serial_no,
-		    inv.customer_id,
 		    c.customer_name,
 		    ct.contract_type_name,
 		    rt.rate_type_name,
@@ -27,7 +26,7 @@ class Service_connection_model extends CORE_Model{
 		        LEFT JOIN
 		    meter_inventory inv ON inv.meter_inventory_id = sc.meter_inventory_id
 		        LEFT JOIN
-		    customers c ON c.customer_id = inv.customer_id
+		    customers c ON c.customer_id = sc.customer_id
 		        LEFT JOIN
 		    contract_types ct ON ct.contract_type_id = sc.contract_type_id
 		        LEFT JOIN

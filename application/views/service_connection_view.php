@@ -177,11 +177,10 @@
                     </div>
                 </div><!---modal-->
 
-                <div id="modal_new_connection" class="modal fade" role="dialog">
+                <div id="modal_new_connection" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header" style="background-color:#2ecc71;">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
                                 <h4 id="connection_title" class="modal-title" style="color: #ecf0f1;"><span id="modal_mode"></span></h4>
                             </div>
                             <div class="modal-body">
@@ -206,21 +205,6 @@
                                                     </div>
                                                     <div class="row bottom-10">
                                                         <div class="form-group">
-                                                            <label class="col-xs-12 col-md-3 control-label"><strong><span class="red">*</span> Customer:</strong></label>
-                                                            <div class="col-xs-12 col-md-9">
-                                                                <div class="input-group">
-                                                                    <input type="text" class="form-control" placeholder="Customer" id="customer_name" name="customer_name" readonly>
-                                                                    <input type="hidden" name="customer_id" value="0" required data-error-msg="Customer is required.">
-                                                                    <input type="hidden" name="meter_inventory_id" value="0">
-                                                                    <span class="input-group-addon">
-                                                                        <a href="#" id="link_browse_cu"><b>...</b></a>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row bottom-10">
-                                                        <div class="form-group">
                                                             <label class="col-xs-12 col-md-3 control-label"><strong>Account No:</strong></label>
                                                             <div class="col-xs-12 col-md-9">
                                                                 <div class="input-group">
@@ -229,6 +213,19 @@
                                                                         <i class="fa fa-code"></i>
                                                                     </span>
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-3 control-label"><strong><span class="red">*</span> Customer:</strong></label>
+                                                            <div class="col-xs-12 col-md-9">
+                                                                <select name="customer_id" id="cbo_customer" class="form-control" style="width: 100%;" required data-error-msg="Customer is required!">
+                                                                    <option value="0">[ Create New Customer ]</option>
+                                                                    <?php foreach($customers as $customer){?>
+                                                                        <option value="<?php echo $customer->customer_id; ?>" data-address="<?php echo $customer->address; ?>"><?php echo $customer->customer_name; ?></option>
+                                                                    <?php }?>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -247,7 +244,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="row bottom-10">
+                                                    <div class="row bottom-10 hidden">
                                                         <div class="form-group">
                                                             <label class="col-xs-12 col-md-4 control-label"><strong><span class="red">*</span> Connection Date:</strong></label>
                                                             <div class="col-xs-12 col-md-8">
@@ -255,20 +252,22 @@
                                                                     <span class="input-group-addon">
                                                                         <i class="fa fa-calendar"></i>
                                                                     </span>
-                                                                    <input type="text" name="connection_date" id="connection_date" class="date-picker form-control" placeholder="MM/DD/YYYY" data-error-msg="Date Connection is required." required>
+                                                                    <input type="text" name="connection_date" id="connection_date" class="date-picker form-control" placeholder="MM/DD/YYYY" data-error-msg="Date Connection is required.">
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="row bottom-10">
                                                         <div class="form-group">
-                                                            <label class="col-xs-12 col-md-4 control-label"><strong>Meter Serial:</strong></label>
+                                                            <label class="col-xs-12 col-md-4 control-label"><strong><span class="red">*</span> Meter Serial:</strong></label>
                                                             <div class="col-xs-12 col-md-8">
                                                                 <div class="input-group">
+                                                                    <input type="text" id="serial_no" name="serial_no" class="form-control" placeholder="Serial No" required data-error-msg="Meter Serial is required." readonly>
+                                                                    <input type="hidden" name="meter_inventory_id" value="0">
                                                                     <span class="input-group-addon">
-                                                                        <i class="fa fa-code"></i>
+                                                                        <a href="#" id="link_browse_cu"><b>...</b></a>
+                                                                        <i class="fa fa-code" id="ms_icon"></i>
                                                                     </span>
-                                                                    <input type="text" id="serial_no" name="serial_no" class="form-control" placeholder="Serial No" readonly>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -297,15 +296,16 @@
                                                     </div>
                                                     <div class="row bottom-10">
                                                         <div class="form-group">
-                                                            <label class="col-xs-12 col-md-4 control-label">
-                                                                <strong>Contract Type:</strong>
+                                                            <label class="col-xs-12 col-md-12 control-label">
+                                                                <strong><span class="red">*</span> Address:</strong>
                                                             </label>
-                                                            <div class="col-xs-12 col-md-8">
-                                                                <select name="contract_type_id" id="cbo_contract_type" class="form-control" data-error-msg="Contract Type is required!" style="width: 100%;" required>
-                                                                    <?php foreach($contract_types as $contract_type) { ?>
-                                                                        <option value="<?php echo $contract_type->contract_type_id; ?>"><?php echo $contract_type->contract_type_name; ?></option>
-                                                                    <?php } ?>
-                                                                </select>
+                                                            <div class="col-xs-12 col-md-12">
+                                                                <div class="input-group">
+                                                                    <textarea class="form-control" name="address" id="address" placeholder="Customer Address" data-error-msg="Address is required." required></textarea>
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-code"></i>
+                                                                    </span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -317,7 +317,20 @@
                                                                     <span class="input-group-addon">
                                                                         <i class="fa fa-code"></i>
                                                                     </span>
-                                                                    <input type="text" name="initial_meter_reading" class="form-control" placeholder="Meter Reading" data-error-msg="Initial Meter Reading is required." required>
+                                                                    <input type="text" name="initial_meter_reading" class="number form-control" placeholder="Meter Reading" data-error-msg="Initial Meter Reading is required." required style="text-align: right;">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-4 control-label"><strong><span class="red">*</span> Initial Deposit:</strong></label>
+                                                            <div class="col-xs-12 col-md-8">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-code"></i>
+                                                                    </span>
+                                                                    <input type="text" name="initial_meter_deposit" class="numeric form-control" placeholder="Meter Deposit" data-error-msg="Initial Meter Deposit is required." required style="text-align: right;">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -325,8 +338,14 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="row bottom-10">
+                                                        <label class="col-xs-12 col-md-4 control-label"><strong>
+                                                            Installation:</strong></label>
+                                                        <hr>
+                                                    </div>
+                                                    <div class="row bottom-10">
                                                         <div class="form-group">
-                                                            <label class="col-xs-12 col-md-4 control-label"><strong>Target Date:</strong></label>
+                                                            <label class="col-xs-12 col-md-4 control-label"><strong>
+                                                            Target Date:</strong></label>
                                                             <div class="col-xs-12 col-md-8">
                                                                 <div class="input-group">
                                                                     <span class="input-group-addon">
@@ -348,6 +367,21 @@
                                                                     </span>
                                                                     <input type="text" name="target_time" class="time-picker form-control" placeholder="HH:MM">
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-4 control-label">
+                                                                <strong>Contract Type:</strong>
+                                                            </label>
+                                                            <div class="col-xs-12 col-md-8">
+                                                                <select name="contract_type_id" id="cbo_contract_type" class="form-control" data-error-msg="Contract Type is required!" style="width: 100%;" required>
+                                                                    <?php foreach($contract_types as $contract_type) { ?>
+                                                                        <option value="<?php echo $contract_type->contract_type_id; ?>"><?php echo $contract_type->contract_type_name; ?></option>
+                                                                    <?php } ?>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -399,21 +433,8 @@
                             <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Meter Inventory</h4>
                         </div>
                         <div class="modal-body">
-
                             <div class="row">
-                                <div class="col-lg-3">
-                                Customer : 
-                                <select class="form-control" id="cbo_customer" style="width: 100%;">
-                                    <option value="">All</option>
-                                    <?php foreach($customers as $customer){?>
-                                        <option value="<?php echo $customer->customer_id; ?>">
-                                            <?php echo $customer->customer_name; ?>
-                                        </option>
-                                    <?php }?>
-                                </select>
-
-                                </div>
-                                <div class="col-lg-offset-6 col-lg-3">
+                                <div class="col-lg-offset-9 col-lg-3">
                                         Search :<br />
                                          <input type="text" id="searchbox_meter" class="form-control">
                                 </div>
@@ -421,7 +442,6 @@
                             <table id="tbl_meter_list" class="table table-striped" cellspacing="0" width="100%">
                                 <thead class="">
                                 <tr>
-                                    <th>Customer</th>
                                     <th>Meter Code</th>
                                     <th>Serial No</th>
                                     <th><center>Action</center></th>
@@ -431,12 +451,253 @@
                             </table>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btn_cancel_customer" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+                            <button type="button" id="btn_cancel_meter" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
                         </div>
                     </div><!---content---->
                 </div>
             </div><!---modal-->
 
+            <div id="modal_new_customer" class="modal fade" role="dialog" style="margin-top: 0;padding-top: 0"><!--modal-->
+                <div class="modal-dialog modal-lg" style="width: 95%;">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:#2ecc71;">
+                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                            <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>Customer Information</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <form id="frm_customer">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="col-md-12">
+                                            Customer Code (Auto):
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-code"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control" placeholder="YYYY-XXXXX" readonly>
+                                                </div>
+                                            </div>
+                                        </div>  
+                                        <div class="col-md-12">
+                                           <b class="required">* </b> Customer Name:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="customer_name" class="form-control" placeholder="Customer Name" data-error-msg="Customer Name is required!" required>
+                                                </div>
+                                            </div>
+                                        </div>                                    
+                                        <div class="col-md-12">
+                                            <b class="required">* </b> Address:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-home"></i>
+                                                     </span>
+                                                     <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                                 Contact No :
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-phone"></i>
+                                                    </span>
+                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Email Address:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-envelope-o"></i>
+                                                    </span>
+                                                    <input type="text" name="email_address" class="form-control" placeholder="Email Address">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                             Occupation :
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="tenant_occupation" class="form-control" placeholder="Occupation">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            Date Move In :
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                     <span class="input-group-addon">
+                                                         <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                    <input type="text" name="date_move_in" class="date-picker form-control" value="<?php echo date('m/d/Y'); ?>" placeholder="MM/DD/YYYY">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="col-md-12" >
+                                            Nationality:
+                                            <div style="padding: 5px 0px 5px 0px">
+                                            <select name="nationality_id" id="cbo_nationality" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($nationalities as $nationality){ ?>
+                                                    <option value="<?php echo $nationality->nationality_id; ?>"><?php echo $nationality->nationality_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Civil Status:
+                                            <div style="padding: 5px 0px 5px 0px">
+                                            <select name="civil_status_id" id="cbo_civil_status" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($civils as $civil){ ?>
+                                                    <option value="<?php echo $civil->civil_status_id; ?>"><?php echo $civil->civil_status_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12">
+                                            Sex:
+                                            <div style="padding: 5px 0px 5px 0px">
+                                            <select name="sex_id" id="cbo_sex" style="width: 100%">
+                                                <?php foreach($sexes as $sex){ ?>
+                                                    <option value="<?php echo $sex->sex_id; ?>"><?php echo $sex->sex_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+
+                                      
+
+
+                                        <div class="col-md-12">
+                                                Customer Type :
+                                            <div style="padding: 5px 0px 5px 0px;">
+                                            <select name="customer_type_id" id="cbo_customer_type" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($customer_type as $customer_type){ ?>
+                                                    <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Contact Person:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="contact_name" class="form-control" placeholder="Contact Person">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Birth Date:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                     <span class="input-group-addon">
+                                                         <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                    <input type="text" name="tenant_birth_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="MM/DD/YYYY">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                                TIN :
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-file-code-o"></i>
+                                                    </span>
+                                                    <input type="text" name="tin_no" id="tin_no" class="form-control" placeholder="TIN">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="col-md-12">
+                                            If Married (Spouse):
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-user"></i>
+                                                    </span>
+                                                    <input type="text" name="spouse_name" class="form-control" placeholder="Spouse">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            Spouse's Occupation:
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-users"></i>
+                                                    </span>
+                                                    <input type="text" name="spouse_occupation" class="form-control" placeholder="Occupation">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div style="padding: 5px 0px 5px 0px;">
+                                            Spouse's Nationality:
+                                            <select name="spouse_nationality_id" id="cbo_spouse_nationality" style="width: 100%">
+                                                <option value="0">None</option>
+                                                <?php foreach($nationalities as $nationality){ ?>
+                                                    <option value="<?php echo $nationality->nationality_id; ?>"><?php echo $nationality->nationality_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="col-md-12">
+                                            <div class="col-md-12">
+                                                <label class="control-label boldlabel" style="text-align:left;padding-top:10px;"><i class="fa fa-user" aria-hidden="true" style="padding-right:10px;"></i>Customer's Photo</label>
+                                                <hr style="margin-top:0px !important;height:1px;background-color:black;">
+                                            </div>
+                                            <div style="width:100%;height:230px;border:2px solid #34495e;border-radius:5px;">
+                                                <center>
+                                                    <img name="img_user" id="img_user" src="assets/img/anonymous-icon.png" height="140px;" width="140px;"></img>
+                                                </center>
+                                                <hr style="margin-top:0px !important;height:1px;background-color:black;">
+                                                <center>
+                                                     <button type="button" id="btn_browse" style="width:150px;" class="btn btn-primary">Browse Photo</button>
+                                                     <button type="button" id="btn_remove_photo" style="width:150px;" class="btn btn-danger">Remove</button>
+                                                     <input type="file" name="file_upload[]" class="hidden">
+                                                </center> 
+                                            </div>
+                                        </div>   
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button id="btn_save_customer" type="button" class="btn" style="background-color:#2ecc71;color:white;">Save</button>
+                            <button id="btn_cancel_customer" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div><!---content---->
+                </div>
+            </div><!---modal-->
 
                 <footer role="contentinfo">
                     <div class="clearfix">
@@ -467,16 +728,23 @@
     <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
     <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
+    <!-- numeric formatter -->
+    <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
+    <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
     <script>
 
     $(document).ready(function(){
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectRowObjMeter;
-        var _cboCustomer; var _cboContractType; var _cboRateType;
+        var _cboCustomer; var _cboContractType; var _cboRateType;var _cboCustomerType; 
+        var _cboNationality; var _cboCivilStatus; var _cboSex; var _cboSpouseNationality;
 
         var initializeControls=function(){
             _cboCustomer=$("#cbo_customer").select2({
+                placeholder: "Please select customer.",
                 allowClear: false
             });
+
+            _cboCustomer.select2('val',null);
 
             _cboContractType=$("#cbo_contract_type").select2({
                 minimumResultsForSearch: -1,
@@ -486,7 +754,29 @@
             _cboRateType=$("#cbo_rate_type").select2({
                 minimumResultsForSearch: -1,
                 allowClear: false
-            });            
+            });    
+
+            _cboCustomerType=$("#cbo_customer_type").select2({
+                allowClear: false
+            });
+
+            _cboNationality=$("#cbo_nationality").select2({
+                allowClear: false
+            });
+
+            _cboCivilStatus=$("#cbo_civil_status").select2({
+                allowClear: false
+            });
+
+            _cboSex=$("#cbo_sex").select2({
+                allowClear: false
+            });
+            
+            _cboSpouseNationality=$("#cbo_spouse_nationality").select2({
+                allowClear: false
+            });     
+            $('.numeric').autoNumeric('init');
+            $('.number').autoNumeric('init', {mDec:0});
 
             dt=$('#tbl_connection').DataTable({
                 "fnInitComplete": function (oSettings, json) {
@@ -514,28 +804,18 @@
             });
 
             dt_meter=$('#tbl_meter_list').DataTable({
-                "bLengthChange":false,
-                oLanguage: {
-                        sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+                "fnInitComplete": function (oSettings, json) {
                 },
-                processing : true,
-                "ajax" : {
-                    "url" : "MeterInventory/transaction/open",
-                    "bDestroy": true,            
-                    "data": function ( d ) {
-                            return $.extend( {}, d, {
-                                "customer_id": $('#cbo_customer').select2('val')
-                            });
-                        }
-                }, 
+                "bLengthChange":false,
+                "pageLength": 15,
+                "ajax" : "MeterInventory/transaction/open",
                 "columns": [
-                    { targets:[0],data: "customer_name" },
-                    { targets:[1],data: "meter_code" },
-                    { targets:[2],data: "serial_no" },
+                    { targets:[0],data: "meter_code" },
+                    { targets:[1],data: "serial_no" },
                     {
-                        targets:[3],
+                        targets:[2],
                         render: function (data, type, full, meta){
-                            var btn_accept='<button class="btn btn-success btn-sm" name="accept_customer"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> Accept</button>';
+                            var btn_accept='<button class="btn btn-success btn-sm" name="accept_meter"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> Accept</button>';
                             return '<center>'+btn_accept+'</center>';
                         }
                     }
@@ -562,6 +842,16 @@
                 return strDate;
             };
 
+            $('#btn_cancel_meter').click(function(){
+                $('#modal_new_connection').modal('show');
+                $('#modal_meter_list').modal('hide');
+            });
+
+            $('#btn_cancel_customer').click(function(){
+                $('#modal_new_connection').modal('show');
+                $('#modal_meter_customer').modal('hide');
+            });
+
             $('#link_browse_cu').click(function(){
                 $('#tbl_meter_list tbody').html('<tr><td colspan="4"><center><br/><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
                 dt_meter.ajax.reload( null, false );
@@ -571,18 +861,31 @@
             });
 
             _cboCustomer.on('change',function(){
-                $('#tbl_meter_list tbody').html('<tr><td colspan="4"><center><br/><br /><br /></center></td></tr>');
-                dt_meter.ajax.reload( null, false );
+                var i=$(this).select2('val');
+                if(i==0){ //new customer
+                    _cboCustomer.select2('val',null);
+                    _cboCustomerType.select2('val', 0);
+                    _cboNationality.select2('val', 0);
+                    _cboSpouseNationality.select2('val', 0);
+                    _cboCivilStatus.select2('val', 0);
+                    _cboSex.select2('val', 1);
+
+                    $('#modal_new_customer').modal('show');
+                    $('#modal_new_connection').modal('hide');
+                    clearFields($('#modal_new_customer').find('form'));
+
+                }else{
+                    var obj_customer=$('#cbo_customer').find('option[value="'+i+'"]');
+                    $('#receipt_name').val(obj_customer.text());
+                    $('#address').val(obj_customer.data('address'));
+                }
             });
 
-            $('#tbl_meter_list > tbody').on('click','button[name="accept_customer"]',function(){
+            $('#tbl_meter_list > tbody').on('click','button[name="accept_meter"]',function(){
                 _selectRowObjMeter=$(this).closest('tr');
                 var data=dt_meter.row(_selectRowObjMeter).data();
 
-                $('#customer_name').val(data.customer_name);
-                $('#receipt_name').val(data.customer_name);
                 $('#serial_no').val(data.serial_no);
-                $('input[name="customer_id"]').val(data.customer_id);
                 $('input[name="meter_inventory_id"]').val(data.meter_inventory_id);
 
                 $('#modal_meter_list').modal('hide');
@@ -590,10 +893,10 @@
 
             }); 
 
-             $('#btn_browse').click(function(event){
+            $('#btn_browse').click(function(event){
                     event.preventDefault();
                     $('input[name="file_upload[]"]').click();
-             });
+            });
 
             $('#btn_remove_photo').click(function(event){
                 event.preventDefault();
@@ -622,12 +925,6 @@
                         }
                     });
                 });
-
-            $('#btn_cancel_customer').on('click', function(){
-
-                $('#modal_meter_list').modal('hide');
-                $('#modal_new_connection').modal('show');
-            });
 
             $('#tbl_connection tbody').on( 'click', 'tr td.details-control', function () {
                 var tr = $(this).closest('tr');
@@ -678,6 +975,10 @@
                 $('#service_date').val(getCurrentDate());
                 $('#connection_date').val(getCurrentDate());
                 $('#modal_new_connection').modal('show');
+                $('#link_browse_cu').show();
+                $('#ms_icon').hide();
+                _cboCustomer.select2('val',null);
+                _cboCustomer.select2("enable",true);
             });
 
             $('#tbl_connection tbody').on('click','button[name="edit_info"]',function(){
@@ -694,6 +995,12 @@
                         }
                     });
                 });
+
+                _cboCustomer.select2('val',data.customer_id)
+                _cboCustomer.select2("enable",false);
+
+                $('#link_browse_cu').hide();
+                $('#ms_icon').show();
 
                 $('#connection_title').text('Edit Connection Service');
                 $('#modal_new_connection').modal('show');
@@ -716,6 +1023,21 @@
             $('#btn_cancel').click(function(){
                 $('#modal_new_connection').modal('hide');
             });
+
+            $('#btn_save_customer').click(function(){
+                if(validateRequiredFields($('#frm_customer'))){
+                    createCustomer().done(function(response){
+                        var customer=response.row_added[0];
+
+                        $('#cbo_customer').append('<option value="'+ customer.customer_id +'" data-address="'+ customer.address +'">'+ customer.customer_name +'</option>');
+                        _cboCustomer.select2('val',customer.customer_id);
+
+                        $('#modal_new_customer').modal('hide');
+                        $('#modal_new_connection').modal('show');
+                        clearFields($('#frm_customer'));
+                    });
+                }
+            }); 
 
             $('#btn_save').click(function(){
                 if(validateRequiredFields($('#frm_connection'))){
@@ -741,6 +1063,11 @@
                 }
             });
         })();
+
+    var reInitializeNumeric=function(){
+        $('.numeric').autoNumeric('init',{mDec: 2});
+        $('.number').autoNumeric('init', {mDec:0});
+    };
 
     var validateRequiredFields=function(f){
         var stat=true;
@@ -769,7 +1096,6 @@
 
         return stat;
     };
-
 
         var createCustomer=function(){
             var _dataCustomer=$('#frm_customer').serializeArray();

@@ -118,20 +118,7 @@ class Service_reconnection extends CORE_Controller {
 
                 $reconnection_id = $this->input->post('reconnection_id',TRUE);
                 $disconnection_id = $this->input->post('disconnection_id',TRUE);
-
-                // ## Previous Disconnection Data
-                $prev_data = $this->Service_reconnection_model->getList($reconnection_id);
-                $prev_disconnection_id = $prev_data[0]->disconnection_id;
-                $prev_connection_id = $prev_data[0]->connection_id;
-                $prev_meter_inventory_id = $prev_data[0]->meter_inventory_id;
-                $disconnection_code = $prev_data[0]->disconnection_code;
-
-                // ## New Disconnection Data
-                $new_data = $this->Service_disconnection_model->getList($disconnection_id);
-                $new_connection_id = $new_data[0]->connection_id;
-                $new_meter_inventory_id = $new_data[0]->meter_inventory_id;
-                $customer_id = $new_data[0]->customer_id;
-                $serial_no = $new_data[0]->serial_no;
+                $reconnection_code = $this->input->post('reconnection_code',TRUE);
 
                 $service_date = date("Y-m-d",strtotime($this->input->post('service_date',TRUE)));
                 $date_connection_target = date("Y-m-d",strtotime($this->input->post('date_connection_target',TRUE)));
@@ -141,34 +128,12 @@ class Service_reconnection extends CORE_Controller {
                 $m_reconnection->date_connection_target=$date_connection_target;
                 $m_reconnection->time_connection_target=$this->input->post('time_connection_target',TRUE);
                 $m_reconnection->rate_type_id=$this->input->post('rate_type_id',TRUE);
-                $m_reconnection->modify($reconnection_id);
-
-                if ($disconnection_id != $prev_disconnection_id){
-                    // update previous connection status and current id
-                    $m_connection->status_id=2; // Disconnected
-                    $m_connection->current_id=$prev_disconnection_id;
-                    $m_connection->modify($prev_connection_id);
-
-                    // update new connection status and current id
-                    $m_connection->status_id=3; // Reconnected
-                    $m_connection->current_id=$reconnection_id;
-                    $m_connection->modify($new_connection_id);
-
-                    // update Previous Meter Inventory Status 
-                    $m_meter_inventory = $this->Meter_inventory_model;
-                    $m_meter_inventory->meter_status_id=2; // Inactive Status
-                    $m_meter_inventory->modify($prev_meter_inventory_id);
-
-                    // update New Meter Inventory Status
-                    $m_meter_inventory = $this->Meter_inventory_model;
-                    $m_meter_inventory->meter_status_id=1; // Active Status
-                    $m_meter_inventory->modify($new_meter_inventory_id); 
-                }               
+                $m_reconnection->modify($reconnection_id);         
 
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Service Reconnection Information successfully updated.';
-                $response['row_updated']= $m_reconnection->getList($disconnection_id);
+                $response['row_updated']= $m_reconnection->getList($reconnection_id);
 
                 $customer = $this->Customers_model->get_list($customer_id);            
                 $m_trans=$this->Trans_model;
@@ -176,7 +141,7 @@ class Service_reconnection extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=71; // TRANS TYPE
-                $m_trans->trans_log='Updated Reconnection: '.$disconnection_code.' - '.$customer[0]->customer_name.' ('.$serial_no.') ';
+                $m_trans->trans_log='Updated Reconnection: '.$reconnection_code;
                 $m_trans->save();
 
                 echo json_encode($response);
@@ -191,6 +156,42 @@ class Service_reconnection extends CORE_Controller {
                 $reconnection_id=$this->input->post('reconnection_id',TRUE);
                 $data = $m_reconnection->getList($reconnection_id);
                 $reconnection_code = $data[0]->reconnection_code;
+
+                // // ## Previous Disconnection Data
+                // $prev_data = $this->Service_reconnection_model->getList($reconnection_id);
+                // $prev_disconnection_id = $prev_data[0]->disconnection_id;
+                // $prev_connection_id = $prev_data[0]->connection_id;
+                // $prev_meter_inventory_id = $prev_data[0]->meter_inventory_id;
+                // $disconnection_code = $prev_data[0]->disconnection_code;
+
+                // // ## New Disconnection Data
+                // $new_data = $this->Service_disconnection_model->getList($disconnection_id);
+                // $new_connection_id = $new_data[0]->connection_id;
+                // $new_meter_inventory_id = $new_data[0]->meter_inventory_id;
+                // $customer_id = $new_data[0]->customer_id;
+                // $serial_no = $new_data[0]->serial_no;
+
+                // if ($disconnection_id != $prev_disconnection_id){
+                //     // update previous connection status and current id
+                //     $m_connection->status_id=2; // Disconnected
+                //     $m_connection->current_id=$prev_disconnection_id;
+                //     $m_connection->modify($prev_connection_id);
+
+                //     // update new connection status and current id
+                //     $m_connection->status_id=3; // Reconnected
+                //     $m_connection->current_id=$reconnection_id;
+                //     $m_connection->modify($new_connection_id);
+
+                //     // update Previous Meter Inventory Status 
+                //     $m_meter_inventory = $this->Meter_inventory_model;
+                //     $m_meter_inventory->meter_status_id=2; // Inactive Status
+                //     $m_meter_inventory->modify($prev_meter_inventory_id);
+
+                //     // update New Meter Inventory Status
+                //     $m_meter_inventory = $this->Meter_inventory_model;
+                //     $m_meter_inventory->meter_status_id=1; // Active Status
+                //     $m_meter_inventory->modify($new_meter_inventory_id); 
+                // }      
 
                 $m_reconnection->is_deleted=1;
                 if($m_reconnection->modify($reconnection_id)){

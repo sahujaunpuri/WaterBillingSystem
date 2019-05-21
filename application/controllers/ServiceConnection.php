@@ -15,7 +15,10 @@ class ServiceConnection extends CORE_Controller {
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Company_model');
-
+        $this->load->model('Customer_type_model');
+        $this->load->model('Nationality_model');
+        $this->load->model('Civil_status_model');
+        $this->load->model('Sex_model');
         $this->load->library('excel');
     }
 
@@ -27,8 +30,23 @@ class ServiceConnection extends CORE_Controller {
         $data['_side_bar_navigation']=$this->load->view('template/elements/side_bar_navigation','',TRUE);
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
         $data['title']='Connection Service';
+        
         $data['customers']=$this->Customers_model->get_list(
             array('customers.is_deleted'=>FALSE)
+        );
+
+        $data['customer_type']=$this->Customer_type_model->get_list(
+            array('customer_type.is_deleted'=>FALSE)
+        );
+
+        $data['nationalities']=$this->Nationality_model->get_list(  
+            array('nationality.is_deleted'=>FALSE,'nationality.is_active'=>TRUE)
+        );
+        $data['civils']=$this->Civil_status_model->get_list(
+            array('civil_status.is_deleted'=>FALSE,'civil_status.is_active'=>TRUE)
+        );
+        $data['sexes']=$this->Sex_model->get_list(
+            array('sex.is_deleted'=>FALSE,'sex.is_active'=>TRUE)
         );
         $data['contract_types']=$this->Contract_type_model->get_list(
             array('contract_types.is_deleted'=>FALSE,'contract_types.is_active'=>TRUE)
@@ -70,11 +88,13 @@ class ServiceConnection extends CORE_Controller {
                 $m_connection->service_date=$service_date;
                 $m_connection->connection_date=$connection_date;
                 $m_connection->receipt_name=$this->input->post('receipt_name',TRUE);
+                $m_connection->address=$this->input->post('address',TRUE);
                 $m_connection->target_date=$target_date;
                 $m_connection->target_time=$this->input->post('target_time',TRUE);
                 $m_connection->contract_type_id=$this->input->post('contract_type_id',TRUE);
                 $m_connection->rate_type_id=$this->input->post('rate_type_id',TRUE);
-                $m_connection->initial_meter_reading=$this->input->post('initial_meter_reading',TRUE);
+                $m_connection->initial_meter_deposit=$this->get_numeric_value($this->input->post('initial_meter_deposit',TRUE));
+                $m_connection->initial_meter_reading=$this->get_numeric_value($this->input->post('initial_meter_reading',TRUE));
                 $m_connection->attended_by=$this->input->post('attended_by',TRUE);
                 $m_connection->created_by=$this->session->user_id;
                 $m_connection->save();
@@ -118,6 +138,18 @@ class ServiceConnection extends CORE_Controller {
                 $m_connection=$this->Service_connection_model;
                 $connection_id=$this->input->post('connection_id',TRUE);
 
+                // // Updating Previous Meter Inventory Status
+                // $m_meter_inventory = $this->Meter_inventory_model;
+                // $m_meter_inventory->meter_status_id=2; // Inactive Status
+                // $m_meter_inventory->is_new=1; // Is New Status
+                // $m_meter_inventory->modify($prev_meter_inventory_id);
+
+                // // Updating Meter Inventory Status
+                // $m_meter_inventory = $this->Meter_inventory_model;
+                // $m_meter_inventory->meter_status_id=1; // Active Status
+                // $m_meter_inventory->is_new=0; // Is Not New Status
+                // $m_meter_inventory->modify($meter_inventory_id);                
+
                 $m_connection->is_deleted=1;
                 if($m_connection->modify($connection_id)){
                     $response['title']='Success!';
@@ -141,55 +173,36 @@ class ServiceConnection extends CORE_Controller {
                 $m_connection=$this->Service_connection_model;
                 
                 $connection_id = $this->input->post('connection_id',TRUE);
-                $customer_id = $this->input->post('customer_id',TRUE);
-                $meter_inventory_id = $this->input->post('meter_inventory_id',TRUE);
                 $service_no =$this->input->post('service_no',TRUE);
-
-                $prev_data = $m_connection->chck_meter(null,$connection_id);
-                $prev_meter_inventory_id = $prev_data[0]->meter_inventory_id;
-                $serial_no = $prev_data[0]->serial_no;
 
                 $service_date = date("Y-m-d",strtotime($this->input->post('service_date',TRUE)));
                 $connection_date = date("Y-m-d",strtotime($this->input->post('connection_date',TRUE)));
                 $target_date = date("Y-m-d",strtotime($this->input->post('target_date',TRUE)));
 
-                $m_connection->customer_id=$customer_id;
-                $m_connection->meter_inventory_id=$meter_inventory_id;
                 $m_connection->service_date=$service_date;
                 $m_connection->connection_date=$connection_date;
                 $m_connection->receipt_name=$this->input->post('receipt_name',TRUE);
+                $m_connection->address=$this->input->post('address',TRUE);
                 $m_connection->target_date=$target_date;
                 $m_connection->target_time=$this->input->post('target_time',TRUE);
                 $m_connection->contract_type_id=$this->input->post('contract_type_id',TRUE);
                 $m_connection->rate_type_id=$this->input->post('rate_type_id',TRUE);
-                $m_connection->initial_meter_reading=$this->input->post('initial_meter_reading',TRUE);
+                $m_connection->initial_meter_deposit=$this->get_numeric_value($this->input->post('initial_meter_deposit',TRUE));
+                $m_connection->initial_meter_reading=$this->get_numeric_value($this->input->post('initial_meter_reading',TRUE));
                 $m_connection->attended_by=$this->input->post('attended_by',TRUE);
                 $m_connection->modify($connection_id);
-
-                // Updating Previous Meter Inventory Status
-                $m_meter_inventory = $this->Meter_inventory_model;
-                $m_meter_inventory->meter_status_id=2; // Inactive Status
-                $m_meter_inventory->is_new=1; // Is New Status
-                $m_meter_inventory->modify($prev_meter_inventory_id);
-
-                // Updating Meter Inventory Status
-                $m_meter_inventory = $this->Meter_inventory_model;
-                $m_meter_inventory->meter_status_id=1; // Active Status
-                $m_meter_inventory->is_new=0; // Is Not New Status
-                $m_meter_inventory->modify($meter_inventory_id);
 
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Service Connection Information successfully updated.';
                 $response['row_updated']= $m_connection->getList($connection_id);
-
-                $customer = $this->Customers_model->get_list($customer_id);            
+         
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=69; // TRANS TYPE
-                $m_trans->trans_log='Updated Service Connection: '.$service_no.' - '.$customer[0]->customer_name.' ('.$serial_no.') ';
+                $m_trans->trans_log='Updated Service Connection: '.$service_no;
                 $m_trans->save();
 
                 echo json_encode($response);

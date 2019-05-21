@@ -17,8 +17,8 @@ class Service_disconnection_model extends CORE_Model {
                     sc.service_no,
                     sc.account_no,
                     sc.meter_inventory_id,
+                    sc.customer_id,
                     inv.serial_no,
-                    inv.customer_id,
                     customers.customer_name,
                     ct.contract_type_name,
                     rt.rate_type_name
@@ -64,7 +64,7 @@ class Service_disconnection_model extends CORE_Model {
             FROM
                 service_connection sc
                 LEFT JOIN meter_inventory inv ON inv.meter_inventory_id = sc.meter_inventory_id
-                LEFT JOIN customers c ON c.customer_id = inv.customer_id
+                LEFT JOIN customers c ON c.customer_id = sc.customer_id
             WHERE
                 (sc.status_id = 1 OR sc.status_id = 3)
                 AND sc.is_deleted = FALSE

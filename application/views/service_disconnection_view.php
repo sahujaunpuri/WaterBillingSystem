@@ -187,7 +187,7 @@
                     </div>
                 </div>
             </div><!---modal-->
-            <div id="modal_new_disconnection" class="modal fade" role="dialog">
+            <div id="modal_new_disconnection" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header" style="background: #2ecc71">
@@ -200,7 +200,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class="">Service Disconnection No (Auto):</label>
-                                            <input type="text" class="form-control" placeholder="SDN-YYYYMMDD-XXXX"  readonly>
+                                            <input type="text" class="form-control" name="disconnection_code" placeholder="SDN-YYYYMMDD-XXXX"  readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-lg-offset-2">
@@ -219,6 +219,7 @@
                                             <input type="hidden" name="previous_id" class="form-control" readonly placeholder="prev_id" value="0">
                                             <span class="input-group-addon">
                                                 <a href="#" id="link_browse_co" style="text-decoration: none;color:black;"><b>...</b></a>
+                                                <i class="fa fa-code" id="sn_icon"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -249,7 +250,7 @@
                                     <div class="col-lg-offset-1 col-lg-4">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class=""><B class="required"> * </B> Last Meter Reading:</label>
-                                            <input type="text" name="last_meter_reading" class="form-control" placeholder="Last Meter Reading" data-error-msg="Last Meter Reading is required!" required>
+                                            <input type="text" name="last_meter_reading" class="number form-control" placeholder="Last Meter Reading" data-error-msg="Last Meter Reading is required!" required style="text-align: right;">
                                         </div>
                                     </div>
                                 </div>
@@ -290,11 +291,13 @@
 
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
-
 <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 <script src="assets/plugins/select2/select2.full.min.js"></script>
+<!-- numeric formatter -->
+<script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
+<script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 <script>
 
 $(document).ready(function(){
@@ -306,6 +309,8 @@ $(document).ready(function(){
         _cboCustomer=$("#cbo_customer").select2({
             allowClear: false
         });
+        
+        $('.number').autoNumeric('init', {mDec:0});
 
         dt=$('#tbl_disconnection').DataTable({
             "dom": '<"toolbar">frtip',
@@ -409,6 +414,8 @@ $(document).ready(function(){
             $('.date-picker').datepicker('setDate', 'today');
             $('#modal_title').text('New Disconnection Service');
             $('#modal_new_disconnection').modal('show');
+            $('#link_browse_co').show();
+            $('#sn_icon').hide();
         });
 
         $('#tbl_disconnection tbody').on('click','button[name="edit_info"]',function(){
@@ -426,6 +433,8 @@ $(document).ready(function(){
                 });
             });
 
+            $('#link_browse_co').hide();
+            $('#sn_icon').show();
             $('#modal_title').text('Edit Disconnection Service');
             $('#modal_new_disconnection').modal('show');
         });
@@ -547,6 +556,11 @@ $(document).ready(function(){
         });
 
     })();
+
+    var reInitializeNumeric=function(){
+        $('.numeric').autoNumeric('init',{mDec: 2});
+        $('.number').autoNumeric('init', {mDec:0});
+    };
 
     var validateRequiredFields=function(f){
         var stat=true;

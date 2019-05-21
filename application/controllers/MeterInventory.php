@@ -13,10 +13,6 @@ class MeterInventory extends CORE_Controller {
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Company_model');
-        $this->load->model('Customer_type_model');
-        $this->load->model('Nationality_model');
-        $this->load->model('Civil_status_model');
-        $this->load->model('Sex_model');
 
         $this->load->library('excel');
     }
@@ -29,38 +25,10 @@ class MeterInventory extends CORE_Controller {
         $data['_side_bar_navigation']=$this->load->view('template/elements/side_bar_navigation','',TRUE);
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
         $data['title']='Meter Inventory Management';
-        $data['customers']=$this->Customers_model->get_list(
-            array('customers.is_deleted'=>FALSE)
-        );
-
-        $data['customers']=$this->Customers_model->get_list(
-            array('customers.is_deleted'=>FALSE)
-        );
-
-        $data['nationalities']=$this->Nationality_model->get_list(  
-            array('nationality.is_deleted'=>FALSE,'nationality.is_active'=>TRUE)
-        );
 
         $data['meter_status']=$this->Meter_status_model->get_list(  
             array('meter_status.is_deleted'=>FALSE,'meter_status.is_active'=>TRUE)
         );
-
-        $data['customer_type']=$this->Customer_type_model->get_list(
-            array('customer_type.is_deleted'=>FALSE)
-        );
-
-        $data['nationalities']=$this->Nationality_model->get_list(
-            array('nationality.is_deleted'=>FALSE,'nationality.is_active'=>TRUE)
-        );
-
-        $data['civils']=$this->Civil_status_model->get_list(
-            array('civil_status.is_deleted'=>FALSE,'civil_status.is_active'=>TRUE)
-        );
-
-        $data['sexes']=$this->Sex_model->get_list(
-            array('sex.is_deleted'=>FALSE,'sex.is_active'=>TRUE)
-        );
-
 
         (in_array('5-4',$this->session->user_rights)? 
         $this->load->view('meter_inventory_view',$data)
@@ -74,27 +42,33 @@ class MeterInventory extends CORE_Controller {
             case 'list':
                 $m_meter_inventory=$this->Meter_inventory_model;
                 $status_id = $this->input->get('status_id',TRUE);
-                $response['data']=$m_meter_inventory->getList($status_id);
+                $response['data']=$m_meter_inventory->getList(null,$status_id);
                 echo json_encode($response);
 
                 break;
 
             case 'open':
-                $customer_id = $this->input->get('customer_id',TRUE);
-                $response['data']=$this->Meter_inventory_model->getList(2,null,$customer_id,1);
+                $response['data']=$this->Meter_inventory_model->getList(null,2,null,1);
                 echo json_encode($response);
                 break;
 
             case 'create':
                 $m_meter_inventory=$this->Meter_inventory_model;
 
-                $customer_id = $this->input->post('customer_id',TRUE);
-                $m_meter_inventory->set('date_created','NOW()');
+                $serial_no = $this->input->post('serial_no',TRUE);
+                $stat = $m_meter_inventory->chckMeter($serial_no);
 
+                if (count($stat) > 0){
+                    $response['title']='Warning!';
+                    $response['stat']='error';
+                    $response['msg']='Serial no is already existing.';
+                    echo json_encode($response);
+                    exit();
+                }
+
+                $m_meter_inventory->set('date_created','NOW()');
                 $m_meter_inventory->serial_no=$this->input->post('serial_no',TRUE);
                 $m_meter_inventory->meter_description=$this->input->post('meter_description',TRUE);
-                $m_meter_inventory->customer_id=$customer_id;
-
                 $m_meter_inventory->created_by=$this->session->user_id;
                 $m_meter_inventory->save();
 
@@ -108,15 +82,14 @@ class MeterInventory extends CORE_Controller {
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Meter Inventory Information successfully created.';
-                $response['row_added']= $m_meter_inventory->getList(null,$meter_inventory_id);
-
-                $customer = $this->Customers_model->get_list($customer_id);            
+                $response['row_added']= $m_meter_inventory->getList($meter_inventory_id);
+           
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
                 $m_trans->trans_type_id=68; // TRANS TYPE
-                $m_trans->trans_log='Created Meter Inventory: '.$meter_code.' - '.$customer[0]->customer_name;
+                $m_trans->trans_log='Created Meter Inventory: '.$meter_code;
                 $m_trans->save();
 
                 echo json_encode($response);
@@ -158,19 +131,26 @@ class MeterInventory extends CORE_Controller {
                 $m_meter_inventory=$this->Meter_inventory_model;
                 $meter_inventory_id=$this->input->post('meter_inventory_id',TRUE);
 
-                $customer_id = $this->input->post('customer_id',TRUE);
+                $serial_no = $this->input->post('serial_no',TRUE);
+                $stat = $m_meter_inventory->chckMeter($serial_no,$meter_inventory_id);
 
-                $m_meter_inventory->serial_no=$this->input->post('serial_no',TRUE);
+                if (count($stat) > 0){
+                    $response['title']='Warning!';
+                    $response['stat']='error';
+                    $response['msg']='Serial no is already existing.';
+                    echo json_encode($response);
+                    exit();
+                }
+
+                $m_meter_inventory->serial_no=$serial_no;
                 $m_meter_inventory->meter_description=$this->input->post('meter_description',TRUE);
-                $m_meter_inventory->customer_id=$customer_id;
-
                 $m_meter_inventory->modified_by=$this->session->user_id;
                 $m_meter_inventory->modify($meter_inventory_id);
 
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Meter Inventory Information successfully updated.';
-                $response['row_updated']= $m_meter_inventory->getList(null,$meter_inventory_id);
+                $response['row_updated']= $m_meter_inventory->getList($meter_inventory_id);
 
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -189,7 +169,7 @@ class MeterInventory extends CORE_Controller {
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
 
-                $data['inventory']=$this->Meter_inventory_model->getList($filter_value);
+                $data['inventory']=$this->Meter_inventory_model->getList(null,$filter_value);
                 $this->load->view('template/meter_masterfile_content',$data);
 
                 break;
@@ -201,7 +181,7 @@ class MeterInventory extends CORE_Controller {
                 $m_company_info=$this->Company_model;
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
-                $inventory=$this->Meter_inventory_model->getList($filter_value);
+                $inventory=$this->Meter_inventory_model->getList(null,$filter_value);
                 $excel->setActiveSheetIndex(0);
 
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
