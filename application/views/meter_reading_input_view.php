@@ -175,10 +175,10 @@
             </form>
         </div>
         <div><hr>
-            <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
+            <label class="control-label" style="font-family: Tahoma;"><strong>Enter Account Number or Customer Name :</strong></label>
             <button id="refreshlist" class="btn-primary btn pull-right" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Refresh</button>
             <div id="custom-templates">
-                <input class="typeahead" type="text" placeholder="Enter PLU or Search Item">
+                <input class="typeahead" type="text" placeholder="Enter Account Number or Customer Name">
             </div><br />
             <form id="frm_items">
                 <div class="table-responsive">
@@ -189,6 +189,7 @@
                             <th>Account No</th>
                             <th>Customer Name</th>
                             <th>Meter Serial</th>
+                            <th>Previous Month</th>
                             <th style="text-align: right;">Previous</th>
                             <th style="text-align: right;">Current</th>
                             <th style="text-align: right;">Consumption</th>
@@ -297,11 +298,12 @@ $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboPeriod; var meterins; var _meter_reading_input_id_for_validation;
     var yearNow = new Date().getFullYear();
     var monthNow = new Date().getMonth() + 1;
+    var _currentMeterPeriod;
     var oTableItems={
         connection_id : 'td:eq(0)',
-        previous_reading : 'td:eq(4)',
-        current_reading : 'td:eq(5)',
-        total_consumption : 'td:eq(6)'
+        previous_reading : 'td:eq(5)',
+        current_reading : 'td:eq(6)',
+        total_consumption : 'td:eq(7)'
 
     };
     var oTableDetails={
@@ -413,12 +415,15 @@ $(document).ready(function(){
                 account_no : suggestion.account_no,
                 customer_name : suggestion.customer_name,
                 serial_no : suggestion.serial_no,
+                previous_month : suggestion.previous_month,
                 previous_reading : suggestion.previous_reading,
                 current_reading : suggestion.current_reading,
                 total_consumption : suggestion.total_consumption
             }));
             reInitializeNumeric();
             $('#tbl_items > tbody > tr:last').find('.current').val('').focus();
+            $('#custom-templates .typeahead').val('');
+            checkTableLength();
         });
         $('div.tt-menu').on('click','table.tt-suggestion',function(){
             _objTypeHead.typeahead('val','');
@@ -458,24 +463,38 @@ $(document).ready(function(){
             $('#invoice_default').datepicker('setDate', 'today');
             $('#due_default').datepicker('setDate', 'today');
             _meter_reading_input_id_for_validation = 0; // FOR VALIDATION
-            getMeterInputs().done(function(data){
-                meterins.clear();
-                meterins.local = data.data;
-                meterins.initialize(true);
-                countaccountlist = data.data.length;
-                    if(countaccountlist > 100){
-                    showNotification({title:"Success !",stat:"success",msg:"Accounts List successfully updated."});
-                    }
+            // getMeterInputs().done(function(data){
+            //     meterins.clear();
+            //     meterins.local = data.data;
+            //     meterins.initialize(true);
+            //     countaccountlist = data.data.length;
+            //         if(countaccountlist > 100){
+            //         showNotification({title:"Success !",stat:"success",msg:"Accounts List successfully updated."});
+            //         }
 
-            }).always(function(){  });
+            // }).always(function(){  });
             _cboPeriod.select2("enable",true);
         });
 
         _cboPeriod.on('select2:select', function(){
             var i=$(this).select2('val');
+            _currentMeterPeriod = $(this).select2('val'); // SET CURRENT METER READING PERIOD TO GET ALL ACCOUNTS
             var obj_period=$('#cbo_period').find('option[value="' + i + '"]');
             $('#start_date').val(obj_period.data('start'));
             $('#end_date').val(obj_period.data('end'));
+            getMeterInputs().done(function(data){
+                meterins.clear();
+                meterins.local = data.data;
+                meterins.initialize(true);
+                countaccountlist = data.data.length;
+                showNotification({title:"Success !",stat:"success",msg:"Accounts List successfully updated."});
+                    // if(countaccountlist > 100){
+                    // showNotification({title:"Success !",stat:"success",msg:"Accounts List successfully updated."});
+                    // }
+
+            }).always(function(){  });
+
+
         });
 
         $('#tbl_meter_input tbody').on('click','button[name="edit_info"]',function(){
@@ -495,6 +514,7 @@ $(document).ready(function(){
                 });
             });
             _cboPeriod.select2('val',data.meter_reading_period_id);
+            
             var obj_period=$('#cbo_period').find('option[value="' + data.meter_reading_period_id + '"]');
             $('#start_date').val(obj_period.data('start'));
             $('#end_date').val(obj_period.data('end'));
@@ -518,6 +538,7 @@ $(document).ready(function(){
                             account_no : value.account_no,
                             customer_name : value.customer_name,
                             serial_no : value.serial_no,
+                            previous_month : value.previous_month,
                             previous_reading : value.previous_reading,
                             current_reading : value.current_reading,
                             total_consumption : value.total_consumption
@@ -527,6 +548,7 @@ $(document).ready(function(){
                 }
 
             });
+            _currentMeterPeriod = data.meter_reading_period_id; // SET CURRENT METER READING PERIOD TO GET ALL ACCOUNTS
             getMeterInputs().done(function(data){
                 meterins.clear();
                 meterins.local = data.data;
@@ -538,7 +560,7 @@ $(document).ready(function(){
 
             }).always(function(){  });
             showList(false);
-        
+            checkTableLength();
         });
 
          $('#refreshlist').click(function(){
@@ -548,7 +570,7 @@ $(document).ready(function(){
                 meterins.initialize(true);
                     showNotification({title:"Success !",stat:"success",msg:"Accounts List successfully updated."});
             }).always(function(){
-                $('#typeaheadsearch').val('');
+                $('#custom-templates .typeahead').val('');
                 });
          });
 
@@ -623,6 +645,7 @@ $(document).ready(function(){
     
         $('#tbl_items > tbody').on('click','button[name="remove_item"]',function(){
             $(this).closest('tr').remove();
+            checkTableLength();
         });
 
 
@@ -656,6 +679,7 @@ $(document).ready(function(){
        return $.ajax({
            "dataType":"json",
            "type":"POST",
+           "data":{meter_reading_period_id : _currentMeterPeriod},
            "url":"Meter_reading_input/transaction/list-inputs",
            "beforeSend": function(){
                 countinputs = meterins.local.length;
@@ -668,6 +692,7 @@ $(document).ready(function(){
 
     var createMeterInput=function(){
         var _data=$('#frm_meter_reading_input,#frm_items,#frm_remarks').serializeArray();
+        _data.push({name : "meter_reading_period_id" ,value : _cboPeriod.val()});
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -679,6 +704,7 @@ $(document).ready(function(){
     var updateMeterInput=function(){
         var _data=$('#frm_meter_reading_input,#frm_items,#frm_remarks').serializeArray();
         _data.push({name : "meter_reading_input_id" ,value : _selectedID});
+        _data.push({name : "meter_reading_period_id" ,value : _cboPeriod.val()});
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -750,6 +776,18 @@ $(document).ready(function(){
          return tblstat;    
     };
 
+    var checkTableLength= function(){
+        if(_txnMode=="new"){
+            var rowtable=$('#tbl_items > tbody tr');
+            if(rowtable.length > 0){
+                _cboPeriod.select2("enable",false);
+            }else{
+                _cboPeriod.select2("enable",true);
+            }
+        }
+        
+    };
+
     var checkTransaction= function(){
         var tbltranstat=true;
         var rowcheck=$('#tbl_items > tbody tr');
@@ -788,6 +826,7 @@ $(document).ready(function(){
         '<td><input type="text" class="form-control" value="'+d.account_no+'" readonly></td>'+
         '<td><input type="text" class="form-control" value="'+d.customer_name +'" readonly></td>'+
         '<td><input type="text" class="form-control" value="'+d.serial_no +'" readonly></td>'+
+        '<td><input type="text" name="previous_month[]" class="form-control" value="'+d.previous_month +'" readonly></td>'+
         '<td><input type="text" name="previous_reading[]" class="number form-control" value="'+ accounting.formatNumber(d.previous_reading,0)+'" style="text-align:right;" readonly></td>'+
         '<td><input type="text" name="current_reading[]" class="number form-control current" value="'+ accounting.formatNumber(d.current_reading,0)+'" style="text-align:right;"></td>'+
         '<td><input type="text" name="total_consumption[]" class="number form-control" value="'+ accounting.formatNumber(d.total_consumption,0)+'" style="text-align:right;" readonly></td>'+

@@ -5436,6 +5436,7 @@ class Templates extends CORE_Controller {
                         'meter_reading_input_items.previous_reading',
                         'meter_reading_input_items.current_reading',
                         'meter_reading_input_items.total_consumption',
+                        'meter_reading_input_items.previous_month',
                         'service_connection.account_no',
                         'customers.customer_name',
                         'meter_inventory.serial_no'
