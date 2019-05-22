@@ -14,14 +14,16 @@ class Service_disconnection_model extends CORE_Model {
                     sd.*,
                     DATE_FORMAT(sd.service_date, '%m/%d/%Y') AS service_date,
                     DATE_FORMAT(sd.date_disconnection_date, '%m/%d/%Y') AS date_disconnection_date,
-                    sc.service_no,
+                    sd.service_no,
                     sc.account_no,
                     sc.meter_inventory_id,
                     sc.customer_id,
+                    sc.address,
                     inv.serial_no,
                     customers.customer_name,
                     ct.contract_type_name,
-                    rt.rate_type_name
+                    rt.rate_type_name,
+                    dr.reason_desc
                 FROM
                     service_disconnection sd
                         LEFT JOIN
@@ -34,6 +36,8 @@ class Service_disconnection_model extends CORE_Model {
                     contract_types ct ON ct.contract_type_id = sc.contract_type_id
                         LEFT JOIN
                     rate_types rt ON rt.rate_type_id = sc.rate_type_id
+                        LEFT JOIN
+                    disconnection_reason dr ON dr.disconnection_reason_id = sd.disconnection_reason_id
                 WHERE
                     sd.is_deleted = FALSE
                         AND sd.is_active = TRUE

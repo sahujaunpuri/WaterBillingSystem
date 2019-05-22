@@ -392,25 +392,37 @@
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.meter_inventory_id;
-                
-                $('input,textarea').each(function(){
-                    var _elem=$(this);
-                    $.each(data,function(name,value){
-                        if(_elem.attr('name')==name){
-                            _elem.val(value);
-                        }
-                    });
-                });
 
-                $('#meter_title').text('Edit Meter Inventory');
-                $('#modal_new_meter').modal('show');
+                chckMeter(_selectedID,'edit').done(function(response){
+                    if (response.stat == "success"){
+                        $('input,textarea').each(function(){
+                            var _elem=$(this);
+                            $.each(data,function(name,value){
+                                if(_elem.attr('name')==name){
+                                    _elem.val(value);
+                                }
+                            });
+                        });
+
+                        $('#meter_title').text('Edit Meter Inventory');
+                        $('#modal_new_meter').modal('show');
+                    }else{
+                        showNotification(response);
+                    }
+                });
             });
 
             $('#tbl_meter_inventory tbody').on('click','button[name="remove_info"]',function(){
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.meter_inventory_id;
-                $('#modal_confirmation').modal('show');
+                chckMeter(_selectedID,'delete').done(function(response){
+                    if(response.stat == "success"){
+                        $('#modal_confirmation').modal('show');
+                    }else{
+                        showNotification(response);
+                    }
+                });
             });
 
             $('#btn_yes').click(function(){
@@ -521,6 +533,20 @@
                 "data":{meter_inventory_id : _selectedID}
             });
         };
+
+        var chckMeter=function(meter_inventory_id,mode){
+
+            var _data=$('#').serializeArray();
+            _data.push({name : "meter_inventory_id" ,value : meter_inventory_id});
+            _data.push({name : "mode" ,value : mode});
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"MeterInventory/transaction/chckMeter",
+                "data":_data
+            });
+        }; 
 
         var showList=function(b){
             if(b){

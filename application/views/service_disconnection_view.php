@@ -92,8 +92,8 @@
                                                     </div>
                                                     <div class="col-lg-offset-3 col-lg-3" style="text-align: right;">
                                                     &nbsp;<br>
-                                                            <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print Connection Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
-                                                            <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Export Connection Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
+                                                            <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print Disconnection Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
+                                                            <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Export Disconnection Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
                                                     </div>
                                                     <div class="col-lg-3">
                                                             Search :<br />
@@ -240,11 +240,23 @@
                                 </div>
 
                                 <div class="row" style="margin: 1%;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class="">Address:</label>
+                                            <textarea name="address" id="address" class="form-control" placeholder="Address" readonly style="border: 1px solid gray;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" style="margin: 1%;">
                                     <div class="col-lg-7" style="padding-left:0px;padding-right: 0px;">
                                         <label class=""><B class="required"> * </B> Reason for Disconnection:</label>
                                         <select name="disconnection_reason_id" id="cbo_disconnection_reason_id" style="width: 100%;padding-left:0px;padding-right: 0px; "  data-error-msg="Reason for Disconnection is required!" required>
-                                            <option value="1">Automatic Disconnection</option>
-                                            <option value="2">Owners Discretion</option>
+                                            <?php foreach($reason as $row){?>
+                                                <option value="<?php echo $row->disconnection_reason_id;?>">
+                                                    <?php echo $row->reason_desc; ?>
+                                                </option>
+                                            <?php }?>
                                         </select>
                                     </div>
                                     <div class="col-lg-offset-1 col-lg-4">
@@ -348,7 +360,7 @@ $(document).ready(function(){
                 "bDestroy": true,            
                 "data": function ( d ) {
                         return $.extend( {}, d, {
-                            "customer_id": $('#cbo_customer').select2('val')
+                            "customer_id": $('#cbo_customer').val()
                         });
                     }
             }, 
@@ -414,6 +426,7 @@ $(document).ready(function(){
             $('.date-picker').datepicker('setDate', 'today');
             $('#modal_title').text('New Disconnection Service');
             $('#modal_new_disconnection').modal('show');
+            _cboDisconnectionReason.select2('val',1);
             $('#link_browse_co').show();
             $('#sn_icon').hide();
         });
@@ -433,6 +446,7 @@ $(document).ready(function(){
                 });
             });
 
+            _cboDisconnectionReason.select2('val',data.disconnection_reason_id);
             $('#link_browse_co').hide();
             $('#sn_icon').show();
             $('#modal_title').text('Edit Disconnection Service');
@@ -446,6 +460,7 @@ $(document).ready(function(){
             $('input[name="service_no"]').val(data.service_no);
             $('input[name="connection_id"]').val(data.connection_id);
             $('input[name="customer_name"]').val(data.customer_name);
+            $('textarea[name="address"]').val(data.address);
             $('input[name="previous_id"]').val(data.previous_id);
 
             $('#modal_account_list').modal('hide');
@@ -457,14 +472,31 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.disconnection_id;
-
             $('#modal_confirmation').modal('show');
+
+            // chck_disconnection_service(_selectedID,'delete').done(function(response){
+            //     if(response.stat == "success"){
+            //         $('#modal_confirmation').modal('show');
+            //     }else{
+            //         showNotification(response);
+            //     }
+            // });
+
         });
 
         _cboCustomer.on('change',function(){
             $('#tbl_account_list tbody').html('<tr><td colspan="5"><center><br/><br /><br /></center></td></tr>');
             dt_account.ajax.reload( null, false );
         });
+
+        $('#btn_print').click(function(){
+           window.open('Service_disconnection/transaction/print-masterfile');
+        });  
+
+        $('#btn_export').click(function(){
+           window.open('Service_disconnection/transaction/export-masterfile');
+        }); 
+
 
         $("#searchbox_disconnection").keyup(function(){         
             dt
@@ -623,6 +655,21 @@ $(document).ready(function(){
             "data":{disconnection_id : _selectedID}
         });
     };
+
+    var chck_disconnection_service=function(disconnection_id,mode){
+
+        var _data=$('#').serializeArray();
+        _data.push({name : "disconnection_id" ,value : disconnection_id});
+        _data.push({name : "mode" ,value : mode});
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Service_disconnection/transaction/chck_disconnection_service",
+            "data":_data
+        });
+    }; 
+
 
     var showList=function(b){
         if(b){

@@ -127,6 +127,27 @@ class MeterInventory extends CORE_Controller {
                 echo json_encode($response);
                 break;
 
+
+            case 'chckMeter':
+                    $m_meter_inventory=$this->Meter_inventory_model;
+                    $m_connection=$this->Service_connection_model;
+
+                    $meter_inventory_id=$this->input->post('meter_inventory_id',TRUE);
+                    $mode=$this->input->post('mode',TRUE);
+                    $validate = $m_connection->chck_meter($meter_inventory_id);
+
+                    if (count($validate) > 0){
+                        if ($mode == "delete"){$response['title']='Cannot delete!';}else{$response['title']='Cannot update!';}
+                        $response['stat']='error';
+                        $response['msg'] = 'This meter still has an active transaction.';
+                    }else{
+                        $response['stat']='success';
+                    }
+
+                    echo json_encode($response);
+
+                break;
+
             case 'update':
                 $m_meter_inventory=$this->Meter_inventory_model;
                 $meter_inventory_id=$this->input->post('meter_inventory_id',TRUE);

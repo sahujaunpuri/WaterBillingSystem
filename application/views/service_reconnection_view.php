@@ -237,7 +237,14 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="row" style="margin: 1%;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class="">Address:</label>
+                                            <textarea class="form-control" name="address" id="address" placeholder="Address" readonly style="border: 1px solid gray;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row" style="margin: 1%;">
                                     <div class="col-lg-6" style="padding-left:0px;padding-right: 0px;">
                                         <label class=""> Contract Type:</label>
@@ -363,7 +370,7 @@ $(document).ready(function(){
                 "bDestroy": true,            
                 "data": function ( d ) {
                         return $.extend( {}, d, {
-                            "customer_id": $('#cbo_customer').select2('val')
+                            "customer_id": $('#cbo_customer').val()
                         });
                     }
             }, 
@@ -430,6 +437,7 @@ $(document).ready(function(){
             $('#modal_title').text('New Reconnection Service');
             $('#modal_new_reconnection').modal('show');
             $('#link_browse_disc').show();
+            _cboRateType.select2('val',1);
             $('#sn_icon').hide();
         });
 
@@ -445,6 +453,8 @@ $(document).ready(function(){
             $('input[name="customer_name"]').val(data.customer_name);
             $('input[name="contract_type_name"]').val(data.contract_type_name);
             $('input[name="rate_type_name"]').val(data.rate_type_name);
+
+            _cboRateType.select2('val',data.rate_type_id);
 
             $('input,textarea,select').each(function(){
                 var _elem=$(this);
@@ -471,6 +481,7 @@ $(document).ready(function(){
             $('input[name="customer_name"]').val(data.customer_name);
             $('input[name="contract_type_name"]').val(data.contract_type_name);
             $('input[name="rate_type_name"]').val(data.rate_type_name);
+            $('textarea[name="address"]').val(data.address);
 
             $('#modal_account_list').modal('hide');
             $('#modal_new_reconnection').modal('show');
@@ -480,9 +491,15 @@ $(document).ready(function(){
         $('#tbl_reconnection tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
-            _selectedID=data.disconnection_id;
+            _selectedID=data.reconnection_id;
 
-            $('#modal_confirmation').modal('show');
+            chck_reconnection_service(_selectedID,'delete').done(function(response){
+                if(response.stat == "success"){
+                    $('#modal_confirmation').modal('show');
+                }else{
+                    showNotification(response);
+                }
+            });
         });
 
         _cboCustomer.on('change',function(){
@@ -501,6 +518,14 @@ $(document).ready(function(){
                 .search(this.value)
                 .draw();
         });
+
+        $('#btn_print').click(function(){
+           window.open('Service_reconnection/transaction/print-masterfile');
+        });  
+
+        $('#btn_export').click(function(){
+           window.open('Service_reconnection/transaction/export-masterfile');
+        }); 
 
         $('#btn_yes').click(function(){
             removeReconnection().done(function(response){
@@ -640,6 +665,20 @@ $(document).ready(function(){
             "type":"POST",
             "url":"Service_reconnection/transaction/delete",
             "data":{reconnection_id : _selectedID}
+        });
+    };
+
+    var chck_reconnection_service=function(reconnection_id,mode){
+
+        var _data=$('#').serializeArray();
+        _data.push({name : "reconnection_id" ,value : reconnection_id});
+        _data.push({name : "mode" ,value : mode});
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Service_reconnection/transaction/chck_reconnection_service",
+            "data":_data
         });
     };
 

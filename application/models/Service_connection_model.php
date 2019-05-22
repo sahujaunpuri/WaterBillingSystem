@@ -50,6 +50,23 @@ class Service_connection_model extends CORE_Model{
         return $query->result();
     }
 
+    function chck_meter_reading($connection_id=null){
+    	$query = $this->db->query("SELECT 
+				    mri.*, sc.service_no
+				FROM
+				    meter_reading_input mri
+				    LEFT JOIN meter_reading_input_items mrii ON mrii.meter_reading_input_id = mri.meter_reading_input_id
+				    LEFT JOIN service_connection sc ON sc.connection_id = mrii.connection_id
+				    WHERE mri.is_deleted = FALSE
+				    AND mrii.connection_id = $connection_id");
+    			return $query->result();
+    }
+
+    function chck_connection($connection_id=null){
+    	$query = $this->db->query("SELECT sd.* FROM service_disconnection sd WHERE sd.is_deleted = FALSE AND sd.connection_id = $connection_id");
+    	return $query->result();
+    }    
+
 }
 
 ?>

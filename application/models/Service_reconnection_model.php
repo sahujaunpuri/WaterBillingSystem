@@ -18,11 +18,13 @@ class Service_reconnection_model extends CORE_Model {
                     sd.disconnection_code,
                     sd.connection_id,
                     sc.account_no,
+                    sc.address,
                     sc.meter_inventory_id,
                     c.customer_name,
                     sc.customer_id,
                     ct.contract_type_name,
-                    rt.rate_type_name
+                    rt.rate_type_name,
+                    rrt.rate_type_name as new_rate_type
                 FROM
                     service_reconnection sr
                         LEFT JOIN
@@ -37,6 +39,8 @@ class Service_reconnection_model extends CORE_Model {
                     contract_types ct ON ct.contract_type_id = sc.contract_type_id
                         LEFT JOIN
                     rate_types rt ON rt.rate_type_id = sc.rate_type_id
+                        LEFT JOIN 
+                    rate_types rrt ON rrt.rate_type_id = sr.rate_type_id
                 WHERE
                     sr.is_deleted = FALSE
                         AND sr.is_active = TRUE
@@ -80,6 +84,16 @@ class Service_reconnection_model extends CORE_Model {
                     ".($customer_id==null?"":" AND sc.customer_id=".$customer_id)."");
                     return $query->result();
     }
+
+    function chck_reconnection($reconnection_id=null){
+        $query = $this->db->query("SELECT sr.*, sd.connection_id
+                    FROM service_reconnection sr 
+                            LEFT JOIN
+                        service_disconnection sd ON sd.disconnection_id = sr.disconnection_id
+                    WHERE sr.is_deleted = FALSE 
+                    AND sr.reconnection_id = $reconnection_id");
+        return $query->result();
+    }    
 
 }
 ?>

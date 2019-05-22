@@ -27,15 +27,13 @@
             .toolbar{
                 float: left;
             }
-
             td.details-control {
-                background: url('assets/img/Folder_Closed.png') no-repeat center center;
+                background: url('assets/img/print.png') no-repeat center center;
                 cursor: pointer;
             }
             tr.details td.details-control {
                 background: url('assets/img/Folder_Opened.png') no-repeat center center;
             }
-
             .child_table{
                 padding: 5px;
                 border: 1px #ff0000 solid;
@@ -133,6 +131,7 @@
                                                         <table id="tbl_connection" class="table table-striped" cellspacing="0" width="100%">
                                                             <thead class="">
                                                             <tr>
+                                                                <th></th>
                                                                 <th>Service No</th>
                                                                 <th>Account No</th>
                                                                 <th>Customer</th>
@@ -786,13 +785,20 @@
                 "pageLength": 15,
                 "ajax" : "ServiceConnection/transaction/list",
                 "columns": [
-                    { targets:[0],data: "service_no" },
-                    { targets:[1],data: "account_no" },
-                    { targets:[2],data: "customer_name" },
-                    { targets:[3],data: "serial_no" },
-                    { targets:[4],data: "connection_date" },
                     {
-                        targets:[5],
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { targets:[1],data: "service_no" },
+                    { targets:[2],data: "account_no" },
+                    { targets:[3],data: "customer_name" },
+                    { targets:[4],data: "serial_no" },
+                    { targets:[5],data: "connection_date" },
+                    {
+                        targets:[6],
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -926,27 +932,15 @@
                     });
                 });
 
+
             $('#tbl_connection tbody').on( 'click', 'tr td.details-control', function () {
                 var tr = $(this).closest('tr');
                 var row = dt.row( tr );
-                var idx = $.inArray( tr.attr('id'), detailRows );
-
-                if ( row.child.isShown() ) {
-                    tr.removeClass( 'details' );
-                    row.child.hide();
-
-                    detailRows.splice( idx, 1 );
-                }
-                else {
-                    tr.addClass( 'details' );
-
-                    row.child( format( row.data() ) ).show();
-
-                    if ( idx === -1 ) {
-                        detailRows.push( tr.attr('id') );
-                    }
-                }
-            } );
+                var idx = $.inArray( tr.attr('id'), detailRows );                
+                    var d=row.data();
+                    alert();
+                    window.open("Templates/layout/meter-reading-input-dropdown/"+ d.meter_reading_input_id+"?type=html");
+            });
 
             $("#searchbox_connection").keyup(function(){         
                 dt
@@ -961,11 +955,11 @@
             });           
 
             $('#btn_print').click(function(){
-               window.open('MeterInventory/transaction/print-masterfile');
+               window.open('ServiceConnection/transaction/print-masterfile');
             });  
 
             $('#btn_export').click(function(){
-               window.open('MeterInventory/transaction/export-masterfile');
+               window.open('ServiceConnection/transaction/export-masterfile');
             }); 
 
             $('#btn_new').click(function(){
@@ -978,6 +972,8 @@
                 $('#link_browse_cu').show();
                 $('#ms_icon').hide();
                 _cboCustomer.select2('val',null);
+                _cboContractType.select2('val',1);
+                _cboRateType.select2('val',1);
                 _cboCustomer.select2("enable",true);
             });
 
@@ -996,7 +992,9 @@
                     });
                 });
 
-                _cboCustomer.select2('val',data.customer_id)
+                _cboCustomer.select2('val',data.customer_id);
+                _cboContractType.select2('val',data.contract_type_id);
+                _cboRateType.select2('val',data.rate_type_id);
                 _cboCustomer.select2("enable",false);
 
                 $('#link_browse_cu').hide();
@@ -1010,7 +1008,14 @@
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.connection_id;
-                $('#modal_confirmation').modal('show');
+
+                chck_connection_service(_selectedID,'delete').done(function(response){
+                    if(response.stat == "success"){
+                        $('#modal_confirmation').modal('show');
+                    }else{
+                        showNotification(response);
+                    }
+                });
             });
 
             $('#btn_yes').click(function(){
@@ -1141,6 +1146,20 @@
                 "data":{connection_id : _selectedID}
             });
         };
+
+        var chck_connection_service=function(connection_id,mode){
+
+            var _data=$('#').serializeArray();
+            _data.push({name : "connection_id" ,value : connection_id});
+            _data.push({name : "mode" ,value : mode});
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"ServiceConnection/transaction/chck_connection_service",
+                "data":_data
+            });
+        }; 
 
         var showList=function(b){
             if(b){

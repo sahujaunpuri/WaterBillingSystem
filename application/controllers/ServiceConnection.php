@@ -61,7 +61,6 @@ class ServiceConnection extends CORE_Controller {
         
     }
 
-
     function transaction($txn=null) {
         switch($txn) {
             case 'list':
@@ -136,26 +135,24 @@ class ServiceConnection extends CORE_Controller {
 
             case 'delete':
                 $m_connection=$this->Service_connection_model;
-                $connection_id=$this->input->post('connection_id',TRUE);
+                $connection_id=$this->input->post('connection_id',TRUE);         
 
-                // // Updating Previous Meter Inventory Status
-                // $m_meter_inventory = $this->Meter_inventory_model;
-                // $m_meter_inventory->meter_status_id=2; // Inactive Status
-                // $m_meter_inventory->is_new=1; // Is New Status
-                // $m_meter_inventory->modify($prev_meter_inventory_id);
-
-                // // Updating Meter Inventory Status
-                // $m_meter_inventory = $this->Meter_inventory_model;
-                // $m_meter_inventory->meter_status_id=1; // Active Status
-                // $m_meter_inventory->is_new=0; // Is Not New Status
-                // $m_meter_inventory->modify($meter_inventory_id);                
+                // Updating Meter Inventory Status
+                $connection = $m_connection->getList($connection_id);
+                $meter_inventory_id = $connection[0]->meter_inventory_id;
 
                 $m_connection->is_deleted=1;
-                if($m_connection->modify($connection_id)){
+                if($m_connection->modify($connection_id)){     
+
                     $response['title']='Success!';
                     $response['stat']='success';
                     $response['msg']='Service Connection information successfully deleted.';
                     $m_trans=$this->Trans_model;
+
+                    $m_meter_inventory = $this->Meter_inventory_model;
+                    $m_meter_inventory->meter_status_id=2; // Inactive Status
+                    $m_meter_inventory->is_new=1; // Is Not New Status
+                    $m_meter_inventory->modify($meter_inventory_id);                    
 
                     $m_trans->user_id=$this->session->user_id;
                     $m_trans->set('trans_date','NOW()');
@@ -209,20 +206,34 @@ class ServiceConnection extends CORE_Controller {
 
                 break;
 
+            case 'chck_connection_service':
+                    $m_connection=$this->Service_connection_model;
+
+                    $connection_id=$this->input->post('connection_id',TRUE);
+                    $mode=$this->input->post('mode',TRUE);
+                    $validate = $m_connection->chck_meter_reading($connection_id);
+                    $validate_2 = $m_connection->chck_connection($connection_id);
+
+                    if (count($validate) > 0 || count($validate_2)){
+                        if ($mode == "delete"){$response['title']='Cannot delete!';}else{$response['title']='Cannot update!';}
+                        $response['stat']='error';
+                        $response['msg'] = 'Connection Service #('.$validate[0]->service_no.') still has an active transaction.';
+                    }else{
+                        $response['stat']='success';
+                    }
+
+                    echo json_encode($response);
+
+                break;
+
             case 'print-masterfile':
                 $m_company_info=$this->Company_model;
+                $m_connection=$this->Service_connection_model;
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
 
-                $data['inventory']=$this->Meter_inventory_model->get_list('meter_inventory.is_active=TRUE AND meter_inventory.is_deleted=FALSE',
-                    'meter_inventory.*,customers.customer_name,',
-                    array(
-                        array('customers','customers.customer_id = meter_inventory.customer_id','left')
-
-                        ),
-                    'meter_inventory.meter_code ASC'
-                    );
-                    $this->load->view('template/meter_masterfile_content',$data);
+                $data['connection']=$m_connection->getList();
+                $this->load->view('template/service_connection_list',$data);
 
                 break;
 
@@ -233,14 +244,7 @@ class ServiceConnection extends CORE_Controller {
                 $m_company_info=$this->Company_model;
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
-                $inventory=$this->Meter_inventory_model->get_list('meter_inventory.is_active=TRUE AND meter_inventory.is_deleted=FALSE',
-                    'meter_inventory.*,customers.customer_name,',
-                    array(
-                        array('customers','customers.customer_id = meter_inventory.customer_id','left')
-
-                        ),
-                    'meter_inventory.meter_code ASC'
-                    );
+                $connection=$this->Service_connection_model->getList();
                 $excel->setActiveSheetIndex(0);
 
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
@@ -249,30 +253,39 @@ class ServiceConnection extends CORE_Controller {
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('40');
 
                 //name the worksheet
-                $excel->getActiveSheet()->setTitle("Meter Inventory Masterfile");
+                $excel->getActiveSheet()->setTitle("Service Connection Masterfile");
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->mergeCells('A1:B1');
-                $excel->getActiveSheet()->mergeCells('A2:C2');
-                $excel->getActiveSheet()->mergeCells('A3:B3');
-                $excel->getActiveSheet()->mergeCells('A4:B4');
+                $excel->getActiveSheet()->mergeCells('A1:D1');
+                $excel->getActiveSheet()->mergeCells('A2:D2');
+                $excel->getActiveSheet()->mergeCells('A3:D3');
+                $excel->getActiveSheet()->mergeCells('A4:D4');
 
                 $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
                                         ->setCellValue('A2',$company_info[0]->company_address)
                                         ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
                                         ->setCellValue('A4',$company_info[0]->email_address);
 
-                $excel->getActiveSheet()->setCellValue('A6','Meter Inventory Masterfile')
+                $excel->getActiveSheet()->setCellValue('A6','Service Connection Masterfile')
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A7','')
                                         ->getStyle('A7')->getFont()->setItalic(TRUE);
                 $excel->getActiveSheet()->setCellValue('A8','')
                                         ->getStyle('A8')->getFont()->setItalic(TRUE);
 
-                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('25');
-                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
-                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('40');
-                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('40');
-                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('25');
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('5');
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimension('H')->setWidth('40');
+                $excel->getActiveSheet()->getColumnDimension('I')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('J')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('K')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('L')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('M')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('N')->setWidth('20');
 
                  $style_header = array(
 
@@ -286,33 +299,61 @@ class ServiceConnection extends CORE_Controller {
                 );
 
 
-                $excel->getActiveSheet()->getStyle('A9:E9')->applyFromArray( $style_header );
+                $excel->getActiveSheet()->getStyle('A9:N9')->applyFromArray( $style_header );
 
-                $excel->getActiveSheet()->setCellValue('A9','Meter Code')
+                $excel->getActiveSheet()->setCellValue('A9','#')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('B9','Serial No')
+                $excel->getActiveSheet()->setCellValue('B9','Service No')
                                         ->getStyle('B9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C9','Description')
+                $excel->getActiveSheet()->setCellValue('C9','Account No')
                                         ->getStyle('C9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D9','Current Assignee')
+                $excel->getActiveSheet()->setCellValue('D9','Customer')
                                         ->getStyle('D9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('E9','Date Created')
+                $excel->getActiveSheet()->setCellValue('E9','Service Date')
                                         ->getStyle('E9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('F9','Meter Serial')
+                                        ->getStyle('F9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('G9','Name to appear on receipt')
+                                        ->getStyle('G9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('H9','Address')
+                                        ->getStyle('H9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I9','Target Installation Date & Time')
+                                        ->getStyle('I9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('J9','Contract Type')
+                                        ->getStyle('J9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('K9','Rate Type')
+                                        ->getStyle('K9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('L9','Initial Reading')
+                                        ->getStyle('L9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('M9','Initial Deposit')
+                                        ->getStyle('M9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('N9','Attended By')
+                                        ->getStyle('N9')->getFont()->setBold(TRUE);
 
+                $a=1;
                 $i=10;
 
-
-                foreach ($inventory as $inventory) {
-                $excel->getActiveSheet()->setCellValue('A'.$i,$inventory->meter_code)
-                                        ->setCellValue('B'.$i,$inventory->serial_no)
-                                        ->setCellValue('C'.$i,$inventory->meter_description)
-                                        ->setCellValue('D'.$i,$inventory->customer_name)
-                                        ->setCellValue('E'.$i,$inventory->date_created);
+                foreach ($connection as $row) {
+                $excel->getActiveSheet()->setCellValue('A'.$i,$a)
+                                        ->setCellValue('B'.$i,$row->service_no)
+                                        ->setCellValue('C'.$i,$row->account_no)
+                                        ->setCellValue('D'.$i,$row->customer_name)
+                                        ->setCellValue('E'.$i,$row->service_date)
+                                        ->setCellValue('F'.$i,$row->serial_no)
+                                        ->setCellValue('G'.$i,$row->receipt_name)
+                                        ->setCellValue('H'.$i,$row->address)
+                                        ->setCellValue('I'.$i,$row->target_date.' '.$row->target_time)
+                                        ->setCellValue('J'.$i,$row->contract_type_name)
+                                        ->setCellValue('K'.$i,$row->rate_type_name)
+                                        ->setCellValue('L'.$i,$row->initial_meter_reading)
+                                        ->setCellValue('M'.$i,$row->initial_meter_deposit)
+                                        ->setCellValue('N'.$i,$row->attended_by);
                 $i++;
+                $a++;
 
                 }
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="Meter Inventory Masterfile '.date('M-d-Y',NOW()).'.xlsx"');
+                header('Content-Disposition: attachment;filename="Service Connection Masterfile '.date('M-d-Y',NOW()).'.xlsx"');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
