@@ -62,7 +62,12 @@ class Meter_reading_input extends CORE_Controller
                 break;
 
             case 'list-inputs' :
-                $response['data']= $this->Meter_reading_period_model->get_meter_reading_for_inputs();
+                $meter_reading_period_id = $this->input->post('meter_reading_period_id',TRUE);
+                $meter_period_info = $this->Meter_reading_period_model->get_list($meter_reading_period_id,
+                'DATE(CONCAT(meter_reading_period.meter_reading_year,  "-", meter_reading_period.month_id, "-01")) as before_date');
+                $before_date = $meter_period_info[0]->before_date;
+                // echo $before_date;
+                $response['data']= $this->Meter_reading_period_model->get_meter_reading_for_inputs($before_date);
                 echo json_encode($response);
                 break;
 
@@ -103,6 +108,7 @@ class Meter_reading_input extends CORE_Controller
                         'meter_reading_input_items.previous_reading',
                         'meter_reading_input_items.current_reading',
                         'meter_reading_input_items.total_consumption',
+                        'meter_reading_input_items.previous_month',
                         'service_connection.account_no',
                         'customers.customer_name',
                         'meter_inventory.serial_no'
@@ -141,12 +147,14 @@ class Meter_reading_input extends CORE_Controller
                 //prepare the items with multiple values for looping statement
                 $connection_id = $this->input->post('connection_id');
                 $previous_reading = $this->input->post('previous_reading');
+                $previous_month = $this->input->post('previous_month');
                 $current_reading = $this->input->post('current_reading');
                 $total_consumption = $this->input->post('total_consumption');
                 
                 for($i=0;$i<count($connection_id);$i++){
                     $m_invoice_items->meter_reading_input_id=$meter_reading_input_id;
                     $m_invoice_items->connection_id=$this->get_numeric_value($connection_id[$i]);
+                    $m_invoice_items->previous_month=$previous_month[$i];
                     $m_invoice_items->previous_reading=$this->get_numeric_value($previous_reading[$i]);
                     $m_invoice_items->current_reading=$this->get_numeric_value($current_reading[$i]);
                     $m_invoice_items->total_consumption=$this->get_numeric_value($total_consumption[$i]);
@@ -180,10 +188,11 @@ class Meter_reading_input extends CORE_Controller
                 $previous_reading = $this->input->post('previous_reading');
                 $current_reading = $this->input->post('current_reading');
                 $total_consumption = $this->input->post('total_consumption');
-                
+                $previous_month = $this->input->post('previous_month');
                 for($i=0;$i<count($connection_id);$i++){
                     $m_invoice_items->meter_reading_input_id=$meter_reading_input_id;
                     $m_invoice_items->connection_id=$this->get_numeric_value($connection_id[$i]);
+                    $m_invoice_items->previous_month=$previous_month[$i];                 
                     $m_invoice_items->previous_reading=$this->get_numeric_value($previous_reading[$i]);
                     $m_invoice_items->current_reading=$this->get_numeric_value($current_reading[$i]);
                     $m_invoice_items->total_consumption=$this->get_numeric_value($total_consumption[$i]);

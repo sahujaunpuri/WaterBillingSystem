@@ -143,7 +143,7 @@
                 <hr>
                     <div class="row">
                         <div class="col-sm-4">
-                            <label>SO # :</label> <br />
+                            <label>ACCOUNT NO :</label> <br />
                             <div class="input-group">
                                 <input type="text" name="account_no" class="form-control" id="account_no_id" readonly>
                                 <input type="hidden" id="connection_id" name="connection_id" class="form-control" >
