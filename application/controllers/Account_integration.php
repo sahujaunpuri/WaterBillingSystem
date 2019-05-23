@@ -22,6 +22,8 @@ class Account_integration extends CORE_Controller
                 'Departments_model',
                 'Purchasing_integration_model',
                 'Trans_model',
+                'Matrix_residential_model',
+                'Matrix_commercial_model',
                 'Sched_expense_integration'
             )
 
@@ -47,6 +49,8 @@ class Account_integration extends CORE_Controller
         $data['departments'] = $this->Departments_model->get_list(array('is_active'=>TRUE, 'is_deleted'=>FALSE));
         $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+        $data['residentials']=$this->Matrix_residential_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
+        $data['commercials']=$this->Matrix_commercial_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
 
 
 
@@ -130,6 +134,35 @@ class Account_integration extends CORE_Controller
                 echo json_encode($response);
 
                 break;
+
+
+
+            case 'save_water_billing':
+                $m_integration=$this->Account_integration_model;
+                $m_integration->default_matrix_residential_id=$this->input->post('default_matrix_residential_id',TRUE);
+                $m_integration->default_matrix_commercial_id=$this->input->post('default_matrix_commercial_id',TRUE);        
+                $m_integration->modify(1);
+
+                $response['stat']="success";
+                $response['title']="Success!";
+                $response['msg']="Water Billing Settings Successfully Integrated.";
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=57; // TRANS TYPE
+                $m_trans->trans_log='Updated Water Billing System Configuration';
+                $m_trans->save();
+                echo json_encode($response);
+
+                break;
+
+
+
+
+
+
 
 
             case 'save_supplier':

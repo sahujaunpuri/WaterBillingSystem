@@ -379,7 +379,9 @@ $(document).ready(function(){
         $('#btn_yes').click(function(){
             removeMeterPeriod().done(function(response){
                 showNotification(response);
-                dt.row(_selectRowObj).remove().draw();
+                if(response.stat=='success') {
+                    dt.row(_selectRowObj).remove().draw();
+                }
             });
         });
 
@@ -393,22 +395,28 @@ $(document).ready(function(){
                 if(_txnMode=="new"){
                     createMeterPeriod().done(function(response){
                         showNotification(response);
-                        dt.row.add(response.row_added[0]).draw();
-                        clearFields();
+                            if(response.stat=='success') {
+                                dt.row.add(response.row_added[0]).draw();
+                                clearFields();
+                                $('#modal_meter_reading_period').modal('hide');
+                            }
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }else{
                     updateMeterPeriod().done(function(response){
                         showNotification(response);
-                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                        clearFields();
+                        if(response.stat=='success') {
+                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                            clearFields();
+                            $('#modal_meter_reading_period').modal('hide');
+                        }
                         //showList(true);
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }
-                $('#modal_meter_reading_period').modal('hide');
+                
             }
         });
     })();
@@ -495,8 +503,8 @@ $(document).ready(function(){
     };
 
     var clearFields=function(){
-        $('input[required],textarea','#frm_meter_reading_period').val('');
-        $('form').find('input:first').focus();
+        $('input[required],textarea,input:not(.date-picker)','#frm_meter_reading_period').val('');
+        // $('form').find('input:first').focus();
     };
 
     function format ( d ) {

@@ -12,6 +12,7 @@ class Matrix_commercial extends CORE_Controller
         $this->load->model('Trans_model');
         $this->load->model('Matrix_commercial_model');
         $this->load->model('Matrix_commercial_items_model');
+        $this->load->model('Account_integration_model');
         $this->load->library('excel');
     }
 
@@ -130,12 +131,20 @@ class Matrix_commercial extends CORE_Controller
             case 'delete':
                 $m_matrix=$this->Matrix_commercial_model;
                 $matrix_commercial_id=$this->input->post('matrix_commercial_id',TRUE);
-                $m_matrix->is_deleted=1;//mark as deleted
-                $m_matrix->modify($matrix_commercial_id);
+                $ai=$this->Account_integration_model->get_list(1)[0];
+                if($ai->default_matrix_commercial_id == $matrix_commercial_id){
+                    $response['title']='Cannot Delete!';
+                    $response['stat']='error';
+                    $response['msg']='Cannot Delete Matrix in use.';
+                }else{
+                    $m_matrix->is_deleted=1;//mark as deleted
+                    $m_matrix->modify($matrix_commercial_id);
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Record successfully deleted.';
+                }
 
-                $response['title']='Success!';
-                $response['stat']='success';
-                $response['msg']='Record successfully deleted.';
+
                 echo json_encode($response);
 
                 break;

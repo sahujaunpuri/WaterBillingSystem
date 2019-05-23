@@ -10,6 +10,7 @@ class Meter_reading_period extends CORE_Controller {
         $this->load->model('Trans_model');
         $this->load->model('Months_model');
         $this->load->model('Meter_reading_period_model');
+        $this->load->model('Meter_Reading_input_model');
 
     }
 
@@ -39,10 +40,23 @@ class Meter_reading_period extends CORE_Controller {
             case 'create':
                 $m_period = $this->Meter_reading_period_model;
 
+                $month_id = $this->input->post('month_id', TRUE);
+                $meter_reading_year = $this->input->post('meter_reading_year', TRUE);
+
+                $p_validate = count($m_period->validate_count_period($meter_reading_year,$month_id,0));  // VALIDATE MONTH AND YEAR IF EXISTS IN TABLE
+
+                if($p_validate > 0){
+                    $response['stat']='error';
+                    $response['title']='<b>Duplicate!</b>';
+                    $response['msg']='Cannot make an Existing Meter Reading Period !<br />';
+                    die(json_encode($response));
+
+                }
+
                 $m_period->meter_reading_period_start = date('Y-m-d',strtotime($this->input->post('meter_reading_period_start', TRUE)));
                 $m_period->meter_reading_period_end = date('Y-m-d',strtotime($this->input->post('meter_reading_period_end', TRUE)));
-                $m_period->month_id = $this->input->post('month_id', TRUE);
-                $m_period->meter_reading_year = $this->input->post('meter_reading_year', TRUE);
+                $m_period->month_id = $month_id;
+                $m_period->meter_reading_year = $meter_reading_year;
 
                 $m_period->save();
                 $meter_reading_period_id = $m_period->last_insert_id();
@@ -66,9 +80,17 @@ class Meter_reading_period extends CORE_Controller {
 
             case 'delete':
                 $m_period=$this->Meter_reading_period_model;
-
                 $meter_reading_period_id=$this->input->post('meter_reading_period_id',TRUE);
 
+                $m_input = $this->Meter_Reading_input_model;
+                $p_input_validate = count($m_input->get_list(array('is_active'=> TRUE, 'is_deleted'=>FALSE , 'meter_reading_period_id'=>$meter_reading_period_id))); // VALIDATE IF THERE IS A METER PERIOD IN  METER READING ENTRY (INPUT)
+                if($p_input_validate > 0){
+                    $response['stat']='error';
+                    $response['title']='<b>Cannot Delete!</b>';
+                    $response['msg']='Meter Reading Entries are created using this period !<br />';
+                    die(json_encode($response));
+
+                }
                 $m_period->is_deleted=1;
                 if($m_period->modify($meter_reading_period_id)){
                     $response['title']='Success!';
@@ -92,10 +114,30 @@ class Meter_reading_period extends CORE_Controller {
             case 'update':
                 $m_period = $this->Meter_reading_period_model;
                 $meter_reading_period_id =$this->input->post('meter_reading_period_id', TRUE);
+                $month_id = $this->input->post('month_id', TRUE);
+                $meter_reading_year = $this->input->post('meter_reading_year', TRUE);
+                $p_validate = count($m_period->validate_count_period($meter_reading_year,$month_id,$meter_reading_period_id));
+
+                if($p_validate > 0){
+                    $response['stat']='error';
+                    $response['title']='<b>Duplicate!</b>';
+                    $response['msg']='Matrix Exists !<br />';
+                    die(json_encode($response));
+
+                }
+                $m_input = $this->Meter_Reading_input_model;
+                $p_input_validate = count($m_input->get_list(array('is_active'=> TRUE, 'is_deleted'=>FALSE , 'meter_reading_period_id'=>$meter_reading_period_id))); // VALIDATE IF THERE IS A METER PERIOD IN  METER READING ENTRY (INPUT)
+                if($p_input_validate > 0){
+                    $response['stat']='error';
+                    $response['title']='<b>Cannot Update!</b>';
+                    $response['msg']='Meter Reading Entries are created using this period !<br />';
+                    die(json_encode($response));
+
+                }
                 $m_period->meter_reading_period_start = date('Y-m-d',strtotime($this->input->post('meter_reading_period_start', TRUE)));
                 $m_period->meter_reading_period_end = date('Y-m-d',strtotime($this->input->post('meter_reading_period_end', TRUE)));
-                $m_period->month_id = $this->input->post('month_id', TRUE);
-                $m_period->meter_reading_year = $this->input->post('meter_reading_year', TRUE);
+                $m_period->month_id = $month_id; 
+                $m_period->meter_reading_year = $meter_reading_year; 
                 $m_period->modify($meter_reading_period_id);
     
                 $response['title'] = 'Success!';
