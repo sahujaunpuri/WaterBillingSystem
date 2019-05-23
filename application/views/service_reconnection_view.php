@@ -499,7 +499,7 @@ $(document).ready(function(){
                 }else{
                     showNotification(response);
                 }
-            });
+            });          
         });
 
         _cboCustomer.on('change',function(){

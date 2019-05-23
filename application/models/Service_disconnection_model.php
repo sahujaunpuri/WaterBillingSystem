@@ -77,5 +77,19 @@ class Service_disconnection_model extends CORE_Model {
         return $query->result();
     }
 
+    function chck_disconnection($disconnection_id){
+        $query=$this->db->query("SELECT 
+                    sd.*
+                FROM
+                    service_disconnection sd
+                        LEFT JOIN
+                    service_reconnection sr ON sr.disconnection_id = sd.disconnection_id
+                WHERE
+                    sr.is_deleted = FALSE
+                        AND sd.is_deleted = FALSE
+                        AND sr.disconnection_id = $disconnection_id");
+                        return $query->result();
+    }
+
 }
 ?>

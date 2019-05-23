@@ -472,15 +472,14 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.disconnection_id;
-            $('#modal_confirmation').modal('show');
 
-            // chck_disconnection_service(_selectedID,'delete').done(function(response){
-            //     if(response.stat == "success"){
-            //         $('#modal_confirmation').modal('show');
-            //     }else{
-            //         showNotification(response);
-            //     }
-            // });
+            chck_disconnection_service(_selectedID,'delete').done(function(response){
+                if(response.stat == "success"){
+                    $('#modal_confirmation').modal('show');
+                }else{
+                    showNotification(response);
+                }
+            });
 
         });
 

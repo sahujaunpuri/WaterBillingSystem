@@ -11,7 +11,7 @@ class Service_connection_model extends CORE_Model{
         parent::__construct();
     }
 
-    function getList($connection_id=null){
+    function getList($connection_id=null,$status_id=null,$current_id=null){
     	$query = $this->db->query("SELECT 
 		    sc.*,
 		    inv.serial_no,
@@ -34,7 +34,9 @@ class Service_connection_model extends CORE_Model{
 		WHERE
 		    sc.is_deleted = FALSE
 		        AND sc.is_active = TRUE
-		        ".($connection_id==null?"":" AND sc.connection_id=".$connection_id)."");
+		        ".($connection_id==null?"":" AND sc.connection_id=".$connection_id)."
+                ".($status_id==null?"":" AND sc.status_id=".$status_id)."
+                ".($current_id==null?"":" AND sc.current_id=".$current_id)."");
     	return $query->result();
     }
 
@@ -63,7 +65,11 @@ class Service_connection_model extends CORE_Model{
     }
 
     function chck_connection($connection_id=null){
-    	$query = $this->db->query("SELECT sd.* FROM service_disconnection sd WHERE sd.is_deleted = FALSE AND sd.connection_id = $connection_id");
+    	$query = $this->db->query("SELECT sd.*, sc.service_no
+                    FROM service_disconnection sd
+                        LEFT JOIN service_connection sc ON sc.connection_id = sd.connection_id 
+                        WHERE sd.is_deleted = FALSE 
+                        AND sd.connection_id = $connection_id");
     	return $query->result();
     }    
 

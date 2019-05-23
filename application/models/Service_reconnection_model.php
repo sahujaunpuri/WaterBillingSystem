@@ -86,13 +86,14 @@ class Service_reconnection_model extends CORE_Model {
     }
 
     function chck_reconnection($reconnection_id=null){
-        $query = $this->db->query("SELECT sr.*, sd.connection_id
-                    FROM service_reconnection sr 
-                            LEFT JOIN
-                        service_disconnection sd ON sd.disconnection_id = sr.disconnection_id
-                    WHERE sr.is_deleted = FALSE 
-                    AND sr.reconnection_id = $reconnection_id");
-        return $query->result();
+        $query = $this->db->query("SELECT sd.*
+                    FROM
+                        service_disconnection sd 
+                        WHERE 
+                        sd.is_deleted = FALSE
+                        AND sd.previous_status_id = 3
+                        AND sd.previous_id = $reconnection_id");
+                            return $query->result();
     }    
 
 }

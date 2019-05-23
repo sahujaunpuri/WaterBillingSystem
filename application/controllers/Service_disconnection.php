@@ -164,16 +164,23 @@ class Service_disconnection extends CORE_Controller {
 
             case 'chck_disconnection_service':
                     $m_disconnection=$this->Service_disconnection_model;
+                    $m_connection=$this->Service_connection_model;
 
                     $disconnection_id=$this->input->post('disconnection_id',TRUE);
-                    $mode=$this->input->post('mode',TRUE);
-                    $validate = $m_disconnection->chck_disconnection($disconnection_id);
 
-                    if (count($validate) > 0){
+                    $disconnection = $m_disconnection->getList($disconnection_id);
+                    $disconnection_code = $disconnection[0]->disconnection_code;
+
+                    $mode=$this->input->post('mode',TRUE);
+                    $validate = $m_disconnection->chck_disconnection($disconnection_id); // Active Reconnection
+                    $validate_2 = $m_connection->getList(null,2,$disconnection_id); // Current ID
+
+                    if (count($validate) > 0 OR count($validate_2) <= 0){
                         if ($mode == "delete"){$response['title']='Cannot delete!';}else{$response['title']='Cannot update!';}
                         $response['stat']='error';
-                        $response['msg'] = 'Disconnection Service #('.$validate[0]->disconnection_code.') still has an active transaction.';
-                    }else{
+                        $response['msg'] = 'Disconnection Service #('.$disconnection_code.') still has an active transaction.';
+                    }
+                    else{
                         $response['stat']='success';
                     }
 

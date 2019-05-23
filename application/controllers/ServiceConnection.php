@@ -211,14 +211,20 @@ class ServiceConnection extends CORE_Controller {
 
                     $connection_id=$this->input->post('connection_id',TRUE);
                     $mode=$this->input->post('mode',TRUE);
-                    $validate = $m_connection->chck_meter_reading($connection_id);
-                    $validate_2 = $m_connection->chck_connection($connection_id);
 
-                    if (count($validate) > 0 || count($validate_2)){
+                    $connection = $m_connection->getList($connection_id);
+                    $service_no = $connection[0]->service_no;
+
+                    $validate = $m_connection->chck_meter_reading($connection_id); // Meter Reading Entry
+                    $validate_2 = $m_connection->chck_connection($connection_id); // Disconnection
+                    $validate_3 = $m_connection->getList(null,1,$connection_id); // Current ID
+
+                    if (count($validate) > 0 OR count($validate_2) > 0 OR count($validate_3) <= 0){
                         if ($mode == "delete"){$response['title']='Cannot delete!';}else{$response['title']='Cannot update!';}
                         $response['stat']='error';
-                        $response['msg'] = 'Connection Service #('.$validate[0]->service_no.') still has an active transaction.';
-                    }else{
+                        $response['msg'] = 'Connection Service #('.$service_no.') still has an active transaction.';
+                    }
+                    else{
                         $response['stat']='success';
                     }
 
