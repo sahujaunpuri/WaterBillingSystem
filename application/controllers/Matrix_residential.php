@@ -12,6 +12,7 @@ class Matrix_residential extends CORE_Controller
         $this->load->model('Trans_model');
         $this->load->model('Matrix_residential_model');
         $this->load->model('Matrix_residential_items_model');
+        $this->load->model('Account_integration_model');
         $this->load->library('excel');
     }
 
@@ -130,12 +131,23 @@ class Matrix_residential extends CORE_Controller
             case 'delete':
                 $m_matrix=$this->Matrix_residential_model;
                 $matrix_residential_id=$this->input->post('matrix_residential_id',TRUE);
-                $m_matrix->is_deleted=1;//mark as deleted
-                $m_matrix->modify($matrix_residential_id);
 
-                $response['title']='Success!';
-                $response['stat']='success';
-                $response['msg']='Record successfully deleted.';
+                $ai=$this->Account_integration_model->get_list(1)[0];
+                if($ai->default_matrix_residential_id == $matrix_residential_id){
+
+                    $response['title']='Cannot Delete!';
+                    $response['stat']='error';
+                    $response['msg']='Cannot Delete Matrix in use.';
+
+                }else{
+                    $m_matrix->is_deleted=1;//mark as deleted
+                    $m_matrix->modify($matrix_residential_id);
+
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Record successfully deleted.';
+                }
+
                 echo json_encode($response);
 
                 break;

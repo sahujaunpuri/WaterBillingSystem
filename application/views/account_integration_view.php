@@ -148,7 +148,8 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
     <div class="col-md-12">
         <div class="tab-container tab-top tab-primary">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#accounts_integration_setting_supplier" data-toggle="tab" style="font-family: tahoma;"> Supplier</a></li>
+                <li class="active"><a href="#accounts_integration_setting_billing" data-toggle="tab" style="font-family: tahoma;"> Billing</a></li>
+                <li ><a href="#accounts_integration_setting_supplier" data-toggle="tab" style="font-family: tahoma;"> Supplier</a></li>
                 <li><a href="#accounts_integration_setting_customer" data-toggle="tab" style="font-family: tahoma;"> Customer</a></li>
                 <li><a href="#accounts_integration_setting_inventory" data-toggle="tab" style="font-family: tahoma;"> Inventory</a></li>
                 <li><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"> Other Accounts</a></li>
@@ -160,6 +161,39 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
 
             </ul>
             <div class="tab-content">
+<!-- ITEM TRANSFER START -->
+            <div class="tab-pane active" id="accounts_integration_setting_billing" style="min-height: 300px;">
+                <form id="frm_account_integration_billing" role="form" class="form-horizontal row-border">
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Water Billing Settings </strong></span></h4>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b>Residential Rate :</label>
+                            <div class="col-md-7">
+                                <select name="default_matrix_residential_id" class="cbo_accounts" data-error-msg="Issuance Supplier is required." required>
+                                    <?php foreach($residentials as $residential){ ?>
+                                        <option value="<?php echo $residential->matrix_residential_id; ?>" <?php echo ($current_accounts->default_matrix_residential_id==$residential->matrix_residential_id?'selected':''); ?>  ><?php echo $residential->matrix_residential_code; ?> - <?php echo $residential->description; ?></option>
+                                    <?php } ?>
+                                </select>
+                                <span class="help-block m-b-none">Please Choose a default Residential Rate to be used in creating Statement of Accounts. </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Commercial Rate :</label>
+                            <div class="col-md-7">
+                                <select name="default_matrix_commercial_id" class="cbo_accounts" data-error-msg="Issuance Supplier is required." required>
+                                    <?php foreach($commercials as $commercial){ ?>
+                                        <option value="<?php echo $commercial->matrix_commercial_id; ?>" <?php echo ($current_accounts->default_matrix_commercial_id==$commercial->matrix_commercial_id?'selected':''); ?>  ><?php echo $commercial->matrix_commercial_code; ?> - <?php echo $commercial->description; ?></option>
+                                    <?php } ?>
+                                </select>
+                            <span class="help-block m-b-none">Please Choose a default Commercial Rate to be used in creating Statement of Accounts. </span>
+                            </div><br>
+                        </div>
+                </form>
+                    <div class="col-sm-offset-3">
+                        <button id="btn_save_water_billing" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Water Billing Configuration Changes</button>
+                    </div>
+            </div>
+
+<!-- ITEM TRANSFER END -->
 <!-- ITEM TRANSFER START -->
             <div class="tab-pane" id="accounts_integration_item_transfer" style="min-height: 300px;">
                 <form id="frm_account_integration_item_transfer" role="form" class="form-horizontal row-border">
@@ -338,7 +372,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
              </div>
 <!-- CUSTOMER END -->
 <!-- SUPPLIER START -->
-                <div class="tab-pane active" id="accounts_integration_setting_supplier" style="min-height: 300px;">
+                <div class="tab-pane" id="accounts_integration_setting_supplier" style="min-height: 300px;">
                 <form id="frm_account_integration_supplier" role="form" class="form-horizontal row-border">
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Supplier Integration Account</strong></span></h4>
                         <div class="form-group">
@@ -821,6 +855,14 @@ $(document).ready(function(){
                 });
             });
 
+            $('#btn_save_water_billing').click(function(){
+                saveSettingsWaterBilling().done(function(response){
+                    showNotification(response);
+                }).always(function(){
+                    showSpinningProgress($('#btn_save_water_billing'));
+                });
+            });
+
             
             $('#btn_close_period').click(function(){
                 var btn=$(this);
@@ -1018,6 +1060,20 @@ $(document).ready(function(){
             "url":"Account_integration/transaction/save_material_issuance",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save_material_issuance_accounts'))
+
+        });
+    };
+
+    var saveSettingsWaterBilling=function(){
+        var _data=$('#frm_account_integration_billing').serializeArray();
+        console.log(_data);
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Account_integration/transaction/save_water_billing",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save_water_billing'))
 
         });
     };
