@@ -20,6 +20,8 @@ class Service_reconnection_model extends CORE_Model {
                     sc.account_no,
                     sc.address,
                     sc.meter_inventory_id,
+                    sc.receipt_name,
+                    inv.serial_no,
                     c.customer_name,
                     sc.customer_id,
                     ct.contract_type_name,
