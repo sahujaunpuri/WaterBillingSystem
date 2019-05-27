@@ -106,8 +106,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Meter_reading_input_model');
         $this->load->model('Meter_reading_input_items_model');
 
-
-
+        $this->load->model('Service_connection_model');
+        $this->load->model('Service_disconnection_model');
+        $this->load->model('Service_reconnection_model');
 
         $this->load->library('M_pdf');
         $this->load->library('excel');
@@ -5473,6 +5474,104 @@ class Templates extends CORE_Controller {
                 }
 
                 break;
+
+                case 'connection': //Connection Services
+                        $m_connection=$this->Service_connection_model;
+                        $m_company=$this->Company_model;
+                        $type=$this->input->get('type',TRUE);
+
+                        $info=$m_connection->getList($filter_value);
+                        $company=$m_company->get_list();
+
+                        $data['connection']=$info[0];
+                        $data['company_info']=$company[0];
+
+                        //show only inside grid with menu button
+                        if($type=='fullview'||$type==null){
+                            echo $this->load->view('template/connection_content_wo_header',$data,TRUE);
+                            echo $this->load->view('template/connection_content_menus',$data,TRUE);
+                        }
+
+                        //show only inside grid without menu button
+                        if($type=='contentview'){
+                            echo $this->load->view('template/connection_content',$data,TRUE);
+                        }
+
+                        //download pdf
+                        if($type=='pdf'){
+                            $file_name=$info[0]->service_no;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/connection_content',$data,TRUE); //load the template
+                            $pdf->setFooter('{PAGENO}');
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output($pdfFilePath,"D");
+
+                        }
+
+                        //preview on browser
+                        if($type=='preview'){
+                            $file_name=$info[0]->service_no;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/connection_content',$data,TRUE); //load the template
+                            $pdf->setFooter('{PAGENO}');
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output();
+                        }
+
+                        break;
+
+                case 'reconnection': //Connection Services
+                        $m_reconnection=$this->Service_reconnection_model;
+                        $m_company=$this->Company_model;
+                        $type=$this->input->get('type',TRUE);
+
+                        $info=$m_reconnection->getList($filter_value);
+                        $company=$m_company->get_list();
+
+                        $data['reconnection']=$info[0];
+                        $data['company_info']=$company[0];
+
+                        //show only inside grid with menu button
+                        if($type=='fullview'||$type==null){
+                            echo $this->load->view('template/reconnection_content_wo_header',$data,TRUE);
+                            echo $this->load->view('template/reconnection_content_menus',$data,TRUE);
+                        }
+
+                        //show only inside grid without menu button
+                        if($type=='contentview'){
+                            echo $this->load->view('template/reconnection_content',$data,TRUE);
+                        }
+
+                        //download pdf
+                        if($type=='pdf'){
+                            $file_name=$info[0]->reconnection_code;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/reconnection_content',$data,TRUE); //load the template
+                            $pdf->setFooter('{PAGENO}');
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output($pdfFilePath,"D");
+
+                        }
+
+                        //preview on browser
+                        if($type=='preview'){
+                            $file_name=$info[0]->reconnection_code;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/reconnection_content',$data,TRUE); //load the template
+                            $pdf->setFooter('{PAGENO}');
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output();
+                        }
+
+                        break;
 
         }
     }

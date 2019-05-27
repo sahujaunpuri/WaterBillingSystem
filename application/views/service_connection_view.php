@@ -28,8 +28,8 @@
                 float: left;
             }
             td.details-control {
-                background: url('assets/img/print.png') no-repeat center center;
-                cursor: pointer;
+            background: url('assets/img/Folder_Closed.png') no-repeat center center;
+            cursor: pointer;
             }
             tr.details td.details-control {
                 background: url('assets/img/Folder_Opened.png') no-repeat center center;
@@ -932,15 +932,39 @@
                     });
                 });
 
+                $('#tbl_connection tbody').on( 'click', 'tr td.details-control', function () {
+                    var tr = $(this).closest('tr');
+                    var row = dt.row( tr );
+                    var idx = $.inArray( tr.attr('id'), detailRows );
 
-            $('#tbl_connection tbody').on( 'click', 'tr td.details-control', function () {
-                var tr = $(this).closest('tr');
-                var row = dt.row( tr );
-                var idx = $.inArray( tr.attr('id'), detailRows );                
-                    var d=row.data();
-                    alert();
-                    window.open("Templates/layout/meter-reading-input-dropdown/"+ d.meter_reading_input_id+"?type=html");
-            });
+                    if ( row.child.isShown() ) {
+                        tr.removeClass( 'details' );
+                        row.child.hide();
+
+                        // Remove from the 'open' array
+                        detailRows.splice( idx, 1 );
+                    }
+                    else {
+                        tr.addClass( 'details' );
+                        //console.log(row.data());
+                        var d=row.data();
+
+                        $.ajax({
+                            "dataType":"html",
+                            "type":"POST",
+                            "url":"Templates/layout/connection/"+ d.connection_id,
+                            "beforeSend" : function(){
+                                row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                            }
+                        }).done(function(response){
+                            row.child( response,'no-padding' ).show();
+                            // Add to the 'open' array
+                            if ( idx === -1 ) {
+                                detailRows.push( tr.attr('id') );
+                            }
+                        });
+                    }
+                });            
 
             $("#searchbox_connection").keyup(function(){         
                 dt

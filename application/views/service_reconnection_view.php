@@ -103,6 +103,7 @@
                                                 <table id="tbl_reconnection" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                     <tr>
+                                                        <th></th>
                                                         <th>Service No</th>
                                                         <th>Contract No</th>
                                                         <th>Account No</th>
@@ -342,6 +343,13 @@ $(document).ready(function(){
                 "searchPlaceholder": "Search"
             },
             "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
                 { targets:[0],data: "reconnection_code" },
                 { targets:[1],data: "disconnection_code" },
                 { targets:[2],data: "account_no" },
@@ -408,7 +416,7 @@ $(document).ready(function(){
     var bindEventHandlers=(function(){
         var detailRows = [];
 
-        $('#tbl_departments tbody').on( 'click', 'tr td.details-control', function () {
+        $('#tbl_reconnection tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt.row( tr );
             var idx = $.inArray( tr.attr('id'), detailRows );
@@ -417,18 +425,30 @@ $(document).ready(function(){
                 tr.removeClass( 'details' );
                 row.child.hide();
 
+                // Remove from the 'open' array
                 detailRows.splice( idx, 1 );
             }
             else {
                 tr.addClass( 'details' );
+                //console.log(row.data());
+                var d=row.data();
 
-                row.child( format( row.data() ) ).show();
-
-                if ( idx === -1 ) {
-                    detailRows.push( tr.attr('id') );
-                }
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Templates/layout/reconnection/"+ d.reconnection_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response,'no-padding' ).show();
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+                });
             }
-        } );
+        });         
 
         $('#btn_new').click(function(){
             _txnMode="new";

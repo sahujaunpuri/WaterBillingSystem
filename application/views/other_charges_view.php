@@ -279,7 +279,7 @@
         <div class="modal-content">
             <div class="modal-header ">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Sales Order</h2>
+                <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Accounts</h2>
             </div>
             <div class="modal-body">
                 <table id="tbl_account_list" class="table table-striped" cellspacing="0" width="100%">
@@ -557,7 +557,7 @@ $(document).ready(function(){
         $('#tbl_other_charges tbody').on('click','button[name="edit_info"]',function(){
             ///alert("ddd");
             _txnMode="edit";
-            $('.other_charges_title').html('Edit Sales Invoice');
+            $('.other_charges_title').html('Edit Other Charges');
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.other_charge_id;
@@ -626,11 +626,11 @@ $(document).ready(function(){
             _selectedID=data.other_charge_id;
             //alert(_selectedID);
             _is_journal_posted=data.is_journal_posted;
-        if(_is_journal_posted > 0){
-                showNotification({title:" Error!",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Sales Journal."});
+            if(_is_journal_posted > 0){
+                    showNotification({title:" Error!",stat:"error",msg:"Cannot Delete: Invoice is already Posted in Sales Journal."});
             } else{
-            $('#modal_confirmation').modal('show');
-        }
+                $('#modal_confirmation').modal('show');
+            }
         });
         //track every changes on numeric fields
         $('#tbl_items tbody').on('keyup','input.numeric,input.number',function(){
