@@ -103,6 +103,7 @@
                                                 <table id="tbl_disconnection" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                     <tr>
+                                                        <th></th>
                                                         <th>Service No</th>
                                                         <th>Contract No</th>
                                                         <th>Account No</th>
@@ -332,13 +333,20 @@ $(document).ready(function(){
                 "searchPlaceholder": "Search"
             },
             "columns": [
-                { targets:[0],data: "disconnection_code" },
-                { targets:[1],data: "service_no" },
-                { targets:[2],data: "account_no" },
-                { targets:[3],data: "customer_name" },
-                { targets:[4],data: "service_date" },
                 {
-                    targets:[5],
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "disconnection_code" },
+                { targets:[2],data: "service_no" },
+                { targets:[3],data: "account_no" },
+                { targets:[4],data: "customer_name" },
+                { targets:[5],data: "service_date" },
+                {
+                    targets:[6],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -398,7 +406,7 @@ $(document).ready(function(){
     var bindEventHandlers=(function(){
         var detailRows = [];
 
-        $('#tbl_departments tbody').on( 'click', 'tr td.details-control', function () {
+        $('#tbl_disconnection tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt.row( tr );
             var idx = $.inArray( tr.attr('id'), detailRows );
@@ -407,16 +415,28 @@ $(document).ready(function(){
                 tr.removeClass( 'details' );
                 row.child.hide();
 
+                // Remove from the 'open' array
                 detailRows.splice( idx, 1 );
             }
             else {
                 tr.addClass( 'details' );
-
-                row.child( format( row.data() ) ).show();
-
-                if ( idx === -1 ) {
-                    detailRows.push( tr.attr('id') );
-                }
+                //console.log(row.data());
+                var d=row.data();
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Service_disconnection/transaction/disconnection-print?id="+ d.disconnection_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    tr.addClass( 'details' );
+                    row.child( response,'no-padding' ).show();
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+                });
             }
         } );
 

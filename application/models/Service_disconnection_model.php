@@ -19,6 +19,7 @@ class Service_disconnection_model extends CORE_Model {
                     sc.meter_inventory_id,
                     sc.customer_id,
                     sc.address,
+                    sc.receipt_name,
                     inv.serial_no,
                     customers.customer_name,
                     ct.contract_type_name,

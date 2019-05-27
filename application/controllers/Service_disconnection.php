@@ -14,6 +14,8 @@ class Service_disconnection extends CORE_Controller {
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->library('excel');
+        $this->load->library('M_pdf');
+        
     }
 
     public function index() {
@@ -352,6 +354,33 @@ class Service_disconnection extends CORE_Controller {
                 $objWriter->save('php://output');            
                      
             break;
+
+            case 'disconnection-print':
+                $m_company=$this->Company_model;
+                $disconnection_id=$this->input->get('id',TRUE);
+                $type=$this->input->get('type',TRUE);
+                $data['company_info']=$m_company->get_list()[0];
+                $m_disconnection=$this->Service_disconnection_model;
+                $data['dis_info'] = $m_disconnection->getList($disconnection_id)[0];
+                //show only inside grid with menu button
+                if($type=='fullview'||$type==null){
+                    echo $this->load->view('template/service_disconnection_content_wo_header',$data,TRUE);
+                    echo $this->load->view('template/service_disconnection_content_menus',$data,TRUE);
+                }
+
+                //preview on browser
+                if($type=='preview'){
+                    $file_name='Disconnection Service';
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/service_disconnection_content',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
+
+                break;
         }
     }
 }
