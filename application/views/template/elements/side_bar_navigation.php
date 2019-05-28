@@ -46,7 +46,8 @@
                                 <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Charge_unit">Charge Unit Management</a></li>
                                 <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Other_charges">Other Charges</a></li>
                                 <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Meter_reading_input">Meter Reading Entry</a></li>
-
+                                <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Process_billing">Process Billing</a></li>
+                                <li class="<?php echo (in_array('1-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_consumption_history">Consumption History</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('1',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-wallet"></i><span>Financing</span></a>
