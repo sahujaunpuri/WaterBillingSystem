@@ -12,6 +12,32 @@ class Billing_model extends CORE_Model{
         parent::__construct();
     }
 
+    function billing_statement($period_id=null,$meter_reading_input_id=null,$customer_id=null){
+    	$query = $this->db->query("SELECT 
+			    sc.account_no,
+			    c.customer_name,
+			    mi.serial_no,
+			    billing.billing_id,
+			    billing.previous_month,
+			    billing.previous_reading,
+			    billing.current_reading,
+			    billing.total_consumption,
+			    billing.amount_due
+			FROM
+			    billing
+			        LEFT JOIN
+			    service_connection sc ON sc.connection_id = billing.connection_id
+			        LEFT JOIN
+			    customers c ON c.customer_id = sc.customer_id
+			        LEFT JOIN
+			    meter_inventory mi ON mi.meter_inventory_id = sc.meter_inventory_id
+			WHERE
+			        ".($period_id==null?" billing.meter_reading_period_id = 0":" billing.meter_reading_period_id=".$period_id)."
+			        ".($meter_reading_input_id==0?"":" AND billing.meter_reading_input_id=".$meter_reading_input_id)."
+			        ".($customer_id==0?"":" AND sc.customer_id=".$customer_id).""); 
+    	return $query->result();
+    }
+
     function process_billing($meter_reading_input_id) {
 
     	foreach($meter_reading_input_id as $id){
@@ -71,6 +97,7 @@ class Billing_model extends CORE_Model{
 					            mrii.previous_reading,
 					            mrii.current_reading,
 					            mrii.total_consumption,
+					            mrii.previous_month,
 					            mri.meter_reading_input_id,
 					            mri.meter_reading_period_id,
 					            mri.date_input,
@@ -102,6 +129,7 @@ class Billing_model extends CORE_Model{
                     'due_date' => date("Y-m-d",strtotime($row->due_date)),
                     'reading_date' => date('Y-m-d',strtotime($row->date_input)),
                     'previous_reading' => $row->previous_reading,
+                    'previous_month' => $row->previous_month,
                     'current_reading' => $row->current_reading,
                     'total_consumption' => $row->total_consumption,
                     'amount_due' => $row->amount_due,
