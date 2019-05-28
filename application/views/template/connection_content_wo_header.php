@@ -22,7 +22,7 @@
 </style>
 <div>
     <center>
-        <table width="100%" cellpadding="5" style="font-family: tahoma;font-size: 11px!important;" border="0">
+        <table width="100%" cellpadding="5" style="font-family: tahoma;font-size: 11px!important;" border="0" class="table table-striped">
             <tr>
                 <td style="background: lightgray;" colspan="4"><b>ACCOUNT DETAILS</b></td>
             </tr>

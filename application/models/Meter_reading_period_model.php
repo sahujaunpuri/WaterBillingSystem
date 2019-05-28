@@ -40,20 +40,15 @@ class Meter_reading_period_model extends CORE_Model {
 			AND mri.is_active = TRUE
 
 			UNION ALL
-
+			
 			SELECT 
-			sc.connection_id,
+			sd.connection_id,
 			DATE(sd.date_disconnection_date) as applicable_month,
 			sd.last_meter_reading as current_reading FROM 
 
-			service_connection sc  
+			service_disconnection sd 
 
-			LEFT JOIN service_reconnection sr ON sr.reconnection_id = sc.current_id
-			LEFT JOIN service_disconnection sd ON sd.disconnection_id = sr.disconnection_id
-
-			WHERE sc.is_active = TRUE 
-			AND sc.is_deleted = FALSE AND sr.is_active = TRUE 
-			AND sr.is_deleted = FALSE AND sd.is_active = TRUE 
+			WHERE  sd.is_active = TRUE 
 			AND sd.is_deleted = FALSE
 
 			UNION ALL
@@ -92,19 +87,15 @@ class Meter_reading_period_model extends CORE_Model {
 			UNION ALL
 
 			SELECT 
-			sc.connection_id,
+			sd.connection_id,
 			DATE(sd.date_disconnection_date) as applicable_month,
 			sd.last_meter_reading as current_reading FROM 
 
-			service_connection sc  
+			service_disconnection sd 
 
-			LEFT JOIN service_reconnection sr ON sr.reconnection_id = sc.current_id
-			LEFT JOIN service_disconnection sd ON sd.disconnection_id = sr.disconnection_id
-
-			WHERE sc.is_active = TRUE 
-			AND sc.is_deleted = FALSE AND sr.is_active = TRUE 
-			AND sr.is_deleted = FALSE AND sd.is_active = TRUE 
+			WHERE  sd.is_active = TRUE 
 			AND sd.is_deleted = FALSE
+
 			UNION ALL
 
 			SELECT 
@@ -148,6 +139,73 @@ class Meter_reading_period_model extends CORE_Model {
             )."
             ";
         return $this->db->query($sql)->result();
+    }
+
+
+    function get_history($connection_id=null){
+    	$query = $this->db->query('SELECT m.*,
+DATE_FORMAT(m.applicable_date, "%m") as month_id,
+DATE_FORMAT(m.applicable_date, "%Y") as meter_reading_year
+FROM (SELECT 
+service_date as applicable_date,
+initial_meter_reading as current
+FROM service_connection
+WHERE connection_id = 1 AND is_active = TRUE AND is_deleted = FALSE
+
+UNION ALL
+ 
+SELECT 
+date_disconnection_date as applicable_date,
+last_meter_reading as current
+FROM service_disconnection
+WHERE disconnection_id = 1 AND is_active = TRUE AND is_deleted = FALSE
+
+UNION ALL
+
+SELECT 
+DATE(CONCAT(mrp.meter_reading_year,  "-", mrp.month_id, "-01")) as applicable_date,
+current_reading as current
+
+FROM meter_reading_input_items mrii 
+
+LEFT JOIN meter_reading_input mri ON mri.meter_reading_input_id=mrii.meter_reading_input_id
+LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = mri.meter_reading_period_id
+WHERE mri.is_deleted = FALSE 
+AND mri.is_active = TRUE AND mrii.connection_id = 1) as m
+
+INNER JOIN
+
+(SELECT * FROM (SELECT 
+service_date as applicable_date
+
+FROM service_connection
+WHERE connection_id = 1 AND is_active = TRUE AND is_deleted = FALSE
+
+UNION ALL
+ 
+SELECT 
+date_disconnection_date as applicable_date
+FROM service_disconnection
+WHERE disconnection_id = 1 AND is_active = TRUE AND is_deleted = FALSE
+
+UNION ALL
+
+SELECT 
+DATE(CONCAT(mrp.meter_reading_year,  "-", mrp.month_id, "-01")) as applicable_date
+
+FROM meter_reading_input_items mrii 
+
+LEFT JOIN meter_reading_input mri ON mri.meter_reading_input_id=mrii.meter_reading_input_id
+LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = mri.meter_reading_period_id
+WHERE mri.is_deleted = FALSE 
+AND mri.is_active = TRUE AND mrii.connection_id = 1) as main
+
+GROUP BY YEAR(applicable_date), MONTH(applicable_date)) as max_dates
+
+ON max_dates.applicable_date = m.applicable_date');
+return $query->result();
+
+
     }
 
 }
