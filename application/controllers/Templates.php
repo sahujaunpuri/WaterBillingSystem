@@ -5460,7 +5460,13 @@ class Templates extends CORE_Controller {
                 if($type=='fullview'||$type==null){
                     echo $this->load->view('template/meter_reading_input_content',$data,TRUE);
                     // echo $this->load->view('template/service_invoice_content_menus',$data,TRUE);
-                        }
+                }
+
+                //show only inside grid without menu button
+                if($type=='contentview'){
+                    echo $this->load->view('template/meter_reading_input_content_wo_header',$data,TRUE);
+                }
+                
                 if($type=='html'){
                     $file_name=$info[0]->other_charge_no;
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
