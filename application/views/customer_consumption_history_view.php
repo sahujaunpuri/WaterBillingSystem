@@ -45,6 +45,12 @@
        .select2-results__options {
                 overflow-x: hidden;
         }
+        .right_align{
+            text-align: right;
+        }
+        .nav-tabs > li > a {    
+            font-size: 15px;
+        }
     </style>
 
 </head>
@@ -267,63 +273,35 @@ function reInitializeTables (){
                 $('#details_loader').hide();
                 $('.tab-pane').html('');
                 $.each(response.years, function(index,value){
-
                     $('#'+value.meter_reading_year).append(
-                    '<table style="width:100%" class="table table-striped">'+
+                    '<table style="width:100%;border:1px solid lightgray!important;" class="table table-striped">'+
                     '<thead>'+
-                    '<th width="15%"></th>'+
-                    '<th>Reading</th>'+
-                    '<th>Consumption</th>'+                    
-                    '<th>Amount</th>'+                    
+                    '<th width="15%">MONTH</th>'+
+                    '<th class="right_align">Reading</th>'+
+                    '<th class="right_align">Consumption</th>'+                    
+                    '<th class="right_align">Amount</th>'+                    
                     '</thead>'+
                         '<tbody id="tbody_'+value.meter_reading_year+'">'+
-
                         '</tbody>'+
                          '</table>'
                     );
-
-
                 });
-
                     $.each(response.years, function(index,sug){
                     $.each(response.months, function(index,value){
-
-
                         $('#tbody_'+sug.meter_reading_year).append(
                             '<tr>'+
                             '<td><b>'+value.month_name+'</b></td>'+
-                            '<td id="'+sug.meter_reading_year+'_'+pad(value.month_id,2)+'_r"></td>'+
-                            '<td id="'+sug.meter_reading_year+'_'+pad(value.month_id,2)+'_c"></td>'+
-                            '<td id="'+sug.meter_reading_year+'_'+pad(value.month_id,2)+'_a"></td>'+
-
+                            '<td class="right_align" id="'+sug.meter_reading_year+'_'+pad(value.month_id,2)+'_r"></td>'+
+                            '<td class="right_align" id="'+sug.meter_reading_year+'_'+pad(value.month_id,2)+'_c"></td>'+
+                            '<td class="right_align" id="'+sug.meter_reading_year+'_'+pad(value.month_id,2)+'_a"></td>'+
                             '</tr>');
-
-                            // if(sug.meter_reading_year == data.meter_reading_year && pad(value.month_id, 2) == data.month_id){
-                            //     $('#tbody_'+sug.meter_reading_year).append(
-                            //         '<tr>'+
-                            //         '<td><b>'+value.month_name+'</b></td>'+
-                            //         '<td>'+sug.meter_reading_year+'</td>'+
-                            //         '<td>asd</td>'+
-                            //         '</tr>');
-
-                            // }else if (sug.meter_reading_year == data.meter_reading_year){
-                            //     $('#tbody_'+sug.meter_reading_year).append(
-                            //         '<tr>'+
-                            //         '<td><b>'+value.month_name+'</b></td>'+
-                            //         '<td>'+sug.meter_reading_year+'</td>'+
-                            //         '<td></td>'+
-                            //         '</tr>');
-
-                            // }
-
-
                     });
-
-                   
                 });
 
                 $.each(response.data, function(index,data){
-                        $('#'+data.meter_reading_year+'_'+pad(data.month_id,2)+'_c').text(data.current);
+                        $('#'+data.meter_reading_year+'_'+pad(data.month_id,2)+'_a').text(accounting.formatNumber(data.total_amount,2));
+                        $('#'+data.meter_reading_year+'_'+pad(data.month_id,2)+'_r').text(data.reading);
+                        $('#'+data.meter_reading_year+'_'+pad(data.month_id,2)+'_c').text(data.total_consumption);
                 });
 
 

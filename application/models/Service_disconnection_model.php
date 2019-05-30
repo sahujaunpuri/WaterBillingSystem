@@ -92,5 +92,61 @@ class Service_disconnection_model extends CORE_Model {
                         return $query->result();
     }
 
+
+    function  get_disconnection_rate($id,$consumption){
+                    $query = $this->db->query("SELECT 
+                        z.*,
+                        (CASE
+                            WHEN z.is_fixed_amount = 1 THEN z.rate
+                            ELSE ($consumption * z.rate)
+                        END) AS amount_due,
+                        (CASE
+                            WHEN z.is_fixed_amount = 1 THEN ((10 / 100) * z.rate)
+                            ELSE ((10 / 100) * ($consumption * z.rate))
+                        END) as penalty_amount
+                    FROM
+                        (SELECT 
+                            x.*,
+                                (CASE
+                                    WHEN
+                                        x.contract_type_id = 1
+                                    THEN COALESCE((SELECT mtrx_ri.matrix_residential_amount FROM matrix_residential mtrx_r
+                                        LEFT JOIN matrix_residential_items mtrx_ri ON mtrx_ri.matrix_residential_id = mtrx_r.matrix_residential_id
+                                        WHERE mtrx_r.matrix_residential_id = default_matrix_id
+                                            AND $consumption BETWEEN matrix_residential_from AND matrix_residential_to), 0)
+                                    ELSE COALESCE((SELECT mtrx_ci.matrix_commercial_amount FROM matrix_commercial mtrx_c
+                                        LEFT JOIN matrix_commercial_items mtrx_ci ON mtrx_ci.matrix_commercial_id = mtrx_c.matrix_commercial_id
+                                        WHERE mtrx_c.matrix_commercial_id = default_matrix_id
+                                            AND $consumption BETWEEN matrix_commercial_from AND matrix_commercial_to), 0)
+                                END) AS rate,
+                                (CASE
+                                    WHEN
+                                        x.contract_type_id = 1
+                                    THEN COALESCE((SELECT mtrx_ri.is_fixed_amount FROM matrix_residential mtrx_r
+                                        LEFT JOIN matrix_residential_items mtrx_ri ON mtrx_ri.matrix_residential_id = mtrx_r.matrix_residential_id
+                                        WHERE mtrx_r.matrix_residential_id = default_matrix_id
+                                            AND $consumption BETWEEN matrix_residential_from AND matrix_residential_to), 0)
+                                    ELSE COALESCE((SELECT mtrx_ci.is_fixed_amount FROM matrix_commercial mtrx_c
+                                        LEFT JOIN matrix_commercial_items mtrx_ci ON mtrx_ci.matrix_commercial_id = mtrx_c.matrix_commercial_id
+                                        WHERE mtrx_c.matrix_commercial_id = default_matrix_id
+                                            AND $consumption BETWEEN matrix_commercial_from AND matrix_commercial_to), 0)
+                                END) AS is_fixed_amount
+                        FROM
+                            (SELECT 
+                            sc.connection_id,
+                                sc.contract_type_id, 
+                                (CASE 
+                                    WHEN sc.contract_type_id = 1
+                                    THEN (SELECT default_matrix_residential_id FROM account_integration)
+                                    ELSE (SELECT default_matrix_commercial_id FROM account_integration)
+                                END) AS default_matrix_id
+                        FROM
+                             service_connection sc 
+                        WHERE
+                            sc.is_deleted = FALSE
+                            AND sc.connection_id = ".$id.") AS x) AS z");
+
+    return $query->result();
+    }
 }
 ?>

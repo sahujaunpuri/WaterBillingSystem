@@ -53,7 +53,7 @@ class Customer_consumption_history extends CORE_Controller {
             $response['years']=$this->Meter_reading_period_model->get_list(array('is_active'=> TRUE, 'is_deleted'=> FALSE), 'DISTINCT(meter_reading_year)');
             $response['months']=$this->Months_model->get_list();
             if($scid != null || $scid != '' ){
-				$response['data']=$this->Meter_reading_period_model->get_history();
+				$response['data']=$this->Meter_reading_period_model->get_history($scid);
             }else {
             	$response['data'] = [];
             }
@@ -65,7 +65,7 @@ class Customer_consumption_history extends CORE_Controller {
 				$m_connection=$this->Service_connection_model;
 				$scid=$this->input->get('scid',TRUE);
 				if($scid != null || $scid != '' ){
-					$info=$m_connection->getList(1);
+					$info=$m_connection->getList($scid);
 					$data['connection']=$info[0];
 	            	echo $this->load->view('template/connection_content_wo_header',$data,TRUE); 
 				}else{
@@ -77,12 +77,13 @@ class Customer_consumption_history extends CORE_Controller {
 
             case 'consumption-history-print':
 				$m_connection=$this->Service_connection_model;
-				$scid=$this->input->get('scid',TRUE);
+                $scid=$this->input->get('scid',TRUE);
+				$year=$this->input->get('y',TRUE);
                 $data['company_info']=$this->Company_model->get_list()[0];
 				$data['connection']=$m_connection->getList($scid)[0];
 	            $data['years']=$this->Meter_reading_period_model->get_list(array('is_active'=> TRUE, 'is_deleted'=> FALSE), 'DISTINCT(meter_reading_year)');
 	            $data['months']=$this->Months_model->get_list();
-				$data['data']=$this->Meter_reading_period_model->get_history();
+				$data['datas']=$this->Meter_reading_period_model->get_history($scid,$year);
 
                 $file_name='Customer Consumption History';
                 $pdfFilePath = $file_name.".pdf"; //generate filename base on id
@@ -96,31 +97,6 @@ class Customer_consumption_history extends CORE_Controller {
             break;
 
         
-
-            case 'soa-print':
-                $data['company_info']=$this->Company_model->get_list()[0];
-                // $m_connection=$this->Service_connection_model;
-                // $scid=$this->input->get('scid',TRUE);
-                // $data['company_info']=$this->Company_model->get_list()[0];
-                // $data['connection']=$m_connection->getList($scid)[0];
-                // $data['years']=$this->Meter_reading_period_model->get_list(array('is_active'=> TRUE, 'is_deleted'=> FALSE), 'DISTINCT(meter_reading_year)');
-                // $data['months']=$this->Months_model->get_list();
-                // $data['data']=$this->Meter_reading_period_model->get_history();
-
-                // $file_name='Customer Consumption History';
-                // $pdfFilePath = $file_name.".pdf"; //generate filename base on id
-                // $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                // $content=$this->load->view('template/connection_content_history_print',$data,TRUE); //load the template
-                // // $pdf->setFooter('{PAGENO}');
-                // $pdf->WriteHTML($content);
-                // //download it.
-                // $pdf->Output();
-            $data[]=[];
-                echo $this->load->view('template/billing_statement_content',$data,TRUE); 
-            break;
-
-
-
         }
     }
 

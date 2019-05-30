@@ -827,9 +827,9 @@ $(document).ready(function(){
         '<td><input type="text" class="form-control" value="'+d.customer_name +'" readonly></td>'+
         '<td><input type="text" class="form-control" value="'+d.serial_no +'" readonly></td>'+
         '<td><input type="text" name="previous_month[]" class="form-control" value="'+d.previous_month +'" readonly></td>'+
-        '<td><input type="text" name="previous_reading[]" class="number form-control" value="'+ accounting.formatNumber(d.previous_reading,0)+'" style="text-align:right;" readonly></td>'+
-        '<td><input type="text" name="current_reading[]" class="number form-control current" value="'+ accounting.formatNumber(d.current_reading,0)+'" style="text-align:right;"></td>'+
-        '<td><input type="text" name="total_consumption[]" class="number form-control" value="'+ accounting.formatNumber(d.total_consumption,0)+'" style="text-align:right;" readonly></td>'+
+        '<td><input type="text" name="previous_reading[]" class="number form-control" value="'+ d.previous_reading+'" style="text-align:right;" readonly></td>'+
+        '<td><input type="text" name="current_reading[]" class="number form-control current" value="'+ d.current_reading+'" style="text-align:right;"></td>'+
+        '<td><input type="text" name="total_consumption[]" class="number form-control" value="'+ d.total_consumption+'" style="text-align:right;" readonly></td>'+
         '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
         '</tr>';
     };

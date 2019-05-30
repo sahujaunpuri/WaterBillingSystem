@@ -125,11 +125,11 @@
             <tr>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="right-align">0.00</td>
+                <td><?php echo date('F Y', strtotime($dis_info->date_disconnection_date)); ?></td>
+                <td class="right-align"><?php echo $dis_info->previous_reading; ?></td>
+                <td class="right-align"><?php echo $dis_info->last_meter_reading; ?></td>
+                <td class="right-align"><?php echo $dis_info->total_consumption; ?></td>
+                <td class="right-align"><?php echo number_format($dis_info->meter_amount_due,2); ?></td>
            </tr>
            <tr>
                 <td ></td>

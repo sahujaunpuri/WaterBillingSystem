@@ -8,7 +8,7 @@ class Meter_reading_period_model extends CORE_Model {
         parent::__construct();
     }
 
-    function get_meter_reading_for_inputs($before_date){
+    function get_meter_reading_for_inputs($before_date,$connection_id=null){
         $sql='SELECT
 			main.connection_id,
 			sc.account_no,
@@ -117,7 +117,9 @@ class Meter_reading_period_model extends CORE_Model {
 
 			LEFT JOIN service_connection sc ON sc.connection_id = main.connection_id 
 			LEFT JOIN customers c ON c.customer_id = sc.customer_id
-			LEFT JOIN meter_inventory mi ON mi.meter_inventory_id = sc.meter_inventory_id';
+			LEFT JOIN meter_inventory mi ON mi.meter_inventory_id = sc.meter_inventory_id
+			'.($connection_id==null?'':' AND main.connection_id=$connection_id').'
+			';
         return $this->db->query($sql)->result();
     }
 
@@ -142,68 +144,67 @@ class Meter_reading_period_model extends CORE_Model {
     }
 
 
-    function get_history($connection_id=null){
-    	$query = $this->db->query('SELECT m.*,
-DATE_FORMAT(m.applicable_date, "%m") as month_id,
-DATE_FORMAT(m.applicable_date, "%Y") as meter_reading_year
-FROM (SELECT 
-service_date as applicable_date,
-initial_meter_reading as current
-FROM service_connection
-WHERE connection_id = 1 AND is_active = TRUE AND is_deleted = FALSE
+    function get_history($connection_id=null,$year = null){
+    	$query = $this->db->query('
+            '.($year==null?'':'SELECT o.* FROM ( SELECT n.*,months.month_name, months.month_id as month_asc FROM(').'
+    		SELECT 
+			m.connection_id,
+			m.applicable_date,
+			DATE_FORMAT(m.applicable_date, "%m") as month_id,
+			DATE_FORMAT(m.applicable_date, "%Y") as meter_reading_year,
+			m.reading,
+			SUM(m.consumption) as  total_consumption,
+			SUM(m.amount) as total_amount
+			
+			FROM (
 
-UNION ALL
- 
-SELECT 
-date_disconnection_date as applicable_date,
-last_meter_reading as current
-FROM service_disconnection
-WHERE disconnection_id = 1 AND is_active = TRUE AND is_deleted = FALSE
+			SELECT 
+			sdr.connection_id,
+			DATE(CONCAT(YEAR(sdr.date_disconnection_date),  "-", MONTH(sdr.date_disconnection_date), "-01")) as applicable_date,
+			sdr.last_meter_reading as reading,
+			sdr.total_consumption as consumption,
+			sdr.meter_amount_due as amount
+			FROM service_disconnection sdr
+			 
+			WHERE sdr.is_active= TRUE AND sdr.is_deleted = FALSE 
+			AND sdr.connection_id = '.$connection_id.'
+		    
+		    UNION ALL
+		    
+			SELECT 
+			scr.connection_id,
+			DATE(CONCAT(YEAR(scr.connection_date),  "-", MONTH(scr.connection_date), "-01")) as applicable_date,
+			scr.initial_meter_reading as reading,
+			0 as consumption,
+			0 as amount
+			FROM service_connection scr
+			 
+			WHERE scr.is_active= TRUE AND scr.is_deleted = FALSE 
+			AND scr.connection_id = '.$connection_id.'
 
-UNION ALL
+			UNION ALL
+		    
+			SELECT 
+			b.connection_id,
+			DATE(CONCAT(mrp.meter_reading_year,  "-", mrp.month_id, "-01")) as applicable_date,
+			current_reading as reading,
+			total_consumption as consumption,
+			amount_due as amount
 
-SELECT 
-DATE(CONCAT(mrp.meter_reading_year,  "-", mrp.month_id, "-01")) as applicable_date,
-current_reading as current
+			FROM billing b
+			LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = b.meter_reading_period_id
 
-FROM meter_reading_input_items mrii 
+			WHERE b.connection_id ='.$connection_id.' 
+		    ORDER BY reading DESC
+		    ) as m
+		    '.($year==null?'':' WHERE YEAR(applicable_date) = "'.$year.'"').'
+		    GROUP BY applicable_date
 
-LEFT JOIN meter_reading_input mri ON mri.meter_reading_input_id=mrii.meter_reading_input_id
-LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = mri.meter_reading_period_id
-WHERE mri.is_deleted = FALSE 
-AND mri.is_active = TRUE AND mrii.connection_id = 1) as m
-
-INNER JOIN
-
-(SELECT * FROM (SELECT 
-service_date as applicable_date
-
-FROM service_connection
-WHERE connection_id = 1 AND is_active = TRUE AND is_deleted = FALSE
-
-UNION ALL
- 
-SELECT 
-date_disconnection_date as applicable_date
-FROM service_disconnection
-WHERE disconnection_id = 1 AND is_active = TRUE AND is_deleted = FALSE
-
-UNION ALL
-
-SELECT 
-DATE(CONCAT(mrp.meter_reading_year,  "-", mrp.month_id, "-01")) as applicable_date
-
-FROM meter_reading_input_items mrii 
-
-LEFT JOIN meter_reading_input mri ON mri.meter_reading_input_id=mrii.meter_reading_input_id
-LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = mri.meter_reading_period_id
-WHERE mri.is_deleted = FALSE 
-AND mri.is_active = TRUE AND mrii.connection_id = 1) as main
-
-GROUP BY YEAR(applicable_date), MONTH(applicable_date)) as max_dates
-
-ON max_dates.applicable_date = m.applicable_date');
-return $query->result();
+		    '.($year==null?'':' )as n
+            RIGHT JOIN months on months.month_id = n.month_id) as o
+            ORDER BY o.month_asc').'
+			');
+			return $query->result();
 
 
     }

@@ -94,25 +94,28 @@
             </tr>
         </table>
         <br />
-
+<h4 style="width:100%;text-align: center;"><?php echo $_GET['y']; ?> - CONSUMPTION HISTORY </h4>
 <table style="width:100%;font-family: tahoma;font-size: 11px!important;" class="table table-striped" cellspacing="0" cellpadding="5">
 <thead>
     <tr>
     <th class="bottom top left align-left" width="15%">Month</th>
-    <th class="bottom top left">Reading</th>
-    <th class="bottom top left">Consumption</th>
-    <th class="bottom top left right">Amount</th>
+    <th class="bottom top left align-right">Reading</th>
+    <th class="bottom top left align-right">Consumption</th>
+    <th class="bottom top left right align-right">Amount</th>
     </tr>
 </thead>
+<?php print_r($datas) ?>
 <tbody id="tbody">
-<?php foreach ($months as $month) { ?>
-   <tr>
-    <td class="left bold"><?php echo $month->month_name; ?></td>
-    <td class="left"></td>
-    <td class="left"></td>
-    <td class="left right">
-    </tr>
-<?php } ?>
+<?php 
+           foreach ($datas as $data) {
+            ?>
+            <tr>
+                <td class="left bold"><?php echo $data->month_name; ?> </td>
+                <td class="left align-right"><?php echo $data->reading; ?></td>
+                <td class="left align-right"><?php echo $data->total_consumption; ?></td>
+                <td class="left right align-right"><?php if($data->total_amount != 0){ echo number_format($data->total_amount,2); } ?></td>
+            </tr>
+    <?php } ?>
    <tr>
     <td class="top"></td>
     <td class="top"></td>

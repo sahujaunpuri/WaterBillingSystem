@@ -58,6 +58,13 @@
                 display: none;
         }
 
+        #tbl_items .form-control[readonly]{
+            background-color: transparent;
+            border: 0;
+        }
+        .number, .numeric{
+            text-align: right;
+        }
     </style>
 
 </head>
@@ -263,7 +270,7 @@
                                     <div class="col-lg-offset-1 col-lg-4">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class=""><B class="required"> * </B> Last Meter Reading:</label>
-                                            <input type="text" name="last_meter_reading" class="number form-control" placeholder="Last Meter Reading" data-error-msg="Last Meter Reading is required!" required style="text-align: right;">
+                                            <!-- <input type="text" name="last_meter_reading" class="number form-control" placeholder="Last Meter Reading" data-error-msg="Last Meter Reading is required!" required style="text-align: right;"> -->
                                         </div>
                                     </div>
                                 </div>
@@ -275,10 +282,37 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                            <thead class="">    
+                                            <tr>
+                                                <th>Previous Month</th>
+                                                <th style="text-align: right;">Previous</th>
+                                                <th style="text-align: right;">Current</th>
+                                                <th style="text-align: right;">Consumption</th>
+                                                <th style="text-align: right;">Total</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td class=""><input type="text" class="form-control" name="previous_month" readonly> </td>
+                                                <td class=""><input type="text" class="form-control number" name="previous_reading" readonly></td>
+                                                <td class=""><input type="text" class="form-control number" name="last_meter_reading"></td>
+                                                <td class=""><input type="text" class="form-control number" name="total_consumption" readonly=""></td>
+                                                <td class=""><input type="text" class="form-control numeric" name="meter_amount_due" readonly=""></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <input type="hidden" name="default_matrix_id" class="form-control"> 
+                                        <input type="hidden" name="rate_amount" class="form-control"> 
+                                        <input type="hidden" name="is_fixed" class="form-control"> 
+                                    </div>
+                                </div>
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button id="btn_save" class="btn btn-primary">Save</button>
+                            <button id="btn_save" class="btn btn-primary"><span class=""></span> Save</button>
                             <button id="btn_cancel" class="btn btn-default">Cancel</button>
                         </div>
                     </div>
@@ -315,7 +349,7 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDisconnectionReason; var dt_so; 
-    var _cboCustomer;
+    var _cboCustomer; var _selectedConnectionID; var _connection_id_get
 
     var initializeControls=function(){
 
@@ -348,7 +382,7 @@ $(document).ready(function(){
                 {
                     targets:[6],
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_edit='<button class="btn btn-primary btn-sm disabled" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
@@ -483,6 +517,14 @@ $(document).ready(function(){
             $('textarea[name="address"]').val(data.address);
             $('input[name="previous_id"]').val(data.previous_id);
 
+            _connection_id_get = data.connection_id;
+            getLatestReading(_connection_id_get).done(function(response){
+                var latest=response.data[0];
+                console.log(latest);
+                $('input[name="previous_month"]').val(latest.previous_month);
+                $('input[name="previous_reading"]').val(latest.previous_reading);
+            });
+
             $('#modal_account_list').modal('hide');
             $('#modal_new_disconnection').modal('show');
 
@@ -589,7 +631,7 @@ $(document).ready(function(){
                         showNotification(response);
                         dt.row.add(response.row_added[0]).draw();
                         clearFields($('#frm_disconnection'));
-
+                        $('#modal_new_disconnection').modal('hide');
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
@@ -598,11 +640,41 @@ $(document).ready(function(){
                         showNotification(response);
                         dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                         clearFields($('#frm_disconnection'));
+                        $('#modal_new_disconnection').modal('hide');
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });
                 }
-                $('#modal_new_disconnection').modal('hide');
+                
+            }
+        });
+
+
+        $('#tbl_items tbody').on('keyup','input.number',function(){
+
+            var row=$(this).closest('tr');
+            var last_meter_reading=parseFloat(accounting.unformat($('input[name="last_meter_reading"]').val()));
+            var previous_reading=parseFloat(accounting.unformat($('input[name="previous_reading"]').val()));
+            if(previous_reading == '' || previous_reading == null){
+                return false;
+            }
+            if(last_meter_reading < previous_reading){
+                $('input[name="total_consumption"]').val('');
+                $('input[name="meter_amount_due"]').val('');
+                $('input[name="default_matrix_id"]').val('');
+                $('input[name="rate_amount"]').val('');
+                $('input[name="is_fixed"]').val('');
+            }else{
+                var total_consumption=last_meter_reading-previous_reading;
+                 $('input[name="total_consumption"]').val(accounting.formatNumber(total_consumption,0));
+                 // GET DETAILS
+                    getLatestReadingAmount(total_consumption).done(function(response){
+                        var rate=response.data[0];
+                        $('input[name="meter_amount_due"]').val(accounting.formatNumber(rate.amount_due,2));
+                        $('input[name="default_matrix_id"]').val(rate.default_matrix_id);
+                        $('input[name="rate_amount"]').val(rate.rate);
+                        $('input[name="is_fixed"]').val(rate.is_fixed_amount);
+                    });
             }
         });
 
@@ -643,7 +715,7 @@ $(document).ready(function(){
 
     var createDisconnection=function(){
         var _data=$('#frm_disconnection').serializeArray();
-
+        // console.log(_data)
         return $.ajax({
             "dataType":"json",
             "type":"POST",
@@ -672,6 +744,24 @@ $(document).ready(function(){
             "type":"POST",
             "url":"Service_disconnection/transaction/delete",
             "data":{disconnection_id : _selectedID}
+        });
+    };
+
+    var getLatestReading=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Service_disconnection/transaction/get-latest-reading",
+            "data":{connection_id : _connection_id_get}
+        });
+    };
+
+    var getLatestReadingAmount=function(consumption_get){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Service_disconnection/transaction/get-latest-reading-amount",
+            "data":{connection_id : _connection_id_get, consumption : consumption_get}
         });
     };
 

@@ -13,6 +13,7 @@ class Service_disconnection extends CORE_Controller {
         $this->load->model('Customers_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Meter_reading_period_model');
         $this->load->library('excel');
         $this->load->library('M_pdf');
         
@@ -49,9 +50,26 @@ class Service_disconnection extends CORE_Controller {
                 echo json_encode($response);
                 break;
 
+            case 'get-latest-reading-amount':
+                $m_disconnection = $this->Service_disconnection_model;
+                $connection_id = $this->input->post('connection_id',TRUE);
+                $consumption = $this->get_numeric_value($this->input->post('consumption',TRUE));
+                $response['data']=$m_disconnection->get_disconnection_rate($connection_id,$consumption);
+                echo json_encode($response);
+                break;
+
+
+
             case 'accounts':
                 $customer_id = $this->input->get('customer_id',TRUE);
                 $response['data']=$this->Service_disconnection_model->accounts($customer_id);
+                echo json_encode($response);
+                break;
+
+            case 'get-latest-reading':
+                $connection_id = $this->input->get('connection_id',TRUE);
+                $before_date   = date('Y-m-d',now());
+                $response['data']= $this->Meter_reading_period_model->get_meter_reading_for_inputs($before_date,$connection_id);
                 echo json_encode($response);
                 break;
 
@@ -78,11 +96,23 @@ class Service_disconnection extends CORE_Controller {
                 $m_disconnection->date_disconnection_date=$date_disconnection_date;
                 $m_disconnection->service_no=$service_no;
                 $m_disconnection->disconnection_reason_id=$this->input->post('disconnection_reason_id',TRUE);
-                $m_disconnection->last_meter_reading=$this->get_numeric_value($this->input->post('last_meter_reading',TRUE));
+
                 $m_disconnection->disconnection_notes=$this->input->post('disconnection_notes',TRUE);
                 $m_disconnection->previous_id=$this->input->post('previous_id',TRUE);
                 $m_disconnection->previous_status_id=$status_id;
                 $m_disconnection->created_by=$this->session->user_id;
+
+                $m_disconnection->default_matrix_id=$this->get_numeric_value($this->input->post('default_matrix_id',TRUE));
+                $m_disconnection->rate_amount=$this->get_numeric_value($this->input->post('rate_amount',TRUE));
+                $m_disconnection->is_fixed=$this->get_numeric_value($this->input->post('is_fixed',TRUE));
+                $m_disconnection->previous_month=$this->input->post('previous_month',TRUE);
+                $m_disconnection->previous_reading=$this->get_numeric_value($this->input->post('previous_reading',TRUE));
+                $m_disconnection->last_meter_reading=$this->get_numeric_value($this->input->post('last_meter_reading',TRUE));
+                $m_disconnection->total_consumption=$this->get_numeric_value($this->input->post('total_consumption',TRUE));
+                $m_disconnection->meter_amount_due=$this->get_numeric_value($this->input->post('meter_amount_due',TRUE));
+
+
+
                 $m_disconnection->save();
 
                 $disconnection_id=$m_disconnection->last_insert_id();
