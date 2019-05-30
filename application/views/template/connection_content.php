@@ -92,7 +92,7 @@
             </tr>
             <tr>
                 <td colspan="3" style="padding: 0px!important;margin: 0px!important;"></td>
-                <td style="padding: 0px!important;margin: 0px!important;"><center><?php echo $connection->attended_by; ?></center></td>
+                <td style="padding: 0px!important;margin: 0px!important;"><center><?php echo $connection->attendant; ?></center></td>
             </tr>
             <tr>
                 <td colspan="3" style="padding: 0px!important;margin: 0px!important;"></td>

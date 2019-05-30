@@ -18,6 +18,8 @@ class ServiceConnection extends CORE_Controller {
         $this->load->model('Customer_type_model');
         $this->load->model('Nationality_model');
         $this->load->model('Civil_status_model');
+        $this->load->model('Attendant_model');
+        $this->load->model('Departments_model');
         $this->load->model('Sex_model');
         $this->load->library('excel');
     }
@@ -34,11 +36,9 @@ class ServiceConnection extends CORE_Controller {
         $data['customers']=$this->Customers_model->get_list(
             array('customers.is_deleted'=>FALSE)
         );
-
         $data['customer_type']=$this->Customer_type_model->get_list(
             array('customer_type.is_deleted'=>FALSE)
         );
-
         $data['nationalities']=$this->Nationality_model->get_list(  
             array('nationality.is_deleted'=>FALSE,'nationality.is_active'=>TRUE)
         );
@@ -47,6 +47,12 @@ class ServiceConnection extends CORE_Controller {
         );
         $data['sexes']=$this->Sex_model->get_list(
             array('sex.is_deleted'=>FALSE,'sex.is_active'=>TRUE)
+        );
+        $data['attendant']=$this->Attendant_model->get_list(array('attendant.is_deleted'=>FALSE,'attendant.is_active'=>TRUE),
+            'attendant_id, CONCAT(last_name,", ",first_name," ",middle_name) as full_name'
+        );
+        $data['departments']=$this->Departments_model->get_list(
+            array('departments.is_deleted'=>FALSE,'departments.is_active'=>TRUE)
         );
         $data['contract_types']=$this->Contract_type_model->get_list(
             array('contract_types.is_deleted'=>FALSE,'contract_types.is_active'=>TRUE)
@@ -94,7 +100,7 @@ class ServiceConnection extends CORE_Controller {
                 $m_connection->rate_type_id=$this->input->post('rate_type_id',TRUE);
                 $m_connection->initial_meter_deposit=$this->get_numeric_value($this->input->post('initial_meter_deposit',TRUE));
                 $m_connection->initial_meter_reading=$this->get_numeric_value($this->input->post('initial_meter_reading',TRUE));
-                $m_connection->attended_by=$this->input->post('attended_by',TRUE);
+                $m_connection->attendant_id=$this->input->post('attendant_id',TRUE);
                 $m_connection->created_by=$this->session->user_id;
                 $m_connection->save();
 
@@ -186,7 +192,7 @@ class ServiceConnection extends CORE_Controller {
                 $m_connection->rate_type_id=$this->input->post('rate_type_id',TRUE);
                 $m_connection->initial_meter_deposit=$this->get_numeric_value($this->input->post('initial_meter_deposit',TRUE));
                 $m_connection->initial_meter_reading=$this->get_numeric_value($this->input->post('initial_meter_reading',TRUE));
-                $m_connection->attended_by=$this->input->post('attended_by',TRUE);
+                $m_connection->attendant_id=$this->input->post('attendant_id',TRUE);
                 $m_connection->modify($connection_id);
 
                 $response['title']='Success!';
@@ -353,7 +359,7 @@ class ServiceConnection extends CORE_Controller {
                                         ->setCellValue('K'.$i,$row->rate_type_name)
                                         ->setCellValue('L'.$i,$row->initial_meter_reading)
                                         ->setCellValue('M'.$i,$row->initial_meter_deposit)
-                                        ->setCellValue('N'.$i,$row->attended_by);
+                                        ->setCellValue('N'.$i,$row->attendant);
                 $i++;
                 $a++;
 

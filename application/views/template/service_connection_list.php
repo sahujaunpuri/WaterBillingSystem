@@ -87,7 +87,7 @@
                 <td align="right"><?php echo number_format($row->initial_meter_reading,0) ?></td>
                 <td align="right"><?php echo number_format($row->initial_meter_deposit,2) ?></td>
 
-                <td><?php echo $row->attended_by ?></td>
+                <td><?php echo $row->attendant ?></td>
             </tr>
             <?php $i++; } ?>
 

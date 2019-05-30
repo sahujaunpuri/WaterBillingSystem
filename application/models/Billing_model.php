@@ -42,6 +42,9 @@ class Billing_model extends CORE_Model{
 
     	foreach($meter_reading_input_id as $id){
 
+    		$total_amount_due = 0;
+    		$total_charges = 0;
+
     		// Check if billing is existing
     		$check_existing_billing = $this->db->query("SELECT * FROM billing WHERE meter_reading_input_id =".$id);
             $billing = $check_existing_billing->result();
@@ -55,7 +58,25 @@ class Billing_model extends CORE_Model{
                 $this->db->delete('billing');
             }
 
-    		$check_existing_billing = $this->db->query("SELECT * FROM meter_reading_input WHERE meter_reading_input_id =".$id);
+    		$check_existing_billing_scharges = $this->db->query("SELECT bc.other_charge_id FROM
+						    billing_charges bc WHERE bc.meter_reading_input_id=".$id);
+    		$billing_charges = $check_existing_billing_scharges->result();
+
+    		if ($check_existing_billing_scharges->num_rows() != 0){
+
+    			// Update Processed Status of Other Charges
+    			foreach($billing_charges as $bc){
+	            	$update_charges = "UPDATE other_charges SET is_processed=0 WHERE other_charge_id=".$bc->other_charge_id;
+	               	$this->db->query($update_charges);
+    			}
+
+    			// Delete current billing charges
+    			foreach($billing_charges as $bc){
+	                $other_charge_id = $bc->other_charge_id;
+	                $this->db->where('other_charge_id', $other_charge_id);
+	                $this->db->delete('billing_charges');
+    			}
+    		}
 
     		$meter_reading_input = $this->db->query("SELECT 
 					    z.*,
@@ -63,7 +84,11 @@ class Billing_model extends CORE_Model{
 					        WHEN z.is_fixed_amount = 1 THEN z.rate
 					        ELSE (z.total_consumption * z.rate)
 					    END) AS amount_due,
-					    ((10 / 100) * (z.total_consumption * z.rate)) as penalty_amount
+					    (CASE
+					        WHEN z.is_fixed_amount = 1 
+					        	THEN ((10 / 100) * (z.rate))
+					        ELSE ((10 / 100) * (z.total_consumption * z.rate))
+					    END) as penalty_amount
 					FROM
 					    (SELECT 
 					        x.*,
@@ -121,9 +146,11 @@ class Billing_model extends CORE_Model{
 
     		foreach ($meter_reading_input->result() as $row) {
 
+    		  $total_amount_due = $row->amount_due;
               $data[0] =
                  array(
                     'connection_id' => $row->connection_id,
+                    'default_matrix_id' => $row->default_matrix_id,
                     'meter_reading_input_id' => $row->meter_reading_input_id,
                     'meter_reading_period_id' => $row->meter_reading_period_id,
                     'due_date' => date("Y-m-d",strtotime($row->due_date)),
@@ -150,6 +177,52 @@ class Billing_model extends CORE_Model{
 
             	$update = "UPDATE meter_reading_input SET is_processed=1 WHERE meter_reading_input_id=".$row->meter_reading_input_id;
                	$this->db->query($update);
+
+               	$other_charges = $this->db->query("SELECT 
+					    oc.other_charge_id,
+					    oci.other_charge_item_id,
+					    oci.charge_id,
+					    oci.charge_unit_id,
+					    oci.charge_amount,
+					    oci.charge_qty,
+					    oci.charge_line_total
+					FROM
+					    other_charges oc
+					    LEFT JOIN other_charges_items oci ON oci.other_charge_id = oc.other_charge_id
+					    WHERE 
+							oc.is_deleted = FALSE
+							AND oc.is_active = TRUE
+					        AND oc.is_processed = FALSE
+					        AND oc.connection_id =".$row->connection_id);
+               	$charges = $other_charges->result();
+               	$a=0;
+
+               	foreach ($other_charges->result() as $oc) {
+               	  $total_charges += $oc->charge_line_total;
+	              $data_charges[0] =
+	                 array(
+	                    'billing_id' => $billing_id,
+	                    'meter_reading_input_id' => $row->meter_reading_input_id,
+	                    'other_charge_id' => $oc->other_charge_id,
+	                    'other_charge_item_id' => $oc->other_charge_item_id,
+	                    'charge_id' => $oc->charge_id,
+	                    'charge_unit_id' => $oc->charge_unit_id,
+	                    'charge_amount' => $oc->charge_amount,
+	                    'charge_qty' => $oc->charge_qty,
+	                    'charge_line_total' => $oc->charge_line_total
+	                 );
+
+	            	$this->db->insert_batch('billing_charges', $data_charges);     
+
+		            $update_bc = "UPDATE other_charges SET is_processed=1 WHERE other_charge_id=".$oc->other_charge_id;
+	               	$this->db->query($update_bc);
+
+               		$a++;
+               	}
+
+               	$grand_total = $total_amount_due + $total_charges;
+               	$update_amount = "UPDATE billing SET grand_total_amount=$grand_total WHERE billing_id=".$billing_id;
+	            $this->db->query($update_amount);
 
 				$i++;
     		}

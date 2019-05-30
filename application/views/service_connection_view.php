@@ -400,14 +400,14 @@
                                                     </div>
                                                     <div class="row bottom-10">
                                                         <div class="form-group">
-                                                            <label class="col-xs-12 col-md-4 control-label"><strong>Attended by:</strong></label>
+                                                            <label class="col-xs-12 col-md-4 control-label"><strong><span class="red">*</span> Attended by:</strong></label>
                                                             <div class="col-xs-12 col-md-8">
-                                                                <div class="input-group">
-                                                                    <span class="input-group-addon">
-                                                                        <i class="fa fa-user"></i>
-                                                                    </span>
-                                                                    <input type="text" name="attended_by" class="form-control" placeholder="Attended By">
-                                                                </div>
+                                                                <select name="attendant_id" id="cbo_attendant" class="form-control" data-error-msg="Attendant is required!" style="width: 100%;" required>
+                                                                    <option value="0">[ Create New Attendant ]</option>
+                                                                    <?php foreach($attendant as $attendant) { ?>
+                                                                        <option value="<?php echo $attendant->attendant_id; ?>"><?php echo $attendant->full_name; ?></option>
+                                                                    <?php } ?>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -425,7 +425,7 @@
                     </div>
                 </div>
 
-            <div id="modal_meter_list" class="modal fade" role="dialog"><!--modal-->
+            <div id="modal_meter_list" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false"><!--modal-->
                 <div class="modal-dialog" style="width: 80%;">
                     <div class="modal-content"><!---content--->
                         <div class="modal-header ">
@@ -456,11 +456,10 @@
                 </div>
             </div><!---modal-->
 
-            <div id="modal_new_customer" class="modal fade" role="dialog" style="margin-top: 0;padding-top: 0"><!--modal-->
+            <div id="modal_new_customer" class="modal fade" role="dialog" style="margin-top: 0;padding-top: 0" data-backdrop="static" data-keyboard="false"><!--modal-->
                 <div class="modal-dialog modal-lg" style="width: 95%;">
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:#2ecc71;">
-                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                             <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>Customer Information</h4>
                         </div>
 
@@ -698,6 +697,117 @@
                 </div>
             </div><!---modal-->
 
+            <div id="modal_new_attendant" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color:#2ecc71;">
+                                <h4 id="attendant_title" class="modal-title" style="color: #ecf0f1;"><span id="modal_mode"></span></h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <form id="frm_attendant" role="form">
+                                        <div class="">
+                                            <div class="col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="col-xs-12 col-md-4 control-label "><strong> Attendant Code :</strong></label>
+                                                    <div class="col-xs-12 col-md-8">
+                                                        <input type="text" class="form-control" placeholder="ATD-YYYYMMDD-XXXX" readonly>
+                                                    </div>
+                                                </div>
+                                            </div><br><br>
+                                            <div class="col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="col-xs-12 col-md-4 control-label "><strong><font color="red">*</font> First name :</strong></label>
+                                                    <div class="col-xs-12 col-md-8">
+                                                        <input type="text" name="first_name" class="form-control" placeholder="Firstname" data-error-msg="Firstname is required!" required>
+                                                    </div>
+                                                </div>
+                                            </div><br><br>
+                                            <div class="col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="col-xs-12 col-md-4 control-label "><strong>&nbsp;&nbsp;Middle name :</strong></label>
+                                                    <div class="col-xs-12 col-md-8">
+                                                        <input type="text" name="middle_name" class="form-control" placeholder="Middlename">
+                                                    </div>
+                                                </div>
+                                            </div><br><br>
+                                            <div class="col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="col-xs-12 col-md-4 control-label "><strong><font color="red">*</font> Last name :</strong></label>
+                                                    <div class="col-xs-12 col-md-8">
+                                                        <input type="text" name="last_name" class="form-control" placeholder="Last name" required data-error-msg="Lastname is required!">
+                                                    </div>
+                                                </div>
+                                            </div><br><br>
+                                            <div class="col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="col-xs-12 col-md-4 control-label "><strong>Contact Number :</strong></label>
+                                                    <div class="col-xs-12 col-md-8">
+                                                        <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact Number">
+                                                    </div>
+                                                </div>
+                                            </div><br><br>
+                                            <div class="col-xs-12">
+                                                <label class="col-xs-12 col-md-4 control-label "><strong>Department :</strong></label>
+                                                <div class="col-xs-12 col-md-8">
+                                                    <select name="department_id" id="cbo_department" class="form-control" data-error-msg="Department is required!" style="width: 100%;">
+                                                        <option value="0">[ Create New Department ]</option>
+                                                        <?php foreach($departments as $department) { ?>
+                                                            <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="btn_save_attendant" class="btn btn-primary" name="btn_save"><span></span>Save</button>
+                                <button id="btn_cancel_attendant" class="btn btn-default">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal_new_department" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background: #2ecc71">
+                                 <h2 id="department_title" class="modal-title" style="color:white;">Create New Department</h2>
+                            </div>
+                            <div class="modal-body">
+                                <form id="frm_department" role="form" class="form-horizontal">
+                                    <div class="row" style="margin: 1%;">
+                                        <div class="col-lg-12">
+                                            <div class="form-group" style="margin-bottom:0px;">
+                                                <label class=""><font color="red">*</font> Department Name :</label>
+                                                <textarea name="department_name" class="form-control" data-error-msg="Department Name is required!" placeholder="Department name" required></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row" style="margin: 1%;">
+                                        <div class="col-lg-12">
+                                            <div class="form-group" style="margin-bottom:0px;">
+                                                <label class="">Department Description :</label>
+                                                <textarea name="department_desc" class="form-control" placeholder="Department Description"></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="btn_save_department" class="btn btn-primary">Save</button>
+                                <button id="btn_cancel_department" class="btn btn-default">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <footer role="contentinfo">
                     <div class="clearfix">
                         <ul class="list-unstyled list-inline pull-left">
@@ -736,6 +846,7 @@
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectRowObjMeter;
         var _cboCustomer; var _cboContractType; var _cboRateType;var _cboCustomerType; 
         var _cboNationality; var _cboCivilStatus; var _cboSex; var _cboSpouseNationality;
+        var _cboAttendant; var _cboDepartment;
 
         var initializeControls=function(){
             _cboCustomer=$("#cbo_customer").select2({
@@ -774,6 +885,21 @@
             _cboSpouseNationality=$("#cbo_spouse_nationality").select2({
                 allowClear: false
             });     
+
+            _cboAttendant=$("#cbo_attendant").select2({
+                placeholder: "Please select attendant.",
+                allowClear: false
+            });     
+
+            _cboAttendant.select2('val',null);
+
+            _cboDepartment=$("#cbo_department").select2({
+                placeholder: "Please select department.",
+                allowClear: false
+            });  
+
+            _cboDepartment.select2('val',null);
+
             $('.numeric').autoNumeric('init');
             $('.number').autoNumeric('init', {mDec:0});
 
@@ -855,7 +981,17 @@
 
             $('#btn_cancel_customer').click(function(){
                 $('#modal_new_connection').modal('show');
-                $('#modal_meter_customer').modal('hide');
+                $('#modal_new_customer').modal('hide');
+            });
+
+            $('#btn_cancel_attendant').click(function(){
+                $('#modal_new_connection').modal('show');
+                $('#modal_new_attendant').modal('hide');
+            });
+
+            $('#btn_cancel_department').click(function(){
+                $('#modal_new_attendant').modal('show');
+                $('#modal_new_department').modal('hide');
             });
 
             $('#link_browse_cu').click(function(){
@@ -884,6 +1020,29 @@
                     var obj_customer=$('#cbo_customer').find('option[value="'+i+'"]');
                     $('#receipt_name').val(obj_customer.text());
                     $('#address').val(obj_customer.data('address'));
+                }
+            });
+
+            _cboAttendant.on('change',function(){
+                var i=$(this).select2('val');
+                if(i==0){ //new attendant
+
+                    _cboAttendant.select2('val',null);
+                    _cboDepartment.select2('val',null);
+                    $('#attendant_title').text('Create New Attendant');
+                    $('#modal_new_attendant').modal('show');
+                    $('#modal_new_connection').modal('hide');
+                    clearFields($('#modal_new_attendant').find('form'));
+
+                }
+            });            
+
+            _cboDepartment.on('select2:select', function(){
+                if (_cboDepartment.val() == 0) {
+                    _cboDepartment.select2('val',null);
+                    clearFields($('#frm_department'));
+                    $('#modal_new_department').modal('show');
+                    $('#modal_new_attendant').modal('hide');
                 }
             });
 
@@ -996,6 +1155,7 @@
                 $('#link_browse_cu').show();
                 $('#ms_icon').hide();
                 _cboCustomer.select2('val',null);
+                _cboAttendant.select2('val',null);
                 _cboContractType.select2('val',1);
                 _cboRateType.select2('val',1);
                 _cboCustomer.select2("enable",true);
@@ -1017,6 +1177,7 @@
                 });
 
                 _cboCustomer.select2('val',data.customer_id);
+                _cboAttendant.select2('val',data.attendant_id);
                 _cboContractType.select2('val',data.contract_type_id);
                 _cboRateType.select2('val',data.rate_type_id);
                 _cboCustomer.select2("enable",false);
@@ -1064,6 +1225,42 @@
                         $('#modal_new_customer').modal('hide');
                         $('#modal_new_connection').modal('show');
                         clearFields($('#frm_customer'));
+                    }).always(function(){
+                        showSpinningProgress($('#btn_save_customer'));
+                    });
+                }
+            }); 
+
+            $('#btn_save_department').click(function(){
+                if(validateRequiredFields($('#frm_department'))){
+                    createDepartment().done(function(response){
+                        var department=response.row_added[0];
+
+                        $('#cbo_department').append('<option value="'+ department.department_id +'">'+ department.department_name +'</option>');
+                        _cboDepartment.select2('val',department.department_id);
+
+                        $('#modal_new_department').modal('hide');
+                        $('#modal_new_attendant').modal('show');
+                        clearFields($('#frm_department'));
+                    }).always(function(){
+                        showSpinningProgress($('#btn_save_department'));
+                    });
+                }
+            });
+
+            $('#btn_save_attendant').click(function(){
+                if(validateRequiredFields($('#frm_attendant'))){
+                    createAttendant().done(function(response){
+                        var attendant=response.row_added[0];
+
+                        $('#cbo_attendant').append('<option value="'+ attendant.attendant_id +'">'+ attendant.full_name +'</option>');
+                        _cboAttendant.select2('val',attendant.attendant_id);
+
+                        $('#modal_new_attendant').modal('hide');
+                        $('#modal_new_connection').modal('show');
+                        clearFields($('#frm_attendant'));
+                    }).always(function(){
+                        showSpinningProgress($('#btn_save_attendant'));
                     });
                 }
             }); 
@@ -1133,7 +1330,8 @@
                 "dataType":"json",
                 "type":"POST",
                 "url":"Customers/transaction/create",
-                "data":_dataCustomer
+                "data":_dataCustomer,
+                "beforeSend": showSpinningProgress($('#btn_save_customer'))
             });
         }
 
@@ -1146,6 +1344,30 @@
                 "url":"ServiceConnection/transaction/create",
                 "data":_data,
                 "beforeSend": showSpinningProgress($('#btn_save'))
+            });
+        };
+
+        var createDepartment=function(){
+            var _dataDepartment=$('#frm_department').serializeArray();
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Departments/transaction/create",
+                "data":_dataDepartment,
+                "beforeSend": showSpinningProgress($('#btn_save_department'))
+            });
+        }
+
+        var createAttendant=function(){
+            var _data=$('#frm_attendant').serializeArray();
+
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Attendant/transaction/create",
+                "data":_data,
+                "beforeSend": showSpinningProgress($('#btn_save_attendant'))
             });
         };
 

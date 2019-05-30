@@ -18,6 +18,7 @@ class Service_connection_model extends CORE_Model{
 		    c.customer_name,
 		    ct.contract_type_name,
 		    rt.rate_type_name,
+            CONCAT_WS(' ',a.first_name,a.middle_name,a.last_name) as attendant,
 		    DATE_FORMAT(sc.connection_date, '%m/%d/%Y') AS connection_date,
 		    DATE_FORMAT(sc.service_date, '%m/%d/%Y') AS service_date,
 		    DATE_FORMAT(sc.target_date, '%m/%d/%Y') AS target_date
@@ -31,6 +32,8 @@ class Service_connection_model extends CORE_Model{
 		    contract_types ct ON ct.contract_type_id = sc.contract_type_id
 		        LEFT JOIN
 		    rate_types rt ON rt.rate_type_id = sc.rate_type_id
+                LEFT JOIN 
+            attendant a ON a.attendant_id = sc.attendant_id
 		WHERE
 		    sc.is_deleted = FALSE
 		        AND sc.is_active = TRUE
