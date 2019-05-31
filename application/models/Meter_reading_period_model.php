@@ -118,7 +118,7 @@ class Meter_reading_period_model extends CORE_Model {
 			LEFT JOIN service_connection sc ON sc.connection_id = main.connection_id 
 			LEFT JOIN customers c ON c.customer_id = sc.customer_id
 			LEFT JOIN meter_inventory mi ON mi.meter_inventory_id = sc.meter_inventory_id
-			'.($connection_id==null?'':' AND main.connection_id=$connection_id').'
+			'.($connection_id==null?'':' WHERE main.connection_id='.$connection_id.'').'
 			';
         return $this->db->query($sql)->result();
     }

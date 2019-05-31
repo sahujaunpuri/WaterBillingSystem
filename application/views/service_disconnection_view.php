@@ -58,7 +58,7 @@
                 display: none;
         }
 
-        #tbl_items .form-control[readonly]{
+        #tbl_items .form-control[readonly], #tbl_other_items .form-control[readonly]{
             background-color: transparent;
             border: 0;
         }
@@ -133,7 +133,7 @@
             </div>
 
             <div id="modal_account_list" class="modal fade" role="dialog"><!--modal-->
-                <div class="modal-dialog" style="width: 80%;">
+                <div class="modal-dialog " style="width: 80%;">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h2 class="modal-title" style="color: white;"><span id="modal_mode"></span>Account List</h2>
@@ -196,7 +196,7 @@
                 </div>
             </div><!---modal-->
             <div id="modal_new_disconnection" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
-                <div class="modal-dialog">
+                <div class="modal-dialog " style="width: 95%;">
                     <div class="modal-content">
                         <div class="modal-header" style="background: #2ecc71">
                              <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
@@ -204,6 +204,8 @@
                         </div>
                         <div class="modal-body">
                             <form id="frm_disconnection" role="form" class="form-horizontal">
+                            <div class="row">
+                            <div class="col-lg-6">
                                 <div class="row" style="margin: 1%;">
                                     <div class="col-lg-6">
                                         <div class="form-group" style="margin-bottom:0px;">
@@ -282,8 +284,10 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-lg-6">
                                 <div class="row">
-                                    <div class="col-lg-12">
+                                    <h4>Meter Charges</h4>
                                         <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                             <thead class="">    
                                             <tr>
@@ -307,8 +311,29 @@
                                         <input type="hidden" name="default_matrix_id" class="form-control"> 
                                         <input type="hidden" name="rate_amount" class="form-control"> 
                                         <input type="hidden" name="is_fixed" class="form-control"> 
-                                    </div>
                                 </div>
+                                <div class="row">
+                                    <h4>Other Charges</h4>
+                                        <table id="tbl_other_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                            <thead class="">    
+                                            <tr>
+                                                <th class="hidden">OC ID</th>
+                                                <th class="hidden">OCI ID</th>
+                                                <th class="hidden">CH ID</th>
+                                                <th class="hidden">QTY</th>
+                                                <th width="25%">Charge No</th>
+                                                <th width="50%">Description</th>
+                                                <th class="hidden">UM</th>
+                                                <th class="hidden" style="text-align: right;">Cost</th>
+                                                <th style="text-align: right;">Total</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                </div>
+                            </div>
+                            </div>
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -382,7 +407,7 @@ $(document).ready(function(){
                 {
                     targets:[6],
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm disabled" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
@@ -480,6 +505,7 @@ $(document).ready(function(){
             $('.date-picker').datepicker('setDate', 'today');
             $('#modal_title').text('New Disconnection Service');
             $('#modal_new_disconnection').modal('show');
+            $('#tbl_other_items > tbody').html('');
             _cboDisconnectionReason.select2('val',1);
             $('#link_browse_co').show();
             $('#sn_icon').hide();
@@ -490,7 +516,7 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.disconnection_id;
-
+            _connection_id_get = data.connection_id;
             $('input,textarea,select').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
@@ -499,8 +525,41 @@ $(document).ready(function(){
                     }
                 });
             });
-
+            $('#tbl_other_items > tbody').html('');
             _cboDisconnectionReason.select2('val',data.disconnection_reason_id);
+
+
+
+            $.ajax({
+                url : 'Service_disconnection/transaction/items/'+data.connection_id,
+                type : "GET",
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                beforeSend : function(){
+                    $('#tbl_other_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                },
+                success : function(response){
+                    var rows=response.other_charges;
+                    $('#tbl_other_items > tbody').html('');
+                    $.each(rows,function(i,value){
+                        $('#tbl_other_items > tbody').append(newRowItem({
+                            other_charge_id :value.other_charge_id,
+                            other_charge_item_id :value.other_charge_item_id,
+                            charge_id :value.charge_id,
+                            other_charge_no :value.other_charge_no,
+                            charge_qty :value.charge_qty,
+                            charge_desc :value.charge_desc,
+                            charge_unit_id :value.charge_unit_id,
+                            charge_amount :value.charge_amount,
+                            charge_line_total :value.charge_line_total
+                        }));
+                   });
+                    reInitializeNumeric();
+                }
+            });
+
             $('#link_browse_co').hide();
             $('#sn_icon').show();
             $('#modal_title').text('Edit Disconnection Service');
@@ -510,6 +569,7 @@ $(document).ready(function(){
         $('#tbl_account_list > tbody').on('click','button[name="accept_account"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt_account.row(_selectRowObj).data();
+            $('#tbl_other_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
 
             $('input[name="service_no"]').val(data.service_no);
             $('input[name="connection_id"]').val(data.connection_id);
@@ -523,8 +583,25 @@ $(document).ready(function(){
                 console.log(latest);
                 $('input[name="previous_month"]').val(latest.previous_month);
                 $('input[name="previous_reading"]').val(latest.previous_reading);
+                $('#tbl_other_items > tbody').html('');
+                    var rows=response.other_charges;
+                    $.each(rows,function(i,value){
+                        $('#tbl_other_items > tbody').append(newRowItem({
+                            other_charge_id :value.other_charge_id,
+                            other_charge_item_id :value.other_charge_item_id,
+                            charge_id :value.charge_id,
+                            other_charge_no :value.other_charge_no,
+                            charge_qty :value.charge_qty,
+                            charge_desc :value.charge_desc,
+                            charge_unit_id :value.charge_unit_id,
+                            charge_amount :value.charge_amount,
+                            charge_line_total :value.charge_line_total
+                        }));
+                    });
+                    reInitializeNumeric();
             });
 
+             
             $('#modal_account_list').modal('hide');
             $('#modal_new_disconnection').modal('show');
 
@@ -808,6 +885,19 @@ $(document).ready(function(){
         $('form').find('input:first').focus();
     };
 
+    var newRowItem=function(d){
+        return '<tr>'+
+        '<td class="hidden"><input name="other_charge_id[]" type="text" class="number form-control" value="'+d.other_charge_id+'"></td>'+
+        '<td class="hidden"><input name="other_charge_item_id[]" type="text" class="number form-control" value="'+d.other_charge_item_id+'"></td>'+
+        '<td class="hidden"><input name="charge_id[]" type="text" class="number form-control" value="'+d.charge_id+'"></td>'+
+        '<td class="hidden"><input name="charge_qty[]" type="text" class="number form-control" value="'+d.charge_qty+'"></td>'+
+        '<td>'+d.other_charge_no+'</td>'+
+        '<td>'+d.charge_desc+'</td>'+
+        '<td class="hidden"><input name="charge_unit_id[]" type="text" class="form-control number" value="'+d.charge_unit_id+'"></td>'+
+        '<td class="hidden"><input name="charge_amount[]" type="text" class="numeric form-control" value="'+d.charge_amount+'"></td>'+
+        '<td><input name="charge_line_total[]" type="text" class="numeric form-control" value="'+d.charge_line_total+'" readonly></td>'+
+        '</tr>';
+    };
     function format ( d ) {
         return '<br /><table style="margin-left:10%;width: 80%;">' +
         '<thead>' +
