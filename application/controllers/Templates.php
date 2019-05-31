@@ -110,6 +110,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Service_disconnection_model');
         $this->load->model('Service_reconnection_model');
 
+        $this->load->model('Billing_model');
+        $this->load->model('Billing_charges_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -5579,8 +5582,62 @@ class Templates extends CORE_Controller {
 
                         break;
 
+
+                case 'billing_statement': //Billing Statment
+                        $m_billing=$this->Billing_model;
+                        $m_billing_charges=$this->Billing_charges_model;
+
+                        $m_company=$this->Company_model;
+                        $type=$this->input->get('type',TRUE);
+
+                        $period = $m_billing->get_list($filter_value);
+                        $period_id = $period[0]->meter_reading_period_id;
+
+                        $billing=$m_billing->billing_statement($period_id,0,0,$filter_value);
+                        $charges=$m_billing_charges->billing_charges($filter_value);
+                        $company=$m_company->get_list();
+
+                        $data['billing']=$billing[0];
+                        $data['charges']=$charges;
+                        $data['company_info']=$company[0];
+
+                        //show only inside grid with menu button
+                        if($type=='fullview'||$type==null){
+                            echo $this->load->view('template/water_billing_statement_wo_header',$data,TRUE);
+                        }
+
+                        //show only inside grid without menu button
+                        if($type=='contentview'){
+                            echo $this->load->view('template/water_billing_statement_content',$data,TRUE);
+                        }
+
+                        //download pdf
+                        if($type=='pdf'){
+                            $file_name=$data['billing']->control_no;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/water_billing_statement_content',$data,TRUE); //load the template
+                            $pdf->setFooter('{PAGENO}');
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output($pdfFilePath,"D");
+
+                        }
+
+                        //preview on browser
+                        if($type=='preview'){
+                            $file_name=$data['billing']->control_no;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/water_billing_statement_content',$data,TRUE); //load the template
+                            $pdf->setFooter('{PAGENO}');
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output();
+                        }
+
+                        break;
+
         }
     }
-
-
 }

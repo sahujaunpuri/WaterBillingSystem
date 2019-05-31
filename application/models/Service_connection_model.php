@@ -12,7 +12,7 @@ class Service_connection_model extends CORE_Model{
     }
 
     function getList($connection_id=null,$status_id=null,$current_id=null){
-    	$query = $this->db->query("SELECT 
+	$query = $this->db->query("SELECT 
 		    sc.*,
 		    inv.serial_no,
 		    c.customer_name,
@@ -22,6 +22,7 @@ class Service_connection_model extends CORE_Model{
 		    DATE_FORMAT(sc.connection_date, '%m/%d/%Y') AS connection_date,
 		    DATE_FORMAT(sc.service_date, '%m/%d/%Y') AS service_date,
 		    DATE_FORMAT(sc.target_date, '%m/%d/%Y') AS target_date
+
 		FROM
 		    service_connection sc
 		        LEFT JOIN

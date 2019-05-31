@@ -406,24 +406,26 @@ $(document).ready(function(){
         dt=$('#tbl_charges').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
+            "order": [[ 5, "desc" ]],
             "pageLength":15,
             "ajax" : "Charges/transaction/list",
             "columns": [
                 { targets:[0],data: "charge_code" },
                 { targets:[1],data: "charge_desc" },
-                { targets:[1],data: "charge_unit_name" },
-                {sClass:'right_align', targets:[2],data: "charge_amount" ,
+                { targets:[2],data: "charge_unit_name" },
+                {sClass:'right_align', targets:[3],data: "charge_amount" ,
                       render: $.fn.dataTable.render.number( ',', '.', 2 )
                 },
                 {
-                    targets:[3],
+                    targets:[4],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[5],data: "charge_id", visible:false}
             ],
 
             language: {

@@ -429,7 +429,7 @@
                 <div class="modal-dialog" style="width: 80%;">
                     <div class="modal-content"><!---content--->
                         <div class="modal-header ">
-                            <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Meter Inventory</h4>
+                            <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Meter Inventory List</h4>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -443,6 +443,7 @@
                                 <tr>
                                     <th>Meter Code</th>
                                     <th>Serial No</th>
+                                    <th>Description</th>
                                     <th><center>Action</center></th>
                                 </tr>
                                 </thead>
@@ -908,6 +909,7 @@
                 },
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
+                "order": [[ 7, "desc" ]],
                 "pageLength": 15,
                 "ajax" : "ServiceConnection/transaction/list",
                 "columns": [
@@ -931,7 +933,8 @@
 
                             return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                         }
-                    }
+                    },
+                    { targets:[7],data: "connection_id", visible:false}
                 ]
             });
 
@@ -939,18 +942,21 @@
                 "fnInitComplete": function (oSettings, json) {
                 },
                 "bLengthChange":false,
+                "order": [[ 4, "desc" ]],
                 "pageLength": 15,
                 "ajax" : "MeterInventory/transaction/open",
                 "columns": [
                     { targets:[0],data: "meter_code" },
                     { targets:[1],data: "serial_no" },
+                    { targets:[2],data: "meter_description" },
                     {
-                        targets:[2],
+                        targets:[3],
                         render: function (data, type, full, meta){
                             var btn_accept='<button class="btn btn-success btn-sm" name="accept_meter"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> Accept</button>';
                             return '<center>'+btn_accept+'</center>';
                         }
-                    }
+                    },
+                    { targets:[4],data: "meter_inventory_id", visible:false}
 
                 ]
             });

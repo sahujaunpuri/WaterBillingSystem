@@ -204,6 +204,7 @@ $(document).ready(function(){
         dt=$('#tbl_units').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
+            "order": [[ 3, "desc" ]],
             "ajax" : "Charge_unit/transaction/list",
             "language": {
                 "searchPlaceholder":"Search Unit"
@@ -219,7 +220,8 @@ $(document).ready(function(){
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[3],data: "charge_unit_id", visible:false}
             ]
         });
 
