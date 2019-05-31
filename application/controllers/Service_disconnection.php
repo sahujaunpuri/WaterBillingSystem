@@ -14,9 +14,11 @@ class Service_disconnection extends CORE_Controller {
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Meter_reading_period_model');
+        $this->load->model('Other_charge_item_model');
+        $this->load->model('Service_disconnection_charges_model');
         $this->load->library('excel');
         $this->load->library('M_pdf');
-        
+        $this->load->model('Other_charge_model');        
     }
 
     public function index() {
@@ -42,7 +44,7 @@ class Service_disconnection extends CORE_Controller {
         
     }
 
-    function transaction($txn = null) {
+    function transaction($txn = null,$filter_id=null) {
         switch ($txn) {
             case 'list':
                 $m_disconnection = $this->Service_disconnection_model;
@@ -67,9 +69,44 @@ class Service_disconnection extends CORE_Controller {
                 break;
 
             case 'get-latest-reading':
-                $connection_id = $this->input->get('connection_id',TRUE);
+                $connection_id = $this->input->post('connection_id',TRUE);
                 $before_date   = date('Y-m-d',now());
                 $response['data']= $this->Meter_reading_period_model->get_meter_reading_for_inputs($before_date,$connection_id);
+                $response['other_charges'] = $this->Other_charge_item_model->get_list(array('other_charges.is_active'=>TRUE,'other_charges.is_deleted'=>FALSE,'other_charges.connection_id'=>$connection_id,'other_charges.is_processed'=>FALSE),
+                    'other_charges.other_charge_id,
+                    other_charges.other_charge_no,
+                    other_charges_items.other_charge_item_id,
+                    other_charges_items.charge_id,
+                    charges.charge_desc,
+                    other_charges_items.charge_unit_id,
+                    other_charges_items.charge_amount,
+                    other_charges_items.charge_qty,
+                    other_charges_items.charge_line_total',
+                    array(
+                        array('other_charges','other_charges.other_charge_id= other_charges_items.other_charge_id','left'),
+                        array('charges','charges.charge_id = other_charges_items.charge_id','left'))
+
+                    );
+                echo json_encode($response);
+                break;
+
+            case 'items':
+                $connection_id = $filter_id;
+                $response['other_charges'] = $this->Other_charge_item_model->get_list(array('other_charges.connection_id'=>$connection_id),
+                    'other_charges.other_charge_id,
+                    other_charges.other_charge_no,
+                    other_charges_items.other_charge_item_id,
+                    other_charges_items.charge_id,
+                    charges.charge_desc,
+                    other_charges_items.charge_unit_id,
+                    other_charges_items.charge_amount,
+                    other_charges_items.charge_qty,
+                    other_charges_items.charge_line_total',
+                    array(
+                        array('other_charges','other_charges.other_charge_id= other_charges_items.other_charge_id','left'),
+                        array('charges','charges.charge_id = other_charges_items.charge_id','left'))
+
+                    );
                 echo json_encode($response);
                 break;
 
@@ -110,11 +147,7 @@ class Service_disconnection extends CORE_Controller {
                 $m_disconnection->last_meter_reading=$this->get_numeric_value($this->input->post('last_meter_reading',TRUE));
                 $m_disconnection->total_consumption=$this->get_numeric_value($this->input->post('total_consumption',TRUE));
                 $m_disconnection->meter_amount_due=$this->get_numeric_value($this->input->post('meter_amount_due',TRUE));
-
-
-
                 $m_disconnection->save();
-
                 $disconnection_id=$m_disconnection->last_insert_id();
 
                 //update disconnection code on formatted last insert id
@@ -131,6 +164,33 @@ class Service_disconnection extends CORE_Controller {
                 $m_meter_inventory = $this->Meter_inventory_model;
                 $m_meter_inventory->meter_status_id=2; // Inactive Status
                 $m_meter_inventory->modify($meter_inventory_id);
+
+
+                // PREPARE CHARGES ITEMS FOR FOREACH ENTRY
+                $other_charge_id = $this->input->post('other_charge_id',TRUE);
+                $other_charge_item_id = $this->input->post('other_charge_item_id',TRUE);
+                $charge_id = $this->input->post('charge_id',TRUE);
+                $charge_qty = $this->input->post('charge_qty',TRUE);
+                $charge_unit_id = $this->input->post('charge_unit_id',TRUE);
+                $charge_amount = $this->input->post('charge_amount',TRUE);
+                $charge_line_total = $this->input->post('charge_line_total',TRUE);
+
+                $m_disconnection_charges = $this->Service_disconnection_charges_model;
+                $m_other_charges = $this->Other_charge_model;
+                for($i=0;$i<count($other_charge_id);$i++){
+                    $m_disconnection_charges->disconnection_id = $disconnection_id;
+                    $m_disconnection_charges->other_charge_id = $other_charge_id[$i];
+                    $m_disconnection_charges->other_charge_item_id = $other_charge_item_id[$i];
+                    $m_disconnection_charges->charge_id = $charge_id[$i];
+                    $m_disconnection_charges->charge_qty = $this->get_numeric_value($charge_qty[$i]);
+                    $m_disconnection_charges->charge_unit_id = $charge_unit_id[$i];
+                    $m_disconnection_charges->charge_amount = $this->get_numeric_value($charge_amount[$i]);
+                    $m_disconnection_charges->charge_line_total = $this->get_numeric_value($charge_line_total[$i]);
+                    $m_disconnection_charges->save();
+                    $m_other_charges->is_processed = 1;
+                    $m_other_charges->modify($other_charge_id[$i]);
+                }
+
 
                 $response['title']='Success!';
                 $response['stat']='success';
@@ -175,6 +235,18 @@ class Service_disconnection extends CORE_Controller {
                 $m_disconnection->disconnection_notes=$this->input->post('disconnection_notes',TRUE);
                 $m_disconnection->previous_id=$this->input->post('previous_id',TRUE);
                 $m_disconnection->previous_status_id=$status_id;
+
+
+
+                $m_disconnection->default_matrix_id=$this->get_numeric_value($this->input->post('default_matrix_id',TRUE));
+                $m_disconnection->rate_amount=$this->get_numeric_value($this->input->post('rate_amount',TRUE));
+                $m_disconnection->is_fixed=$this->get_numeric_value($this->input->post('is_fixed',TRUE));
+                $m_disconnection->previous_month=$this->input->post('previous_month',TRUE);
+                $m_disconnection->previous_reading=$this->get_numeric_value($this->input->post('previous_reading',TRUE));
+                $m_disconnection->last_meter_reading=$this->get_numeric_value($this->input->post('last_meter_reading',TRUE));
+                $m_disconnection->total_consumption=$this->get_numeric_value($this->input->post('total_consumption',TRUE));
+                $m_disconnection->meter_amount_due=$this->get_numeric_value($this->input->post('meter_amount_due',TRUE));
+
                 $m_disconnection->modify($disconnection_id);   
 
                 $response['title']='Success!';
@@ -226,6 +298,15 @@ class Service_disconnection extends CORE_Controller {
                 $m_meter_inventory=$this->Meter_inventory_model;
 
                 $disconnection_id=$this->input->post('disconnection_id',TRUE);
+
+                $other_charges = $this->Service_disconnection_charges_model->get_list(array('disconnection_id'=>$disconnection_id),'DISTINCT (other_charge_id)');
+                $m_other_charge = $this->Other_charge_model;
+                foreach ($other_charges as $other_charge) {
+                     $m_other_charge->is_processed = FALSE;
+                     $m_other_charge->modify($other_charge->other_charge_id);
+                }
+
+
                 $data = $m_disconnection->getList($disconnection_id);
                 $disconnection_code = $data[0]->disconnection_code;
                 $connection_id = $data[0]->connection_id;
