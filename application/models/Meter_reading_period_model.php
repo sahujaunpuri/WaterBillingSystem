@@ -61,6 +61,7 @@ class Meter_reading_period_model extends CORE_Model {
 			WHERE scr.is_active= TRUE AND scr.is_deleted = FALSE )
 			 as main
 			 
+			 
 			WHERE applicable_month < DATE("'.$before_date.'")
 			ORDER BY connection_id ASC,applicable_month ASC)  as n
 

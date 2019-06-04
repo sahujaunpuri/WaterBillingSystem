@@ -332,6 +332,23 @@
                                             </tbody>
                                         </table>
                                 </div>
+                                
+                                <div class="row">
+                                <h4>Arrears</h4>
+                                    <div class="col-lg-4">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class="">Arrears as of Date:</label>
+                                            <input type="text" name="arrears_amount" class="form-control numeric" placeholder="" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-lg-offset-4">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class="">Arrears Penalty:</label>
+                                            <input type="text" name="arrears_penalty_amount" class="form-control numeric" placeholder="" readonly>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
                             </div>
                             </form>
@@ -583,6 +600,10 @@ $(document).ready(function(){
                 console.log(latest);
                 $('input[name="previous_month"]').val(latest.previous_month);
                 $('input[name="previous_reading"]').val(latest.previous_reading);
+                $('input[name="last_meter_reading"]').val(0);
+                $('input[name="last_meter_reading"]').keyup();
+                $('input[name="arrears_amount"]').val(response.arrears_amount);
+                $('input[name="arrears_penalty_amount"]').val(response.arrears_penalty_amount);
                 $('#tbl_other_items > tbody').html('');
                     var rows=response.other_charges;
                     $.each(rows,function(i,value){
@@ -598,6 +619,7 @@ $(document).ready(function(){
                             charge_line_total :value.charge_line_total
                         }));
                     });
+
                     reInitializeNumeric();
             });
 
@@ -829,7 +851,7 @@ $(document).ready(function(){
             "dataType":"json",
             "type":"POST",
             "url":"Service_disconnection/transaction/get-latest-reading",
-            "data":{connection_id : _connection_id_get}
+            "data":{connection_id : _connection_id_get, 'service_date' :  $('input[name="service_date"]').val()}
         });
     };
 

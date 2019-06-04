@@ -19,6 +19,7 @@ class Service_disconnection extends CORE_Controller {
         $this->load->library('excel');
         $this->load->library('M_pdf');
         $this->load->model('Other_charge_model');        
+        $this->load->model('Billing_model');        
     }
 
     public function index() {
@@ -70,8 +71,32 @@ class Service_disconnection extends CORE_Controller {
 
             case 'get-latest-reading':
                 $connection_id = $this->input->post('connection_id',TRUE);
-                $before_date   = date('Y-m-d',now());
-                $response['data']= $this->Meter_reading_period_model->get_meter_reading_for_inputs($before_date,$connection_id);
+                $before_date = date('Y-m-d',strtotime($this->input->post('service_date',TRUE)));
+                $get_meter_reading_for_inputs = $this->Meter_reading_period_model->get_meter_reading_for_inputs($before_date,$connection_id);
+                
+                $previous_month = $get_meter_reading_for_inputs[0]->previous_month;
+                $previous_billing_info = $this->Service_disconnection_model->previous_billing_info($connection_id,$previous_month);
+                $arrears_penalty_amount=0;
+                $arrears_amount = 0;
+                if(count($previous_billing_info) > 0){
+                    $check_previous_billing_if_paid = $this->Service_disconnection_model->check_previous_billing_if_paid($previous_billing_info[0]->billing_id);
+                    // print_r($check_previous_billing_if_paid);
+
+                    $check_billing_date = $check_previous_billing_if_paid[0]->meter_reading_year.'-'.str_pad($check_previous_billing_if_paid[0]->month_id, 2, 0,STR_PAD_LEFT);
+                    $check_before_date = date('Y-m',strtotime($before_date));
+                    if($check_billing_date != $check_before_date){ // CHECK IF IT ALREADY HAS A BILLING FOR THE SAME MONTH
+                        if($check_previous_billing_if_paid[0]->amount_due > 0){
+                            $get_penalty_for_last_billing = $this->Billing_model->get_list($check_previous_billing_if_paid[0]->billing_id,'penalty_amount')[0];
+                            $arrears_penalty_amount = $get_penalty_for_last_billing->penalty_amount;
+                        }
+                    }
+
+                    $arrears_amount_info = $this->Service_disconnection_model->arrears_amount_info($connection_id);
+                    $arrears_amount= $arrears_amount_info[0]->arrears_amount;
+                }
+                $response['arrears_penalty_amount']= $arrears_penalty_amount;
+                $response['arrears_amount']= $arrears_amount;
+                $response['data']= $get_meter_reading_for_inputs;
                 $response['other_charges'] = $this->Other_charge_item_model->get_list(array('other_charges.is_active'=>TRUE,'other_charges.is_deleted'=>FALSE,'other_charges.connection_id'=>$connection_id,'other_charges.is_processed'=>FALSE),
                     'other_charges.other_charge_id,
                     other_charges.other_charge_no,
@@ -126,6 +151,8 @@ class Service_disconnection extends CORE_Controller {
 
                 $service_date = date("Y-m-d",strtotime($this->input->post('service_date',TRUE)));
                 $date_disconnection_date = date("Y-m-d",strtotime($this->input->post('date_disconnection_date',TRUE)));
+                $arrears_penalty_amount = $this->get_numeric_value($this->input->post('arrears_penalty_amount',TRUE));
+                $meter_amount_due =  $this->get_numeric_value($this->input->post('meter_amount_due',TRUE));
 
                 $m_disconnection->set('date_created','NOW()');
                 $m_disconnection->connection_id=$connection_id;
@@ -146,7 +173,10 @@ class Service_disconnection extends CORE_Controller {
                 $m_disconnection->previous_reading=$this->get_numeric_value($this->input->post('previous_reading',TRUE));
                 $m_disconnection->last_meter_reading=$this->get_numeric_value($this->input->post('last_meter_reading',TRUE));
                 $m_disconnection->total_consumption=$this->get_numeric_value($this->input->post('total_consumption',TRUE));
-                $m_disconnection->meter_amount_due=$this->get_numeric_value($this->input->post('meter_amount_due',TRUE));
+                $m_disconnection->arrears_amount=$this->get_numeric_value($this->input->post('arrears_amount',TRUE));
+            
+                $m_disconnection->meter_amount_due=$meter_amount_due;
+                $m_disconnection->arrears_penalty_amount= $arrears_penalty_amount;
                 $m_disconnection->save();
                 $disconnection_id=$m_disconnection->last_insert_id();
 
@@ -193,7 +223,7 @@ class Service_disconnection extends CORE_Controller {
                     $total_charges += $this->get_numeric_value($charge_line_total[$i]);
                 }
 
-                $m_disconnection->grand_total_amount = $this->get_numeric_value($this->input->post('meter_amount_due',TRUE)) + $this->get_numeric_value($total_charges);
+                $m_disconnection->grand_total_amount =   $this->get_numeric_value($total_charges) + $this->get_numeric_value($meter_amount_due) + $this->get_numeric_value($arrears_penalty_amount);
                 $m_disconnection->modify($disconnection_id);
                 $response['title']='Success!';
                 $response['stat']='success';
@@ -221,7 +251,8 @@ class Service_disconnection extends CORE_Controller {
                 $connection_id = $this->input->post('connection_id',TRUE);
                 $service_no =$this->input->post('service_no',TRUE);
                 $disconnection_code =$this->input->post('disconnection_code',TRUE);
-
+                $arrears_penalty_amount = $this->get_numeric_value($this->input->post('arrears_penalty_amount',TRUE));
+                $meter_amount_due =  $this->get_numeric_value($this->input->post('meter_amount_due',TRUE));
                 // ## New Connection Data
                 $new_data = $this->Service_connection_model->getList($connection_id);
                 $status_id = $new_data[0]->status_id;
@@ -239,8 +270,6 @@ class Service_disconnection extends CORE_Controller {
                 $m_disconnection->previous_id=$this->input->post('previous_id',TRUE);
                 $m_disconnection->previous_status_id=$status_id;
 
-
-
                 $m_disconnection->default_matrix_id=$this->get_numeric_value($this->input->post('default_matrix_id',TRUE));
                 $m_disconnection->rate_amount=$this->get_numeric_value($this->input->post('rate_amount',TRUE));
                 $m_disconnection->is_fixed=$this->get_numeric_value($this->input->post('is_fixed',TRUE));
@@ -248,8 +277,16 @@ class Service_disconnection extends CORE_Controller {
                 $m_disconnection->previous_reading=$this->get_numeric_value($this->input->post('previous_reading',TRUE));
                 $m_disconnection->last_meter_reading=$this->get_numeric_value($this->input->post('last_meter_reading',TRUE));
                 $m_disconnection->total_consumption=$this->get_numeric_value($this->input->post('total_consumption',TRUE));
-                $m_disconnection->meter_amount_due=$this->get_numeric_value($this->input->post('meter_amount_due',TRUE));
+                $m_disconnection->meter_amount_due=$meter_amount_due;
+                $m_disconnection->arrears_amount=$this->get_numeric_value($this->input->post('arrears_amount',TRUE));
 
+                $total_charges = 0;
+                $disconnection_charges_info = $this->Service_disconnection_charges_model->get_list(array('disconnection_id'=>$disconnection_id));
+                foreach ($disconnection_charges_info as $$cinfo) {
+                   $total_charges+= $cinfo->charge_line_total;
+                }
+                $m_disconnection->arrears_penalty_amount= $arrears_penalty_amount;
+                $m_disconnection->grand_total_amount =  $this->get_numeric_value($total_charges) + $this->get_numeric_value($meter_amount_due) + $this->get_numeric_value($arrears_penalty_amount);
                 $m_disconnection->modify($disconnection_id);   
 
                 $response['title']='Success!';
