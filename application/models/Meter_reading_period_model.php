@@ -123,7 +123,6 @@ class Meter_reading_period_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
-
     function validate_count_period($meter_reading_year,$month_id,$meter_reading_period_id){
         $sql="SELECT 
 			meter_reading_period_id

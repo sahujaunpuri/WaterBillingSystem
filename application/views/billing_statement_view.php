@@ -150,6 +150,12 @@
                                                             <?php }?>
                                                         </select>
                                                     </div>
+                                                    <div class="col-lg-offset-1 col-lg-3">
+                                                        <br/>
+                                                        <button type="button" class="btn btn-primary" id="print_billing" style="width: 100%;">
+                                                            <i class="fa fa-print"></i> Print
+                                                        </button>
+                                                    </div>
                                                 </div><br>
                                                 <table id="tbl_billing" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
@@ -386,8 +392,23 @@ $(document).ready(function(){
             var row = dt.row( tr );
             var idx = $.inArray( tr.attr('id'), detailRows );                
                 var d=row.data();
-                window.open("Templates/layout/other-charge-dropdown/"+ d.other_charge_id+"?type=html");
+                window.open("Templates/layout/billing_statement/"+ d.billing_id+"?type=pdf");
         });
+
+        $('#print_billing').on( 'click', function () {
+
+            var period_id = _cboPeriod.select2('val');
+            var meter_reading_input_id = _cboBatchNo.select2('val');
+            var customer_id = _cboCustomer.select2('val');
+
+            if(period_id != null){
+                window.open("Templates/layout/billing_statement_all/"+period_id+"/"+meter_reading_input_id+"/"+customer_id+"?type=pdf");
+            }else{
+                showNotification({title:"Error!",stat:"error",msg:"Meter Period is Required!"});
+            }
+
+        });        
+
 
         $('#tbl_billing tbody').on('click','button[name="edit_info"]',function(){
             _txnMode="edit";

@@ -418,7 +418,7 @@ $(document).ready(function(){
                 previous_month : suggestion.previous_month,
                 previous_reading : suggestion.previous_reading,
                 current_reading : suggestion.current_reading,
-                total_consumption : suggestion.total_consumption
+                total_consumption : 0
             }));
             reInitializeNumeric();
             $('#tbl_items > tbody > tr:last').find('.current').val('').focus();

@@ -113,6 +113,8 @@ class Templates extends CORE_Controller {
         $this->load->model('Billing_model');
         $this->load->model('Billing_charges_model');
 
+        $this->load->model('Meter_reading_period_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -124,7 +126,7 @@ class Templates extends CORE_Controller {
     }
 
 
-    function layout($layout=null,$filter_value=null,$type=null){
+    function layout($layout=null,$filter_value=null,$type=null,$filter_value2=null,$filter_value3=null){
         switch($layout){
               case 'services-journal-for-review':
 
@@ -5599,6 +5601,8 @@ class Templates extends CORE_Controller {
 
                         $data['billing']=$billing[0];
                         $data['charges']=$charges;
+                        $data['charges_1']=$charges;
+                        $data['charges_2']=$charges;
                         $data['company_info']=$company[0];
 
                         //show only inside grid with menu button
@@ -5613,11 +5617,10 @@ class Templates extends CORE_Controller {
 
                         //download pdf
                         if($type=='pdf'){
-                            $file_name=$data['billing']->control_no;
+                            $file_name=$billing[0]->control_no;
                             $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                             $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                            $content=$this->load->view('template/water_billing_statement_content',$data,TRUE); //load the template
-                            $pdf->setFooter('{PAGENO}');
+                            $content=$this->load->view('template/billing_statement_content',$data,TRUE); //load the template
                             $pdf->WriteHTML($content);
                             //download it.
                             $pdf->Output($pdfFilePath,"D");
@@ -5626,17 +5629,77 @@ class Templates extends CORE_Controller {
 
                         //preview on browser
                         if($type=='preview'){
-                            $file_name=$data['billing']->control_no;
+                            $file_name=$billing[0]->control_no;
                             $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                             $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                            $content=$this->load->view('template/water_billing_statement_content',$data,TRUE); //load the template
-                            $pdf->setFooter('{PAGENO}');
+                            $content=$this->load->view('template/billing_statement_content',$data,TRUE); //load the template
                             $pdf->WriteHTML($content);
                             //download it.
                             $pdf->Output();
                         }
 
                         break;
+
+                case 'billing_statement_all': // Print All Statement
+
+                    $period_id = $filter_value;
+                    $meter_reading_input_id = $type;
+                    $customer_id = $filter_value2;
+
+                    $m_billing=$this->Billing_model;
+                    $m_billing_charges=$this->Billing_charges_model;
+                    $m_period=$this->Meter_reading_period_model;
+                    $m_company=$this->Company_model;
+                    $type=$this->input->get('type',TRUE);
+
+                    $billing=$m_billing->billing_statement($period_id,$meter_reading_input_id,$customer_id);
+                    $charges=$m_billing_charges->billing_charges();
+                    $company=$m_company->get_list();
+
+                    $meter_period = $m_period->get_list(
+                        $period_id,
+                        array(
+                            'meter_reading_period.*, months.month_name, CONCAT(months.month_name," ",meter_reading_period.meter_reading_year) as period'
+                        ),
+                        array(
+                            array('months','months.month_id = meter_reading_period.month_id','left')
+                        )
+                    );
+
+                    $data['billing']=$billing;
+                    $data['charges']=$charges;
+                    $data['charges_1']=$charges;
+                    $data['charges_2']=$charges;
+                    $data['company_info']=$company[0];
+
+                    //show only inside grid without menu button
+                    if($type=='contentview'){
+                        echo $this->load->view('template/water_billing_statement_all_content',$data,TRUE);
+                    }
+
+                    //download pdf
+                    if($type=='pdf'){
+                        $file_name= 'Billing Statement - '.$meter_period[0]->period;
+                        $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                        $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                        $content=$this->load->view('template/billing_statement_all_content',$data,TRUE); //load the template
+                        $pdf->WriteHTML($content);
+                        //download it.
+                        $pdf->Output($pdfFilePath,"D");
+
+                    }
+
+                    //preview on browser
+                    if($type=='preview'){
+                        $file_name= 'Billing Statement - '.$meter_period[0]->period;
+                        $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                        $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                        $content=$this->load->view('template/billing_statement_all_content',$data,TRUE); //load the template
+                        $pdf->WriteHTML($content);
+                        //download it.
+                        $pdf->Output();
+                    }
+                break;
 
         }
     }

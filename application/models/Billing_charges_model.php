@@ -14,11 +14,13 @@ class Billing_charges_model extends CORE_Model{
 
     function billing_charges($billing_id=null){
     	$query = $this->db->query("SELECT 
-		    bc.*, c.charge_code, c.charge_desc, cu.charge_unit_name
+		    bc.*, c.charge_code, c.charge_desc, cu.charge_unit_name, oc.other_charge_no
 		FROM
 		    billing_charges bc
 		        LEFT JOIN
 		    billing b ON b.billing_id = bc.billing_id
+		    	LEFT JOIN
+			other_charges oc ON oc.other_charge_id = bc.other_charge_id
 		        LEFT JOIN
 		    charges c ON c.charge_id = bc.charge_id
 		        LEFT JOIN

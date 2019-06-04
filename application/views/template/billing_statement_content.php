@@ -1,232 +1,306 @@
 <head><title>Billing Statement</title></head>
 <body>
 <style>
-    body {
-            font-family: 'Calibri',sans-serif;
-            font-size: 12px;
-    padding:0;
-    margin:0;
-
-    }    
-    .align-right {
-        text-align: right;
-    }
-    .align-left {
-        text-align: left;
-    }
-    .align-center {
-        text-align: center;
-    }
-    .report-header {
-        font-weight: bolder;
-    }
     @page {
-      size: A4 portrait;
-      margin: 2cm 3cm;
+      /*size: 8.5in 11in!important;*/
+      margin: 8px!important;
     }
     table{
         border:none!important;
     }
-    .left {border-left: 1px solid lightgray;}
-    .right{border-right: 1px solid lightgray;}
-    .bottom{border-bottom: 1px solid lightgray;}
-    .top{border-top: 1px solid lightgray;}
-    .bold{font-weight: bold;}
-    div { position: relative; }
-    div > span { position: absolute; right: 10; bottom: 0; }
+    td{
+        padding: 0px!important;
+        margin: 0px!important; 
+    }
+    .center{
+        margin-right:auto;
+        margin-left:auto;
+        width: 90%;
+        text-align: center!important;
+        font-size: 12px;
+        padding: 0px!important; 
+        
+    }
     .pb{
-        margin: 0px 20px;
-/*page-break-after:always; border: 1px black;*/
+        height: 330px;
+        margin: 0px!important;
     }
 </style>
-<?php  for($i=0;$i< 5;$i++){ ?>
 
-<div style="page-break-after:always;">
-<div class="pb" style="height: 330px;mri"><br><br>
-    <center><span style="text-transform: uppercase;"><?php echo $company_info->company_name; ?></span><br>
-    <span style="text-transform: uppercase;"><?php echo $company_info->company_address; ?></span></center><hr>
-    <center><b>BILLING STATEMENTS</b></center><hr>
-    <table style="font-size: 12px;">
-        <tbody>
-            <tr>
-                <td>ACCOUNT NO : &nbsp;&nbsp; 00003541351</td>
-            </tr>
-            <tr>
-                <td>Customer Name : &nbsp;&nbsp; JOASH JEZREEL NOBLE</td>
-            </tr>
-            <tr>
-                <td>Address: &nbsp;&nbsp;LOT 1 BLK 15, TAAL ST
-            </tr>
-        </tbody>
-    </table>
-    <hr>
-    <table width="100%" style="font-size: 12px;">
-        <tbody>
-            <tr>
-                <td colspan="2">PERIOD COVERED : 01/01/2019 - 01/31/2019</td>
-                <td colspan="2">Due Date: 02/15/2019</td>
-            </tr>
-            <tr>
-                <td colspan="4">&nbsp;&nbsp;</td>
-            </tr>
-            <tr>
-                <td colspan="4">Meter Reading</td>
-            </tr>
-            <tr>
-                <td width="10%"></td>
-                <td colspan="3">Reading Date: 02/01/2019</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>Previous Reading:&nbsp;&nbsp;11,367</td>
-                <td>Current Reading: &nbsp;&nbsp;11,403</td>
-                <td>Consume: &nbsp;&nbsp;<b>36</b></td>
-            </tr>
-            <tr>
-                <td colspan="4">Payables</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>Amount Due:&nbsp;&nbsp;792.50</td>
-                <td>Penalty:&nbsp;&nbsp;79.25</td>
-                <td>Total Amount Due:&nbsp;&nbsp;871.75</td>
-            </tr>
-            <tr>
-                <td colspan="4">&nbsp;&nbsp;</td>
-            </tr>
-            <tr>
-                <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b>792.50</b></td>
-                <td colspan="2">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b>871.75</b></td>
-            </tr>
-        </tbody>
-    </table>   
-<span >File Copy</span>
-</div>
-<center>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</center> <br>
-<div class="pb" style="height: 330px;">
-    <center><span style="text-transform: uppercase;"><?php echo $company_info->company_name; ?></span><br>
-    <span style="text-transform: uppercase;"><?php echo $company_info->company_address; ?></span></center><hr>
-    <center><b>BILLING STATEMENTS</b></center><hr>
-    <table style="font-size: 12px;">
-        <tbody>
-            <tr>
-                <td>ACCOUNT NO : &nbsp;&nbsp; 00003541351</td>
-            </tr>
-            <tr>
-                <td>Customer Name : &nbsp;&nbsp; JOASH JEZREEL NOBLE</td>
-            </tr>
-            <tr>
-                <td>Address: &nbsp;&nbsp;LOT 1 BLK 15, TAAL ST
-            </tr>
-        </tbody>
-    </table><hr>
-    <table width="100%" style="font-size: 12px;">
-        <tbody>
-            <tr>
-                <td colspan="2">PERIOD COVERED : 01/01/2019 - 01/31/2019</td>
-                <td colspan="2">Due Date: 02/15/2019</td>
-            </tr>
-            <tr>
-                <td colspan="4">&nbsp;&nbsp;</td>
-            </tr>
-            <tr>
-                <td colspan="4">Meter Reading</td>
-            </tr>
-            <tr>
-                <td width="10%"></td>
-                <td colspan="3">Reading Date: 02/01/2019</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>Previous Reading:</td>
-                <td>Current Reading</td>
-                <td>Consume</td>
-            </tr>
-            <tr>
-                <td colspan="4">Payables</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>Amount Due:&nbsp;&nbsp;11,367</td>
-                <td>Penalty:&nbsp;&nbsp;11,403</td>
-                <td>Total Amount Due:&nbsp;&nbsp;<b>36</b></td>
-            </tr>
-            <tr>
-                <td colspan="4">&nbsp;&nbsp;</td>
-            </tr>
-            <tr>
-                <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b>792.50</b></td>
-                <td colspan="2">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b>871.75</b></td>
-            </tr>
-        </tbody>
-    </table>   
-<span >Customer Copy</span>
-</div>
-<center>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</center> <br>
-<div class="pb" style="height: 330px;">
-    <center><span style="text-transform: uppercase;"><?php echo $company_info->company_name; ?></span><br>
-    <span style="text-transform: uppercase;"><?php echo $company_info->company_address; ?></span></center><hr>
-    <center><b>BILLING STATEMENTS</b></center><hr>
-    <table style="font-size: 12px;">
-        <tbody>
-            <tr>
-                <td>ACCOUNT NO : &nbsp;&nbsp; 00003541351</td>
-            </tr>
-            <tr>
-                <td>Customer Name : &nbsp;&nbsp; JOASH JEZREEL NOBLE</td>
-            </tr>
-            <tr>
-                <td>Address: &nbsp;&nbsp;LOT 1 BLK 15, TAAL ST
-            </tr>
-        </tbody>
-    </table><hr>
-    <table width="100%" style="font-size: 12px;">
-        <tbody>
-            <tr>
-                <td colspan="2">PERIOD COVERED : 01/01/2019 - 01/31/2019</td>
-                <td colspan="2">Due Date: 02/15/2019</td>
-            </tr>
-            <tr>
-                <td colspan="4">&nbsp;&nbsp;</td>
-            </tr>
-            <tr>
-                <td colspan="4">Meter Reading</td>
-            </tr>
-            <tr>
-                <td width="10%"></td>
-                <td colspan="3">Reading Date: 02/01/2019</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>Previous Reading:</td>
-                <td>Current Reading</td>
-                <td>Consume</td>
-            </tr>
-            <tr>
-                <td colspan="4">Payables</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>Amount Due:&nbsp;&nbsp;11,367</td>
-                <td>Penalty:&nbsp;&nbsp;11,403</td>
-                <td>Total Amount Due:&nbsp;&nbsp;<b>36</b></td>
-            </tr>
-            <tr>
-                <td colspan="4">&nbsp;&nbsp;</td>
-            </tr>
-            <tr>
-                <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b>792.50</b></td>
-                <td colspan="2">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b>871.75</b></td>
-            </tr>
-        </tbody>
-    </table>   
-<span >Accounting Copy</span>
-</div>
-</div>
-<?php } ?>
-<script>
-    // window.print();
-</script>
+<!-- <div style="page-break-after:always;"> -->
+    <!-- File Copy -->
+    <div class="pb">
+        <table style="font-size: 12px;width: 100%;">
+            <tbody>
+                <tr>
+                    <td width="50%" align="left">Print Date/Time : <?php echo date("m/d/Y h:i a");?></td>
+                    <td width="50%" align="right">Control No: <?php echo $billing->control_no; ?></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="center" style="text-transform: uppercase;">
+            <?php echo $company_info->company_name; ?><br/>
+            <?php echo $company_info->company_address; ?>
+        </div>
+        <hr style="margin: 0px!important;">
+        <div class="center">
+            <b>BILLING STATEMENTS</b>
+        </div>
+        <hr style="margin: 0px!important;">
+        <table style="font-size: 12px;">
+            <tbody>
+                <tr>
+                    <td>ACCOUNT NO : &nbsp;&nbsp; <?php echo $billing->account_no; ?></td>
+                </tr>
+                <tr>
+                    <td>Customer Name : &nbsp;&nbsp; <?php echo $billing->customer_name; ?></td>
+                </tr>
+                <tr>
+                    <td>Address: &nbsp;&nbsp; <?php echo $billing->address; ?>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
+        <table width="100%" style="font-size: 12px;">
+            <tbody>
+                <tr>
+                    <td colspan="2">PERIOD COVERED : <?php echo $billing->period_covered; ?></td>
+                    <td colspan="2">Due Date: <?php echo $billing->due_date?></td>
+                </tr>
+                <tr>
+                    <td colspan="2">Meter Reading</td>
+                    <td colspan="2">Payables</td>
+                </tr>
+                <tr>
+                    <td width="10%"></td>
+                    <td>Reading Date: <?php echo $billing->reading_date; ?></td>
+                    <td width="10%"></td>
+                    <td>Amount Due:&nbsp;&nbsp;<?php echo number_format($billing->amount_due,2);?></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Previous Reading:&nbsp;&nbsp; <?php echo number_format($billing->previous_reading,0);?></td>
+                    <td></td>
+                    <td>Arrears Amount: &nbsp;&nbsp; <?php echo number_format($billing->arrears_amount,2);?></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Current Reading: &nbsp;&nbsp; <?php echo number_format($billing->current_reading,0);?></td>
+                    <td></td>
+                    <td>Arrears Penalty Amount:&nbsp;&nbsp;<?php echo number_format($billing->arrears_penalty_amount,2);?></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Consume: &nbsp;&nbsp;<b><?php echo number_format($billing->total_consumption,0);?></b></td>
+                    <td></td>
+                    <td>Penalty:&nbsp;&nbsp;<?php echo number_format($billing->penalty_amount,2);?></td>
+                </tr>
+                <tr>
+                    <td colspan="3">Charges</td>
+                    <td>Total Amount Due:&nbsp;&nbsp;<?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->arrears_penalty_amount),2);?></td>
+                </tr>
+                <?php foreach($charges as $charges){?>
+                    <tr>
+                        <td></td>
+                        <td><?php echo $charges->other_charge_no.' - '.$charges->charge_desc.':&nbsp;&nbsp; '.number_format($charges->charge_line_total,2); ?></td>
+                        <td colspan="2"></td>
+                    </tr>
+                <?php }?>
+                <tr>
+                    <td colspan="4">&nbsp;&nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->arrears_penalty_amount),2);?></b></td>
+                    <td colspan="2">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b><?php echo number_format($billing->amount_after_due,2);?></b></td>
+                </tr>
+            </tbody>
+        </table>   
+    <div style="float: right!important;margin-right: auto;display: block;text-align: right;margin-right: 10px;">File Copy</div>
+    <center><div style="border-top: 1px dashed black;height: 1px;width: 100%;text-align: center!important;margin-left: auto;margin-right: auto;display: block;margin-top: 5px;"></div></center>
+    </div>
+    <!-- End -->
+    <!-- Customer Copy -->
+    <div class="pb">
+        <table style="font-size: 12px;width: 100%;margin-top: 10px!important;">
+            <tbody>
+                <tr>
+                    <td width="50%" align="left">Print Date/Time : <?php echo date("m/d/Y h:i a");?></td>
+                    <td width="50%" align="right">Control No: <?php echo $billing->control_no; ?></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="center" style="text-transform: uppercase;">
+            <?php echo $company_info->company_name; ?><br/>
+            <?php echo $company_info->company_address; ?>
+        </div>
+        <hr style="margin: 0px!important;">
+        <div class="center">
+            <b>BILLING STATEMENTS</b>
+        </div>
+        <hr style="margin: 0px!important;">
+        <table style="font-size: 12px;">
+            <tbody>
+                <tr>
+                    <td>ACCOUNT NO : &nbsp;&nbsp; <?php echo $billing->account_no; ?></td>
+                </tr>
+                <tr>
+                    <td>Customer Name : &nbsp;&nbsp; <?php echo $billing->customer_name; ?></td>
+                </tr>
+                <tr>
+                    <td>Address: &nbsp;&nbsp; <?php echo $billing->address; ?>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
+        <table width="100%" style="font-size: 12px;">
+            <tbody>
+                <tr>
+                    <td colspan="2">PERIOD COVERED : <?php echo $billing->period_covered; ?></td>
+                    <td colspan="2">Due Date: <?php echo $billing->due_date?></td>
+                </tr>
+                <tr>
+                    <td colspan="2">Meter Reading</td>
+                    <td colspan="2">Payables</td>
+                </tr>
+                <tr>
+                    <td width="10%"></td>
+                    <td>Reading Date: <?php echo $billing->reading_date; ?></td>
+                    <td width="10%"></td>
+                    <td>Amount Due:&nbsp;&nbsp;<?php echo number_format($billing->amount_due,2);?></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Previous Reading:&nbsp;&nbsp; <?php echo number_format($billing->previous_reading,0);?></td>
+                    <td></td>
+                    <td>Arrears Amount: &nbsp;&nbsp; <?php echo number_format($billing->arrears_amount,2);?></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Current Reading: &nbsp;&nbsp; <?php echo number_format($billing->current_reading,0);?></td>
+                    <td></td>
+                    <td>Arrears Penalty Amount:&nbsp;&nbsp;<?php echo number_format($billing->arrears_penalty_amount,2);?></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Consume: &nbsp;&nbsp;<b><?php echo number_format($billing->total_consumption,0);?></b></td>
+                    <td></td>
+                    <td>Penalty:&nbsp;&nbsp;<?php echo number_format($billing->penalty_amount,2);?></td>
+                </tr>
+                <tr>
+                    <td colspan="3">Charges</td>
+                    <td>Total Amount Due:&nbsp;&nbsp;<?php echo number_format($billing->total_amount_due,2);?></td>
+                </tr>
+                <?php foreach($charges_1 as $charge){?>
+                    <tr>
+                        <td></td>
+                        <td><?php echo $charge->other_charge_no.' - '.$charge->charge_desc.':&nbsp;&nbsp; '.number_format($charge->charge_line_total,2); ?></td>
+                        <td colspan="2"></td>
+                    </tr>
+                <?php }?>
+                <tr>
+                    <td colspan="4">&nbsp;&nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format($billing->grand_total_amount,2);?></b></td>
+                    <td colspan="2">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b><?php echo number_format($billing->amount_after_due,2);?></b></td>
+                </tr>
+            </tbody>
+        </table>   
+    <div style="float: right!important;margin-right: auto;display: block;text-align: right;margin-right: 10px;">Customer Copy</div>
+    <center><div style="border-top: 1px dashed black;height: 1px;width: 100%;text-align: center!important;margin-left: auto;margin-right: auto;display: block;margin-top: 5px;"></div></center>
+    </div>
+    <!-- End -->
+    <!-- Accounting Copy -->
+    <div class="pb">
+        <table style="font-size: 12px;width: 100%;margin-top: 10px!important;">
+            <tbody>
+                <tr>
+                    <td width="50%" align="left">Print Date/Time : <?php echo date("m/d/Y h:i a");?></td>
+                    <td width="50%" align="right">Control No: <?php echo $billing->control_no; ?></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="center" style="text-transform: uppercase;">
+            <?php echo $company_info->company_name; ?><br/>
+            <?php echo $company_info->company_address; ?>
+        </div>
+        <hr style="margin: 0px!important;">
+        <div class="center">
+            <b>BILLING STATEMENTS</b>
+        </div>
+        <hr style="margin: 0px!important;">
+        <table style="font-size: 12px;">
+            <tbody>
+                <tr>
+                    <td>ACCOUNT NO : &nbsp;&nbsp; <?php echo $billing->account_no; ?></td>
+                </tr>
+                <tr>
+                    <td>Customer Name : &nbsp;&nbsp; <?php echo $billing->customer_name; ?></td>
+                </tr>
+                <tr>
+                    <td>Address: &nbsp;&nbsp; <?php echo $billing->address; ?>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
+        <table width="100%" style="font-size: 12px;">
+            <tbody>
+                <tr>
+                    <td colspan="2">PERIOD COVERED : <?php echo $billing->period_covered; ?></td>
+                    <td colspan="2">Due Date: <?php echo $billing->due_date?></td>
+                </tr>
+                <tr>
+                    <td colspan="2">Meter Reading</td>
+                    <td colspan="2">Payables</td>
+                </tr>
+                <tr>
+                    <td width="10%"></td>
+                    <td>Reading Date: <?php echo $billing->reading_date; ?></td>
+                    <td width="10%"></td>
+                    <td>Amount Due:&nbsp;&nbsp;<?php echo number_format($billing->amount_due,2);?></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Previous Reading:&nbsp;&nbsp; <?php echo number_format($billing->previous_reading,0);?></td>
+                    <td></td>
+                    <td>Arrears Amount: &nbsp;&nbsp; <?php echo number_format($billing->arrears_amount,2);?></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Current Reading: &nbsp;&nbsp; <?php echo number_format($billing->current_reading,0);?></td>
+                    <td></td>
+                    <td>Arrears Penalty Amount:&nbsp;&nbsp;<?php echo number_format($billing->arrears_penalty_amount,2);?></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Consume: &nbsp;&nbsp;<b><?php echo number_format($billing->total_consumption,0);?></b></td>
+                    <td></td>
+                    <td>Penalty:&nbsp;&nbsp;<?php echo number_format($billing->penalty_amount,2);?></td>
+                </tr>
+                <tr>
+                    <td colspan="3">Charges</td>
+                    <td>Total Amount Due:&nbsp;&nbsp;<?php echo number_format($billing->total_amount_due,2);?></td>
+                </tr>
+                <?php foreach($charges_2 as $charges){?>
+                    <tr>
+                        <td></td>
+                        <td><?php echo $charges->other_charge_no.' - '.$charges->charge_desc.':&nbsp;&nbsp; '.number_format($charges->charge_line_total,2); ?></td>
+                        <td colspan="2"></td>
+                    </tr>
+                <?php }?>
+                <tr>
+                    <td colspan="4">&nbsp;&nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format($billing->grand_total_amount,2);?></b></td>
+                    <td colspan="2">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b><?php echo number_format($billing->amount_after_due,2);?></b></td>
+                </tr>
+            </tbody>
+        </table>   
+    <div style="float: right!important;margin-right: auto;display: block;text-align: right;margin-right: 10px;">Accounting Copy</div>
+    <center><div style="border-top: 1px dashed black;height: 1px;width: 100%;text-align: center!important;margin-left: auto;margin-right: auto;display: block;margin-top: 5px;"></div></center>
+    </div>
+    <!-- End -->
 
 
 

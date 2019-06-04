@@ -848,7 +848,7 @@
         var _cboCustomer; var _cboContractType; var _cboRateType;var _cboCustomerType; 
         var _cboNationality; var _cboCivilStatus; var _cboSex; var _cboSpouseNationality;
         var _cboAttendant; var _cboDepartment;
-
+        
         var initializeControls=function(){
             _cboCustomer=$("#cbo_customer").select2({
                 placeholder: "Please select customer.",

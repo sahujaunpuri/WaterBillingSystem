@@ -86,17 +86,17 @@
             <tr>
                 <td></td>
                 <td colspan="5">BALANCE AS OF  : </td>
-                <td class="right-align">0.00</td>
+                <td class="right-align"><?php echo number_format($billing->arrears_amount,2); ?></td>
            </tr>
             <tr>
                 <td></td>
                 <td colspan="5">PENALTY : </td>
-                <td class="right-align">0.00</td>
+                <td class="right-align"><?php echo number_format($billing->arrears_penalty_amount,2);?></td>
            </tr> 
             <tr>
                 <td></td>
                 <td colspan="5"><b>TOTAL OUTSTANDING BALANCE</b></td>
-                <td class="right-align"><b>0.00</b></td>
+                <td class="right-align"><b><?php echo number_format(($billing->arrears_amount + $billing->arrears_penalty_amount),2); ?></b></td>
            </tr>     
            <tr>
                 <td colspan="7" class="tablehead"><b>CURRENT BILLING</b></td>
@@ -122,50 +122,34 @@
                 <td class="right-align"><?php echo $billing->current_reading; ?></td>
                 <td class="right-align"><?php echo $billing->total_consumption; ?></td>
                 <td class="right-align"><?php echo number_format($billing->amount_due,2); ?></td>
-           </tr>
-<!--            <tr>
-                <td ></td>
-                <td colspan="6">PENALTY</td>
-           </tr> -->
-<!--            <tr>
-                <td colspan="6"></td>
-                <td class="right-align">0.00</td>
-           </tr> -->
+           </tr>         
            <tr>
                 <td ></td>
                 <td colspan="6">OTHER CHARGES:</td>
            </tr>
-
-           <?php if(count($charges) > 0){ ?>
-
-          <tr>
-            <td colspan="2"></td>
-            <td>Qty</td>
-            <td>Charge</td>
-            <td>UM</td>
-            <td class="right-align">Amount</td>
-            <td class="right-align"></td>
-          </tr>
-
-          <?php foreach($charges as $charges){?>
+          <?php 
+            $total_charges = 0;
+            foreach($charges as $charges){
+            $total_charges += $charges->charge_line_total;
+          ?>
             <tr>
                 <td colspan="2"></td>
-                <td><?php echo number_format($charges->charge_qty,0); ?></td>
-                <td><?php echo $charges->charge_desc; ?></td>
-                <td><?php echo $charges->charge_unit_name; ?></td>
-                <td class="right-align"><?php echo number_format($charges->charge_amount,2); ?></td>
+                <!-- <td><?php echo number_format($charges->charge_qty,0); ?></td> -->
+                <td><?php echo $charges->charge_desc.' ('.$charges->other_charge_no.')'; ?></td>
+                <td colspan="3"></td>
+                <!-- <td><?php echo $charges->charge_unit_name; ?></td> -->
+                <!-- <td class="right-align"><?php echo number_format($charges->charge_amount,2); ?></td> -->
                 <td class="right-align"><?php echo number_format($charges->charge_line_total,2); ?></td>
            </tr>  
-           <?php }}?>
-            
-            <tr>
+           <?php }?>
+           <tr>
                 <td></td>
                 <td colspan="5"><b>TOTAL CURRENT CHARGES</b></td>
-                <td class="right-align"><b><?php echo number_format($billing->grand_total_amount,2); ?></b></td>
+                <td class="right-align"><b><?php echo number_format($total_charges,2); ?></b></td>
            </tr>
            <tr>
                 <td colspan="6" class="tablehead"><b>TOTAL AMOUNT DUE <i>(Before Due Date)</i></b></td>
-                <td class="tablehead right-align"><b><?php echo number_format($billing->grand_total_amount,2); ?></b></td>
+                <td class="tablehead right-align"><b><?php echo number_format(($billing->grand_total_amount + $billing->arrears_amount + $billing->arrears_penalty_amount),2); ?></b></td>
            </tr>
            <tr>
                 <td></td>
@@ -174,7 +158,7 @@
            </tr>
            <tr>
                 <td colspan="6" class="tablehead"><b>TOTAL AMOUNT DUE <i>(After Due Date)</i></b></td>
-                <td class="tablehead right-align"><b><?php echo number_format(($billing->grand_total_amount+$billing->penalty_amount),2); ?></b></td>
+                <td class="tablehead right-align"><b><?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->arrears_penalty_amount+$billing->penalty_amount),2); ?></b></td>
            </tr>
    </table>
 
