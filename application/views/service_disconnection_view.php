@@ -531,7 +531,7 @@ $(document).ready(function(){
 
 
             $.ajax({
-                url : 'Service_disconnection/transaction/items/'+data.connection_id,
+                url : 'Service_disconnection/transaction/items/'+data.disconnection_id,
                 type : "GET",
                 cache : false,
                 dataType : 'json',

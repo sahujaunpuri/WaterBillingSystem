@@ -91,20 +91,20 @@ class Service_disconnection extends CORE_Controller {
                 break;
 
             case 'items':
-                $connection_id = $filter_id;
-                $response['other_charges'] = $this->Other_charge_item_model->get_list(array('other_charges.connection_id'=>$connection_id),
+                $disconnection_id = $filter_id;
+                $response['other_charges'] = $this->Service_disconnection_charges_model->get_list(array('service_disconnection_charges.disconnection_id'=>$disconnection_id),
                     'other_charges.other_charge_id,
                     other_charges.other_charge_no,
-                    other_charges_items.other_charge_item_id,
-                    other_charges_items.charge_id,
+                    service_disconnection_charges.other_charge_item_id,
+                    service_disconnection_charges.charge_id,
                     charges.charge_desc,
-                    other_charges_items.charge_unit_id,
-                    other_charges_items.charge_amount,
-                    other_charges_items.charge_qty,
-                    other_charges_items.charge_line_total',
+                    service_disconnection_charges.charge_unit_id,
+                    service_disconnection_charges.charge_amount,
+                    service_disconnection_charges.charge_qty,
+                    service_disconnection_charges.charge_line_total',
                     array(
-                        array('other_charges','other_charges.other_charge_id= other_charges_items.other_charge_id','left'),
-                        array('charges','charges.charge_id = other_charges_items.charge_id','left'))
+                        array('other_charges','other_charges.other_charge_id= service_disconnection_charges.other_charge_id','left'),
+                        array('charges','charges.charge_id = service_disconnection_charges.charge_id','left'))
 
                     );
                 echo json_encode($response);
@@ -177,6 +177,7 @@ class Service_disconnection extends CORE_Controller {
 
                 $m_disconnection_charges = $this->Service_disconnection_charges_model;
                 $m_other_charges = $this->Other_charge_model;
+                $total_charges = 0;
                 for($i=0;$i<count($other_charge_id);$i++){
                     $m_disconnection_charges->disconnection_id = $disconnection_id;
                     $m_disconnection_charges->other_charge_id = $other_charge_id[$i];
@@ -189,9 +190,11 @@ class Service_disconnection extends CORE_Controller {
                     $m_disconnection_charges->save();
                     $m_other_charges->is_processed = 1;
                     $m_other_charges->modify($other_charge_id[$i]);
+                    $total_charges += $this->get_numeric_value($charge_line_total[$i]);
                 }
 
-
+                $m_disconnection->grand_total_amount = $this->get_numeric_value($this->input->post('meter_amount_due',TRUE)) + $this->get_numeric_value($total_charges);
+                $m_disconnection->modify($disconnection_id);
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Service Disconnection Information successfully created.';
@@ -473,6 +476,24 @@ class Service_disconnection extends CORE_Controller {
                 $data['company_info']=$m_company->get_list()[0];
                 $m_disconnection=$this->Service_disconnection_model;
                 $data['dis_info'] = $m_disconnection->getList($disconnection_id)[0];
+
+
+                $data['other_charges'] = $this->Service_disconnection_charges_model->get_list(array('service_disconnection_charges.disconnection_id'=>$disconnection_id),
+                    'other_charges.other_charge_id,
+                    other_charges.other_charge_no,
+                    service_disconnection_charges.other_charge_item_id,
+                    service_disconnection_charges.charge_id,
+                    charges.charge_desc,
+                    service_disconnection_charges.charge_unit_id,
+                    service_disconnection_charges.charge_amount,
+                    service_disconnection_charges.charge_qty,
+                    service_disconnection_charges.charge_line_total',
+                    array(
+                        array('other_charges','other_charges.other_charge_id= service_disconnection_charges.other_charge_id','left'),
+                        array('charges','charges.charge_id = service_disconnection_charges.charge_id','left'))
+
+                    );
+                    
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
                     echo $this->load->view('template/service_disconnection_content_wo_header',$data,TRUE);
