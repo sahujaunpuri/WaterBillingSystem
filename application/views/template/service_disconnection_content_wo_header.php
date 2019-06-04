@@ -133,26 +133,16 @@
            </tr>
            <tr>
                 <td ></td>
-                <td colspan="6">PENALTY</td>
-           </tr>
-           <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="right-align">0.00</td>
-           </tr>
-           <tr>
-                <td ></td>
                 <td colspan="6">OTHER CHARGES:</td>
            </tr>
             <tr>
+              <?php foreach ($other_charges as $other_charge) { ?>
                 <td></td>
                 <td></td>
-                <td colspan="4"></td>
-                <td class="right-align">0.00</td>
+                <td colspan="4"><?php echo $other_charge->charge_desc ?> (<?php echo $other_charge->other_charge_no ?>) </td>
+
+                <td class="right-align"><?php echo number_format($other_charge->charge_line_total,2) ?></td>
+              <?php } ?>
            </tr>
             <tr>
                 <td></td>
