@@ -294,11 +294,11 @@
             dt=$('#tbl_meter_inventory').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
+                "order": [[ 6, "desc" ]],
                 oLanguage: {
                         sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
                 },
                 processing : true,
-                // "pageLength": 15,
                 "ajax" : {
                     "url" : "MeterInventory/transaction/list",
                     "bDestroy": true,            
@@ -322,7 +322,8 @@
 
                             return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                         }
-                    }
+                    },
+                    { targets:[6],data: "meter_inventory_id", visible:false}
                 ]
             });
 

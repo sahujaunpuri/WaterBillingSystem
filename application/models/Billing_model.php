@@ -12,29 +12,40 @@ class Billing_model extends CORE_Model{
         parent::__construct();
     }
 
-    function billing_statement($period_id=null,$meter_reading_input_id=null,$customer_id=null){
+    function billing_statement($period_id=null,$meter_reading_input_id=null,$customer_id=null,$billing_id=null){
     	$query = $this->db->query("SELECT 
+    		billing.*,
 			    sc.account_no,
+			    sc.address,
+			    ct.contract_type_name,
 			    c.customer_name,
 			    mi.serial_no,
-			    billing.billing_id,
-			    billing.previous_month,
-			    billing.previous_reading,
-			    billing.current_reading,
-			    billing.total_consumption,
-			    billing.amount_due
+			    mri.batch_no,
+			    DATE_FORMAT(billing.due_date,'%m/%d/%Y') as due_date,
+			    DATE_FORMAT(billing.reading_date,'%m/%d/%Y') as reading_date,
+			    CONCAT((DATE_FORMAT(mrp.meter_reading_period_start,'%m/%d/%Y')),' - ',(DATE_FORMAT(mrp.meter_reading_period_end,'%m/%d/%Y'))) AS period_covered,
+			    m.month_name
 			FROM
 			    billing
+			    	LEFT JOIN
+			    meter_reading_input mri ON mri.meter_reading_input_id = billing.meter_reading_input_id
 			        LEFT JOIN
 			    service_connection sc ON sc.connection_id = billing.connection_id
+			    	LEFT JOIN 
+			    contract_types ct ON ct.contract_type_id = sc.contract_type_id
 			        LEFT JOIN
 			    customers c ON c.customer_id = sc.customer_id
 			        LEFT JOIN
 			    meter_inventory mi ON mi.meter_inventory_id = sc.meter_inventory_id
+			    	LEFT JOIN
+			    meter_reading_period mrp ON mrp.meter_reading_period_id = billing.meter_reading_period_id
+			    	LEFT JOIN
+			    months m ON m.month_id = mrp.month_id
 			WHERE
 			        ".($period_id==null?" billing.meter_reading_period_id = 0":" billing.meter_reading_period_id=".$period_id)."
 			        ".($meter_reading_input_id==0?"":" AND billing.meter_reading_input_id=".$meter_reading_input_id)."
-			        ".($customer_id==0?"":" AND sc.customer_id=".$customer_id).""); 
+			        ".($customer_id==0?"":" AND sc.customer_id=".$customer_id)."
+			        ".($billing_id==null?"":" AND billing.billing_id=".$billing_id).""); 
     	return $query->result();
     }
 

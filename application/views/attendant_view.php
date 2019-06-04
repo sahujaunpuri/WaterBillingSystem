@@ -97,7 +97,7 @@
                                                             <thead class="">
                                                                 <tr>
                                                                     <th>Code</th>
-                                                                    <th>Attendant</th>
+                                                                    <th>Attendant Name</th>
                                                                     <th>Department</th>
                                                                     <th><center>Action</center></th>
                                                                 </tr>
@@ -280,6 +280,7 @@
             dt=$('#tbl_attendant').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
+                "order": [[ 4, "desc" ]],
                 "ajax" : "Attendant/transaction/list",
                 "columns": [
                     { targets:[0],data: "attendant_code" },
@@ -293,7 +294,8 @@
 
                             return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                         }
-                    }
+                    },
+                    { targets:[4],data: "attendant_id", visible:false},
                 ]
             });
 

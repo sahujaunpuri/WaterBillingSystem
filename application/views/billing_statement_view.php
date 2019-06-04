@@ -30,6 +30,10 @@
             background: url('assets/img/Folder_Closed.png') no-repeat center center;
             cursor: pointer;
         }
+        td.details-control-print {
+            background: url('assets/img/print.png') no-repeat center center;
+            cursor: pointer;
+        }
         tr.details td.details-control {
             background: url('assets/img/Folder_Opened.png') no-repeat center center;
         }
@@ -151,7 +155,10 @@
                                                     <thead>
                                                         <tr>
                                                             <th></th>
-                                                            <th>Account No</th>
+                                                            <th></th>
+                                                            <th></th>
+                                                            <th>Control No</th>
+                                                            <th style="width: 100px;">Account No</th>
                                                             <th style="width: 200px;">Particular</th>
                                                             <th>Meter Serial</th>
                                                             <th>Previous Month</th>
@@ -260,47 +267,71 @@ $(document).ready(function(){
                     }
             }, 
             "columns": [
+                { targets:[0],data: "batch_no", visible:false},
                 {
-                    "targets": [0],
+                    "targets": [1],
                     "class":          "details-control",
                     "orderable":      false,
                     "data":           null,
                     "defaultContent": ""
                 },
-                { targets:[0],data: "account_no" },
-                { targets:[1],data: "customer_name" },
-                { targets:[2],data: "serial_no" },
-                { targets:[3],data: "previous_month" },
+                {
+                    "targets": [2],
+                    "class":          "details-control-print",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[3],data: "control_no" },
+                { targets:[4],data: "account_no" },
+                { targets:[5],data: "customer_name" },
+                { targets:[6],data: "serial_no" },
+                { targets:[7],data: "previous_month" },
                 {
                     className: "text-right",
-                    targets:[4],data: "previous_reading",
+                    targets:[8],data: "previous_reading",
                     render: function(data){
                         return accounting.formatNumber(data,0);
                     }
                 },
                 {
                     className: "text-right",
-                    targets:[5],data: "current_reading",
+                    targets:[9],data: "current_reading",
                     render: function(data){
                         return accounting.formatNumber(data,0);
                     }
                 },
                 {
                     className: "text-right",
-                    targets:[6],data: "total_consumption",
+                    targets:[10],data: "total_consumption",
                     render: function(data){
                         return accounting.formatNumber(data,0);
                     }
                 },
                 {
                     className: "text-right",
-                    targets:[7],data: "amount_due",
+                    targets:[11],data: "amount_due",
                     render: function(data){
                         return accounting.formatNumber(data,2);
                     }
                 },
 
-            ]
+            ],
+            "drawCallback": function ( settings ) {
+            var api = this.api();
+            var rows = api.rows( {page:'current'} ).nodes();
+            var last=null;
+
+                        api.column(0, {page:'current'} ).data().each( function ( group, i ) {
+                            if ( last !== group ) {
+                                $(rows).eq( i ).before(
+                                    '<tr class="group"><td colspan="12" style="background-color:#ccfdff;"><strong>'+'Batch No #: <i>'+group+'</i></strong></td></tr>'
+                                );
+
+                                last = group;
+                            }
+                        } );
+                    }
         });
 
     $('.date-picker').datepicker({
@@ -336,7 +367,7 @@ $(document).ready(function(){
                 $.ajax({
                     "dataType":"html",
                     "type":"POST",
-                    "url":"Templates/layout/meter-reading-input-dropdown/"+ d.meter_reading_input_id+"?type=contentview",
+                    "url":"Templates/layout/billing_statement/"+ d.billing_id+"?type=contentview",
                     "beforeSend" : function(){
                         row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                     }
@@ -349,6 +380,14 @@ $(document).ready(function(){
                 });
             }
         });  
+
+        $('#tbl_billing tbody').on( 'click', 'tr td.details-control-print', function () {
+            var tr = $(this).closest('tr');
+            var row = dt.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );                
+                var d=row.data();
+                window.open("Templates/layout/other-charge-dropdown/"+ d.other_charge_id+"?type=html");
+        });
 
         $('#tbl_billing tbody').on('click','button[name="edit_info"]',function(){
             _txnMode="edit";
@@ -416,17 +455,17 @@ $(document).ready(function(){
             $('#start_date').val(obj_period.data('start'));
             $('#end_date').val(obj_period.data('end'));
 
-            $('#tbl_billing tbody').html('<tr><td colspan="9"><center><br/><br /><br /></center></td></tr>');
+            $('#tbl_billing tbody').html('<tr><td colspan="11"><center><br/><br /><br /></center></td></tr>');
             dt.ajax.reload( null, false );
         });
 
        _cboBatchNo.on('select2:select', function(){
-            $('#tbl_billing tbody').html('<tr><td colspan="9"><center><br/><br /><br /></center></td></tr>');
+            $('#tbl_billing tbody').html('<tr><td colspan="11"><center><br/><br /><br /></center></td></tr>');
             dt.ajax.reload( null, false );
         });
 
        _cboCustomer.on('select2:select', function(){
-            $('#tbl_billing tbody').html('<tr><td colspan="9"><center><br/><br /><br /></center></td></tr>');
+            $('#tbl_billing tbody').html('<tr><td colspan="11"><center><br/><br /><br /></center></td></tr>');
             dt.ajax.reload( null, false );
         });       
 

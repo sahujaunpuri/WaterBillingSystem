@@ -338,6 +338,7 @@ $(document).ready(function(){
         dt=$('#tbl_reconnection').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
+            "order": [[ 7, "desc" ]],
             "ajax" : "Service_reconnection/transaction/list",
             "language" : {
                 "searchPlaceholder": "Search"
@@ -363,12 +364,14 @@ $(document).ready(function(){
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[6],data: "reconnection_id", visible:false}
             ]
         });
 
         dt_account=$('#tbl_account_list').DataTable({
             "bLengthChange":false,
+            "order": [[ 5, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
             },
@@ -393,7 +396,8 @@ $(document).ready(function(){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_account"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> Accept</button>';
                         return '<center>'+btn_accept+'</center>';
                     }
-                }
+                },
+                { targets:[5],data: "disconnection_id", visible:false}
 
             ]
         });        
