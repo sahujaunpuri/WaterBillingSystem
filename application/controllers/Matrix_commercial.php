@@ -26,7 +26,7 @@ class Matrix_commercial extends CORE_Controller
         $data['title'] = 'Commercial Rate Matrix';
 
 
-        (in_array('6-2',$this->session->user_rights)? 
+        (in_array('17-2',$this->session->user_rights)? 
         $this->load->view('matrix_commercial_view', $data)
         :redirect(base_url('dashboard')));
         

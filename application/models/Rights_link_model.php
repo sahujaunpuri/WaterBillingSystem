@@ -100,8 +100,23 @@ class Rights_link_model extends CORE_Model{
                                           (90,'16','16-2','Quarterly Percentage Tax Return'),
                                           (91,'16','16-3','Certificate of Creditable Tax'),
                                           (92,'6','6-14','Statement of Accounts Settings'),
-                                          (93,'5','5-5','Meter Inventory Management')
-
+                                          (93,'5','5-5','Meter Inventory Management'),
+                                          (94,'17','17-1','Residential Rate Matrix'),
+                                          (95,'17','17-2','Commercial Rate Matrix'),
+                                          (96,'17','17-3','Meter Inventory'),
+                                          (97,'17','17-4','Meter Reading Period'),
+                                          (98,'17','17-5','Attendant Management'),
+                                          (99,'17','17-6','Service Connection'),
+                                          (100,'17','17-7','Service Disconnection'),
+                                          (101,'17','17-8','Service Reconnection'),
+                                          (102,'17','17-9','Charges Management'),
+                                          (103,'17','17-10','Charge Unit Management'),
+                                          (104,'17','17-11','Other Charges'),
+                                          (105,'17','17-12','Meter Reading Entry'),
+                                          (106,'17','17-13','Process Billing'),
+                                          (107,'17','17-14','Billing Payments'),
+                                          (108,'17','17-15','Consumption History'),
+                                          (109,'17','17-16','Billing Statement')
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
                                           rights_links.link_code=VALUES(rights_links.link_code),

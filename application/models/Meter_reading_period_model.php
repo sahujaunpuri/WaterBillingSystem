@@ -54,7 +54,7 @@ class Meter_reading_period_model extends CORE_Model {
 			UNION ALL
 			SELECT 
 			scr.connection_id,
-			DATE(CONCAT(YEAR(scr.connection_date),  "-", MONTH(scr.connection_date), "-01")) as applicable_month,
+			DATE(CONCAT(YEAR(scr.service_date),  "-", MONTH(scr.service_date), "-01")) as applicable_month,
 			scr.initial_meter_reading as current_reading
 			FROM service_connection scr
 			 
@@ -101,7 +101,7 @@ class Meter_reading_period_model extends CORE_Model {
 
 			SELECT 
 			scr.connection_id,
-			DATE(CONCAT(YEAR(scr.connection_date),  "-", MONTH(scr.connection_date), "-01")) as applicable_month,
+			DATE(CONCAT(YEAR(scr.service_date),  "-", MONTH(scr.service_date), "-01")) as applicable_month,
 			scr.initial_meter_reading as current_reading
 			FROM service_connection scr
 			 
@@ -119,7 +119,9 @@ class Meter_reading_period_model extends CORE_Model {
 			LEFT JOIN service_connection sc ON sc.connection_id = main.connection_id 
 			LEFT JOIN customers c ON c.customer_id = sc.customer_id
 			LEFT JOIN meter_inventory mi ON mi.meter_inventory_id = sc.meter_inventory_id
-			'.($connection_id==null?'':' WHERE main.connection_id='.$connection_id.'').'
+
+
+			'.($connection_id==null?'WHERE sc.status_id != 2 ':' WHERE main.connection_id='.$connection_id.' AND sc.status_id != 2').'
 			';
         return $this->db->query($sql)->result();
     }
@@ -173,7 +175,7 @@ class Meter_reading_period_model extends CORE_Model {
 		    
 			SELECT 
 			scr.connection_id,
-			DATE(CONCAT(YEAR(scr.connection_date),  "-", MONTH(scr.connection_date), "-01")) as applicable_date,
+			DATE(CONCAT(YEAR(scr.service_date),  "-", MONTH(scr.service_date), "-01")) as applicable_date,
 			scr.initial_meter_reading as reading,
 			0 as consumption,
 			0 as amount

@@ -17,8 +17,10 @@ class Charge_unit extends CORE_Controller {
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Charges Unit Management';
-
-        $this->load->view('charge_unit_view', $data);
+        
+        (in_array('17-10',$this->session->user_rights)? 
+        $this->load->view('charge_unit_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
     function transaction($txn = null) {

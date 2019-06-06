@@ -47,7 +47,9 @@ class Meter_reading_input extends CORE_Controller
       
 
         $data['title'] = 'Meter Reading Input';
-        $this->load->view('meter_reading_input_view', $data);
+        (in_array('17-12',$this->session->user_rights)? 
+        $this->load->view('meter_reading_input_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
 
