@@ -27,7 +27,7 @@
     }
 </style>
 
-<!-- <div style="page-break-after:always;"> -->
+<div style="page-break-after:always!important;">
     <!-- File Copy -->
     <div class="pb">
         <table style="font-size: 12px;width: 100%;">
@@ -110,7 +110,7 @@
                     <td colspan="4">&nbsp;&nbsp;</td>
                 </tr>
                 <tr>
-                    <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->arrears_penalty_amount),2);?></b></td>
+                    <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->arrears_penalty_amount) ,2);?></b></td>
                     <td colspan="2">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b><?php echo number_format($billing->amount_after_due,2);?></b></td>
                 </tr>
             </tbody>
@@ -188,12 +188,12 @@
                 </tr>
                 <tr>
                     <td colspan="3">Charges</td>
-                    <td>Total Amount Due:&nbsp;&nbsp;<?php echo number_format($billing->total_amount_due,2);?></td>
+                    <td>Total Amount Due:&nbsp;&nbsp;<?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->arrears_penalty_amount),2);?></td>
                 </tr>
-                <?php foreach($charges_1 as $charge){?>
+                <?php foreach($charges_1 as $charges){?>
                     <tr>
                         <td></td>
-                        <td><?php echo $charge->other_charge_no.' - '.$charge->charge_desc.':&nbsp;&nbsp; '.number_format($charge->charge_line_total,2); ?></td>
+                        <td><?php echo $charges->other_charge_no.' - '.$charges->charge_desc.':&nbsp;&nbsp; '.number_format($charges->charge_line_total,2); ?></td>
                         <td colspan="2"></td>
                     </tr>
                 <?php }?>
@@ -201,7 +201,7 @@
                     <td colspan="4">&nbsp;&nbsp;</td>
                 </tr>
                 <tr>
-                    <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format($billing->grand_total_amount,2);?></b></td>
+                    <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->arrears_penalty_amount) ,2);?></b></td>
                     <td colspan="2">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b><?php echo number_format($billing->amount_after_due,2);?></b></td>
                 </tr>
             </tbody>
@@ -279,7 +279,7 @@
                 </tr>
                 <tr>
                     <td colspan="3">Charges</td>
-                    <td>Total Amount Due:&nbsp;&nbsp;<?php echo number_format($billing->total_amount_due,2);?></td>
+                    <td>Total Amount Due:&nbsp;&nbsp;<?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->arrears_penalty_amount),2);?></td>
                 </tr>
                 <?php foreach($charges_2 as $charges){?>
                     <tr>
@@ -292,7 +292,7 @@
                     <td colspan="4">&nbsp;&nbsp;</td>
                 </tr>
                 <tr>
-                    <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format($billing->grand_total_amount,2);?></b></td>
+                    <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->arrears_penalty_amount) ,2);?></b></td>
                     <td colspan="2">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b><?php echo number_format($billing->amount_after_due,2);?></b></td>
                 </tr>
             </tbody>
@@ -301,6 +301,7 @@
     <center><div style="border-top: 1px dashed black;height: 1px;width: 100%;text-align: center!important;margin-left: auto;margin-right: auto;display: block;margin-top: 5px;"></div></center>
     </div>
     <!-- End -->
+</div>
 
 
 

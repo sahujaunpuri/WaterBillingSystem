@@ -392,7 +392,7 @@ $(document).ready(function(){
             var row = dt.row( tr );
             var idx = $.inArray( tr.attr('id'), detailRows );                
                 var d=row.data();
-                window.open("Templates/layout/billing_statement/"+ d.billing_id+"?type=pdf");
+                window.open("Templates/layout/billing_statement/"+ d.billing_id+"?type=preview");
         });
 
         $('#print_billing').on( 'click', function () {
@@ -402,7 +402,7 @@ $(document).ready(function(){
             var customer_id = _cboCustomer.select2('val');
 
             if(period_id != null){
-                window.open("Templates/layout/billing_statement_all/"+period_id+"/"+meter_reading_input_id+"/"+customer_id+"?type=pdf");
+                window.open("Templates/layout/billing_statement_all/"+period_id+"/"+meter_reading_input_id+"/"+customer_id+"?type=preview");
             }else{
                 showNotification({title:"Error!",stat:"error",msg:"Meter Period is Required!"});
             }

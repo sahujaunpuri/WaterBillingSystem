@@ -19,7 +19,6 @@ class Service_connection_model extends CORE_Model{
 		    ct.contract_type_name,
 		    rt.rate_type_name,
             CONCAT_WS(' ',a.first_name,a.middle_name,a.last_name) as attendant,
-		    DATE_FORMAT(sc.connection_date, '%m/%d/%Y') AS connection_date,
 		    DATE_FORMAT(sc.service_date, '%m/%d/%Y') AS service_date,
 		    DATE_FORMAT(sc.target_date, '%m/%d/%Y') AS target_date
 

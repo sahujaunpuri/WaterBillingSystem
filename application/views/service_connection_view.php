@@ -136,7 +136,7 @@
                                                                 <th>Account No</th>
                                                                 <th>Customer</th>
                                                                 <th>Meter Serial</th>
-                                                                <th>Connection Date</th>
+                                                                <th>Service Date</th>
                                                                 <th><center>Action</center></th>
                                                             </tr>
                                                             </thead>
@@ -239,19 +239,6 @@
                                                                         <i class="fa fa-calendar"></i>
                                                                     </span>
                                                                     <input type="text" name="service_date" id="service_date" class="date-picker form-control" placeholder="MM/DD/YYYY" data-error-msg="Service Date is required." required>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row bottom-10 hidden">
-                                                        <div class="form-group">
-                                                            <label class="col-xs-12 col-md-4 control-label"><strong><span class="red">*</span> Connection Date:</strong></label>
-                                                            <div class="col-xs-12 col-md-8">
-                                                                <div class="input-group">
-                                                                    <span class="input-group-addon">
-                                                                        <i class="fa fa-calendar"></i>
-                                                                    </span>
-                                                                    <input type="text" name="connection_date" id="connection_date" class="date-picker form-control" placeholder="MM/DD/YYYY" data-error-msg="Date Connection is required.">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -924,7 +911,7 @@
                     { targets:[2],data: "account_no" },
                     { targets:[3],data: "customer_name" },
                     { targets:[4],data: "serial_no" },
-                    { targets:[5],data: "connection_date" },
+                    { targets:[5],data: "service_date" },
                     {
                         targets:[6],
                         render: function (data, type, full, meta){
@@ -1156,7 +1143,6 @@
                 clearFields($('#frm_connection'));
                 $('#connection_title').text('New Connection Service');
                 $('#service_date').val(getCurrentDate());
-                $('#connection_date').val(getCurrentDate());
                 $('#modal_new_connection').modal('show');
                 $('#link_browse_cu').show();
                 $('#ms_icon').hide();

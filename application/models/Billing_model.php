@@ -219,10 +219,7 @@ class Billing_model extends CORE_Model{
 					$get_penalty_for_last_billing = $this->db->query("SELECT penalty_amount FROM billing WHERE billing_id = ".$previous_billing_info[0]->billing_id."")->result()[0];
 					$arrears_penalty_amount = $get_penalty_for_last_billing->penalty_amount;
 				}
-
-				
-
-
+						
 				$arrears_amount_info = $this->db->query("SELECT SUM(IFNULL(main.amount_due,0)) as arrears_amount FROM(SELECT 
 					b.connection_id,
 					b.due_date,

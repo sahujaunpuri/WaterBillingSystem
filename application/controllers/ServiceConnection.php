@@ -84,14 +84,12 @@ class ServiceConnection extends CORE_Controller {
                 $serial_no =$this->input->post('serial_no',TRUE);
 
                 $service_date = date("Y-m-d",strtotime($this->input->post('service_date',TRUE)));
-                $connection_date = date("Y-m-d",strtotime($this->input->post('connection_date',TRUE)));
                 $target_date = date("Y-m-d",strtotime($this->input->post('target_date',TRUE)));
 
                 $m_connection->set('date_created','NOW()');
                 $m_connection->customer_id=$customer_id;
                 $m_connection->meter_inventory_id=$meter_inventory_id;
                 $m_connection->service_date=$service_date;
-                $m_connection->connection_date=$connection_date;
                 $m_connection->receipt_name=$this->input->post('receipt_name',TRUE);
                 $m_connection->address=$this->input->post('address',TRUE);
                 $m_connection->target_date=$target_date;
@@ -179,11 +177,9 @@ class ServiceConnection extends CORE_Controller {
                 $service_no =$this->input->post('service_no',TRUE);
 
                 $service_date = date("Y-m-d",strtotime($this->input->post('service_date',TRUE)));
-                $connection_date = date("Y-m-d",strtotime($this->input->post('connection_date',TRUE)));
                 $target_date = date("Y-m-d",strtotime($this->input->post('target_date',TRUE)));
 
                 $m_connection->service_date=$service_date;
-                $m_connection->connection_date=$connection_date;
                 $m_connection->receipt_name=$this->input->post('receipt_name',TRUE);
                 $m_connection->address=$this->input->post('address',TRUE);
                 $m_connection->target_date=$target_date;
