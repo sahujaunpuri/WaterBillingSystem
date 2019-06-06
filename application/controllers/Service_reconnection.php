@@ -34,7 +34,7 @@ class Service_reconnection extends CORE_Controller {
             array('rate_types.is_deleted'=>FALSE,'rate_types.is_active'=>TRUE)
         );
 
-        (in_array('4-3',$this->session->user_rights)? 
+        (in_array('17-8',$this->session->user_rights)? 
         $this->load->view('service_reconnection_view', $data)
         :redirect(base_url('dashboard')));
         

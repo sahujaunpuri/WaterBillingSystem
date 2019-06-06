@@ -103,24 +103,28 @@
       </tr>
     </table>
    <table width="100%" style="font-family: tahoma;font-size: 11;border: 0px!important;" class="table table-bordered tbl_service_disconnection" border="0">
-
+        <?php 
+        $total_outstanding_balance= $dis_info->arrears_amount + $dis_info->arrears_penalty_amount;
+        $total_current_charges = 0;
+        $total_amount_due = 0;
+        ?>
            <tr>
                 <td colspan="7" class="tablehead"><b>PREVIOUS BALANCE</b></td>
            </tr>
             <tr>
                 <td></td>
-                <td colspan="5">BALANCE AS OF  : </td>
-                <td class="right-align">0.00</td>
+                <td colspan="5">BALANCE AS OF DATE : </td>
+                <td class="right-align"><?php echo number_format($dis_info->arrears_amount,2); ?></td>
            </tr>
             <tr>
                 <td></td>
                 <td colspan="5">PENALTY : </td>
-                <td class="right-align">0.00</td>
+                <td class="right-align"><?php echo number_format($dis_info->arrears_penalty_amount,2); ?></td>
            </tr> 
             <tr>
                 <td></td>
                 <td colspan="5"><b>TOTAL OUTSTANDING BALANCE</b></td>
-                <td class="right-align"><b>0.00</b></td>
+                <td class="right-align"><b><?php echo number_format($total_outstanding_balance,2);?></b></td>
            </tr>     
            <tr>
                 <td colspan="7" class="tablehead"><b>CURRENT BILLING</b></td>
@@ -141,43 +145,37 @@
             <tr>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="right-align">0.00</td>
+                <td><?php echo date('F Y', strtotime($dis_info->date_disconnection_date)); ?></td>
+                <td class="right-align"><?php echo $dis_info->previous_reading; ?></td>
+                <td class="right-align"><?php echo $dis_info->last_meter_reading; ?></td>
+                <td class="right-align"><?php echo $dis_info->total_consumption; ?></td>
+                <td class="right-align"><?php echo number_format($dis_info->meter_amount_due,2); ?></td>
            </tr>
-           <tr>
-                <td ></td>
-                <td colspan="6">PENALTY</td>
-           </tr>
-           <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="right-align">0.00</td>
-           </tr>
+           <?php $total_current_charges = $total_current_charges +  $dis_info->meter_amount_due ;?>
            <tr>
                 <td ></td>
                 <td colspan="6">OTHER CHARGES:</td>
            </tr>
             <tr>
+              <?php foreach ($other_charges as $other_charge) { ?>
                 <td></td>
                 <td></td>
-                <td colspan="4"></td>
-                <td class="right-align">0.00</td>
+                <td colspan="4"><?php echo $other_charge->charge_desc ?> (<?php echo $other_charge->other_charge_no ?>) </td>
+
+                <td class="right-align"><?php echo number_format($other_charge->charge_line_total,2) ?></td>
+              <?php $total_current_charges += $other_charge->charge_line_total; } 
+              $total_amount_due = $total_current_charges + $total_outstanding_balance;?>
+
+
            </tr>
             <tr>
                 <td></td>
                 <td colspan="5"><b>TOTAL CURRENT CHARGES</b></td>
-                <td class="right-align"><b>0.00</b></td>
+                <td class="right-align"><b><?php echo number_format($total_current_charges,2); ?></b></td>
            </tr>
            <tr>
                 <td colspan="6" class="tablehead"><b>TOTAL AMOUNT DUE</b></td>
-                <td class="tablehead right-align"><b>0.00</b></td>
+                <td class="tablehead right-align"><b><?php echo number_format($total_amount_due,2); ?></b></td>
            </tr>
    </table>
 

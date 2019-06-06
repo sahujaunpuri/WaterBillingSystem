@@ -21,7 +21,7 @@ class Attendant extends CORE_Controller {
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
         $data['title']='Attendant Management';
         $data['departments']=$this->Departments_model->get_list(array('departments.is_deleted'=>FALSE));
-        (in_array('5-4',$this->session->user_rights)? 
+        (in_array('17-5',$this->session->user_rights)? 
         $this->load->view('attendant_view',$data)
         :redirect(base_url('dashboard')));
         

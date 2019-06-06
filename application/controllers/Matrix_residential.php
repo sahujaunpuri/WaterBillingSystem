@@ -26,7 +26,7 @@ class Matrix_residential extends CORE_Controller
         $data['title'] = 'Residential Rate Matrix';
 
 
-        (in_array('6-2',$this->session->user_rights)? 
+        (in_array('17-1',$this->session->user_rights)? 
         $this->load->view('matrix_residential_view', $data)
         :redirect(base_url('dashboard')));
         

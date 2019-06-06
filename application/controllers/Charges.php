@@ -23,16 +23,12 @@ class Charges extends CORE_Controller
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Charges Management';
-
-
-
-
         $data['units'] = $this->Charge_unit_model->get_list(array('charge_unit.is_deleted'=>FALSE));
-
         $data['accounts'] = $this->Account_title_model->get_list(null,'account_id,account_title');
 
-
-        $this->load->view('charges_view', $data);
+        (in_array('17-9',$this->session->user_rights)? 
+        $this->load->view('charges_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
     function transaction($txn = null) {
