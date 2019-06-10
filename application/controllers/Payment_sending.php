@@ -104,6 +104,16 @@ class Payment_sending extends CORE_Controller {
                 $response['title']="Success!";
                 $response['stat']="success";
                 $response['msg']="Payments successfully sent to Accounting.";
+
+                // Audittrail Log           
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=12; //CRUD
+                $m_trans->trans_type_id=83; // TRANS TYPE
+                $m_trans->trans_log='Transfered Billing Payments to Accounting: ('.$this->input->post('tsd').' to '.$this->input->post('ted').')';
+                $m_trans->save();
+
                 echo json_encode($response);
                 break;
 

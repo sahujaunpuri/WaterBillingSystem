@@ -158,8 +158,8 @@ class Cash_receipt extends CORE_Controller
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=8; //CRUD
-                $m_trans->trans_type_id=18; // TRANS TYPE
-                $m_trans->trans_log='Finalized Payment No.'.$payment_info[0]->batch_code.' ('.$payment_info[0]->billing_payment_batch_id.') For Cash Receipt Journal TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->trans_type_id=83; // TRANS TYPE
+                $m_trans->trans_log='Finalized Billing Payment Batch No.'.$payment_info[0]->batch_code.' ('.$payment_info[0]->billing_payment_batch_id.') For Cash Receipt Journal TXN-'.date('Ymd').'-'.$journal_id;
                 $m_trans->save();
                 //AUDIT TRAIL END
                 }

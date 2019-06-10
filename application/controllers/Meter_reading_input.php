@@ -12,6 +12,7 @@ class Meter_reading_input extends CORE_Controller
         $this->load->model('Other_charge_model');
         $this->load->model('Charges_model');
         $this->load->model('Users_model');
+        $this->load->model('trans_model');
         $this->load->model('Other_charge_item_model');
         $this->load->model('Meter_reading_period_model');
         $this->load->model('Meter_reading_input_model');
@@ -176,13 +177,21 @@ class Meter_reading_input extends CORE_Controller
                     $m_invoice_items->save();
                 }
 
-            
-
                 if($m_invoice->status()===TRUE){
                     $response['title'] = 'Success!';
                     $response['stat'] = 'success';
                     $response['msg'] = 'Batch Meter Input successfully created.';
                     $response['row_added']=$this->response_rows_invoice($meter_reading_input_id);
+
+                    // Audittrail Log           
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=1; //CRUD
+                    $m_trans->trans_type_id=79; // TRANS TYPE
+                    $m_trans->trans_log='Created New Batch Meter Reading: BCH-'.$batch_info->meter_reading_year.''.$month_id.'-'.$batch_id;
+                    $m_trans->save();
+
                     echo json_encode($response);
                 }
 
@@ -230,6 +239,16 @@ class Meter_reading_input extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Batch Meter Input successfully updated.';
                     $response['row_updated']=$this->response_rows_invoice($meter_reading_input_id);
+
+                    // Audittrail Log           
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=2; //CRUD
+                    $m_trans->trans_type_id=79; // TRANS TYPE
+                    $m_trans->trans_log='Updated Batch Meter Reading: ID('.$meter_reading_input_id.')';
+                    $m_trans->save();
+
                     echo json_encode($response);
                 }
 
@@ -250,6 +269,16 @@ class Meter_reading_input extends CORE_Controller
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Record successfully deleted.';
+
+                // Audittrail Log           
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=3; //CRUD
+                $m_trans->trans_type_id=79; // TRANS TYPE
+                $m_trans->trans_log='Deleted Batch Meter Reading: ID('.$meter_reading_input_id.')';
+                $m_trans->save();
+
                 echo json_encode($response);
 
                 break;    

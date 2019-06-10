@@ -151,8 +151,8 @@ class Accounts_receivable extends CORE_Controller
                 $m_trans->user_id=$this->session->user_id;
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=8; //CRUD
-                $m_trans->trans_type_id=17; // TRANS TYPE
-                $m_trans->trans_log='Finalized Sales Invoice No.'.$meter_info[0]->batch_no.' For Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->trans_type_id=82; // TRANS TYPE
+                $m_trans->trans_log='Finalized Meter Entry Batch No.'.$meter_info[0]->batch_no.' For Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
                 $m_trans->save();
                 //AUDIT TRAIL END
                 }

@@ -73,9 +73,21 @@ class Billing_sending extends CORE_Controller {
                 $m_period->is_sent = TRUE;
                 $m_period->batch_total_amount = $batch_total_amount;
                 $m_period->modify($meter_reading_input_id);
+
+                $batch = $this->Meter_reading_input_model->meter_reading($meter_reading_input_id);
+
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
                 $response['msg'] = 'Batch Successfully sent to Accounting.';
+
+                // Audittrail Log           
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=12; //CRUD
+                $m_trans->trans_type_id=82; // TRANS TYPE
+                $m_trans->trans_log='Transfered Batch Meter Reading to Accounting: ('.$batch[0]->batch_no.')';
+                $m_trans->save();
 
                 echo json_encode($response);
                 break;
