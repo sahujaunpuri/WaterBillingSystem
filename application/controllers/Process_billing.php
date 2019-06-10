@@ -40,7 +40,7 @@ class Process_billing extends CORE_Controller {
         
     }
 
-    function transaction($txn = null) {
+    function transaction($txn = null,$filter_value=null) {
         switch ($txn) {
             case 'reading':
                 $period_id = $this->input->get('period_id',TRUE);
@@ -65,6 +65,14 @@ class Process_billing extends CORE_Controller {
             case 'process':
                 $m_billing=$this->Billing_model;
                 $meter_reading_input_id = $this->input->post('meter_reading_input_id', TRUE);
+                $period_id = $filter_value;
+
+                $meter_period = $this->Meter_reading_period_model->get_list(
+                    $period_id,
+                    'CONCAT(months.month_name," ",meter_reading_period.meter_reading_year) as period',
+                    array(
+                        array('months','months.month_id = meter_reading_period.month_id','left'))
+                );     
 
                 if($meter_reading_input_id!="")
                 {
@@ -74,6 +82,16 @@ class Process_billing extends CORE_Controller {
                         $response['title']='Success!';
                         $response['stat']='success';
                         $response['msg']='Billing Successfully Processed.';
+
+                        // Audittrail Log          
+                        $m_trans=$this->Trans_model;
+                        $m_trans->user_id=$this->session->user_id;
+                        $m_trans->set('trans_date','NOW()');
+                        $m_trans->trans_key_id=11; //CRUD
+                        $m_trans->trans_type_id=80; // TRANS TYPE
+                        $m_trans->trans_log='Process Billing ('.$meter_period[0]->period.')';
+                        $m_trans->save();
+
                     }
                     else{
                         $response['title']='Error!';

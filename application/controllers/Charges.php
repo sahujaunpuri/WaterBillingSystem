@@ -13,6 +13,7 @@ class Charges extends CORE_Controller
         $this->load->model('Charges_model');
         $this->load->model('Charge_unit_model');
         $this->load->model('Users_model');
+        $this->load->model('Trans_model');
     }
 
     public function index() {
@@ -50,6 +51,15 @@ class Charges extends CORE_Controller
                 $response['stat']='success';
                 $response['msg']='Charge information successfully updated.';
                 $response['row_added']=$this->response_rows($charge_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=76; // TRANS TYPE
+                $m_trans->trans_log='Created Charge: ('.$this->input->post('charge_code',TRUE).')';
+                $m_trans->save();
+
                 echo json_encode($response);
 
             break;
@@ -67,6 +77,15 @@ class Charges extends CORE_Controller
                 $response['stat']='success';
                 $response['msg']='Charge Information Successfully Updated.';
                 $response['row_updated']=$this->response_rows($charge_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=76; // TRANS TYPE
+                $m_trans->trans_log='Updated Charge: ID('.$charge_id.')';
+                $m_trans->save();
+
                 echo json_encode($response);
 
             break;
@@ -81,6 +100,14 @@ class Charges extends CORE_Controller
                         $response['title']='Success!';
                         $response['stat']='success';
                         $response['msg']='Charge information successfully deleted.';
+
+                        $m_trans=$this->Trans_model;
+                        $m_trans->user_id=$this->session->user_id;
+                        $m_trans->set('trans_date','NOW()');
+                        $m_trans->trans_key_id=3; //CRUD
+                        $m_trans->trans_type_id=76; // TRANS TYPE
+                        $m_trans->trans_log='Deleted Charge: ID('.$charge_id.')';
+                        $m_trans->save();
 
                         echo json_encode($response); 
                     }

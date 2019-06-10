@@ -11,9 +11,7 @@ class Trail extends CORE_Controller
         $this->load->model('Trans_model');
         $this->load->model('Trans_type_model');
         $this->load->model('Trans_key_model');
-
-
-                   $this->load->library('excel');
+        $this->load->library('excel');
 
     }
 

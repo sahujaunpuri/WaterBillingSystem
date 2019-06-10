@@ -464,10 +464,11 @@ $(document).ready(function(){
 
     var process_billing=function(){
         var _data = dt.$('input, select').serialize();
+        var period_id = $('#cbo_period').val();
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Process_billing/transaction/process",
+            "url":"Process_billing/transaction/process/"+period_id,
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_process'))
         });

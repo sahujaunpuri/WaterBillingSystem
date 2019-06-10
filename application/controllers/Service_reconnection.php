@@ -13,6 +13,7 @@ class Service_reconnection extends CORE_Controller {
         $this->load->model('Customers_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Trans_services_model');
         $this->load->model('Company_model');
         $this->load->library('excel');
     }
@@ -109,6 +110,16 @@ class Service_reconnection extends CORE_Controller {
                 $m_trans->trans_log='Created New Reconnection: '.$reconnection_code.' - '.$customer[0]->customer_name.' ('.$serial_no.') ';
                 $m_trans->save();
 
+                // Service History
+                $m_trans_services=$this->Trans_services_model;
+                $m_trans_services->user_id=$this->session->user_id;
+                $m_trans_services->set('trans_date','NOW()');
+                $m_trans_services->trans_key_id=1; //CRUD
+                $m_trans_services->trans_type_id=3; // TRANS TYPE
+                $m_trans_services->connection_id=$connection_id; // TRANS TYPE
+                $m_trans_services->trans_log='Created New Reconnection: ('.$reconnection_code.')';
+                $m_trans_services->save();
+
                 echo json_encode($response);
 
                 break;
@@ -142,7 +153,7 @@ class Service_reconnection extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=71; // TRANS TYPE
-                $m_trans->trans_log='Updated Reconnection: '.$reconnection_code;
+                $m_trans->trans_log='Updated Reconnection: ID('.$reconnection_id.')';
                 $m_trans->save();
 
                 echo json_encode($response);
@@ -207,11 +218,20 @@ class Service_reconnection extends CORE_Controller {
                     $m_trans->set('trans_date','NOW()');
                     $m_trans->trans_key_id=3; //CRUD
                     $m_trans->trans_type_id=71; // TRANS TYPE
-                    $m_trans->trans_log='Deleted Reconnection: '.$reconnection_code;
+                    $m_trans->trans_log='Deleted Reconnection: ID('.$reconnection_id.')';
                     $m_trans->save();
 
-                    echo json_encode($response);
-                }
+                    // Service History
+                    $m_trans_services=$this->Trans_services_model;
+                    $m_trans_services->user_id=$this->session->user_id;
+                    $m_trans_services->set('trans_date','NOW()');
+                    $m_trans_services->trans_key_id=2; //CRUD
+                    $m_trans_services->trans_type_id=3; // TRANS TYPE
+                    $m_trans_services->connection_id=$connection_id; // TRANS TYPE
+                    $m_trans_services->trans_log='Deleted Reconnection: ('.$reconnection_code.')';
+                    $m_trans_services->save();
+                        echo json_encode($response);
+                    }
                 break;
 
             case 'print-masterfile':

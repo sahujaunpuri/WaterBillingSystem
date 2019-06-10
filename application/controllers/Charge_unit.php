@@ -7,6 +7,7 @@ class Charge_unit extends CORE_Controller {
         $this->validate_session();
         $this->load->model('Charge_unit_model');
         $this->load->model('Users_model');
+        $this->load->model('Trans_model');
     }
 
     public function index() {
@@ -44,6 +45,15 @@ class Charge_unit extends CORE_Controller {
                 $response['stat'] = 'success';
                 $response['msg'] = 'unit information successfully created.';
                 $response['row_added'] = $m_units->get_charge_unit_list($unit_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=77; // TRANS TYPE
+                $m_trans->trans_log='Created Charge Unit: ('.$this->input->post('charge_unit_name',TRUE).')';
+                $m_trans->save();
+
                 echo json_encode($response);
 
                 break;
@@ -58,6 +68,14 @@ class Charge_unit extends CORE_Controller {
                     $response['title']='Success!';
                     $response['stat']='success';
                     $response['msg']='unit information successfully deleted.';
+
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=3; //CRUD
+                    $m_trans->trans_type_id=77; // TRANS TYPE
+                    $m_trans->trans_log='Updated Charge Unit: ID('.$unit_id.')';
+                    $m_trans->save();
 
                     echo json_encode($response);
                 }
@@ -77,6 +95,15 @@ class Charge_unit extends CORE_Controller {
                 $response['stat']='success';
                 $response['msg']='unit information successfully updated.';
                 $response['row_updated']=$m_units->get_charge_unit_list($unit_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=77; // TRANS TYPE
+                $m_trans->trans_log='Updated Charge Unit: ID('.$unit_id.')';
+                $m_trans->save();
+
                 echo json_encode($response);
 
                 break;

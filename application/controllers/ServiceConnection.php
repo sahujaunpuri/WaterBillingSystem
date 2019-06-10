@@ -14,6 +14,7 @@ class ServiceConnection extends CORE_Controller {
         $this->load->model('Rate_type_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Trans_services_model');
         $this->load->model('Company_model');
         $this->load->model('Customer_type_model');
         $this->load->model('Nationality_model');
@@ -124,6 +125,7 @@ class ServiceConnection extends CORE_Controller {
                 $response['msg']='Service Connection Information successfully created.';
                 $response['row_added']= $m_connection->getList($connection_id);
 
+                // Audittrail Log
                 $customer = $this->Customers_model->get_list($customer_id);            
                 $m_trans=$this->Trans_model;
                 $m_trans->user_id=$this->session->user_id;
@@ -132,6 +134,16 @@ class ServiceConnection extends CORE_Controller {
                 $m_trans->trans_type_id=69; // TRANS TYPE
                 $m_trans->trans_log='Created New Connection: '.$service_no.' - '.$customer[0]->customer_name.' ('.$serial_no.') ';
                 $m_trans->save();
+
+                // Service History
+                $m_trans_services=$this->Trans_services_model;
+                $m_trans_services->user_id=$this->session->user_id;
+                $m_trans_services->set('trans_date','NOW()');
+                $m_trans_services->trans_key_id=1; //CRUD
+                $m_trans_services->trans_type_id=1; // TRANS TYPE
+                $m_trans_services->connection_id=$connection_id; // CONNECTION ID
+                $m_trans_services->trans_log='Created New Connection: ('.$service_no.')';
+                $m_trans_services->save();
 
                 echo json_encode($response);
 
@@ -144,6 +156,9 @@ class ServiceConnection extends CORE_Controller {
                 // Updating Meter Inventory Status
                 $connection = $m_connection->getList($connection_id);
                 $meter_inventory_id = $connection[0]->meter_inventory_id;
+                $service_no = $connection[0]->service_no;
+                $customer_name = $connection[0]->customer_name;
+                $serial_no = $connection[0]->serial_no;
 
                 $m_connection->is_deleted=1;
                 if($m_connection->modify($connection_id)){     
@@ -164,6 +179,16 @@ class ServiceConnection extends CORE_Controller {
                     $m_trans->trans_type_id=69; // TRANS TYPE
                     $m_trans->trans_log='Deleted Connection : ID('.$connection_id.')';
                     $m_trans->save();
+                    
+                    // Service History
+                    $m_trans_services=$this->Trans_services_model;
+                    $m_trans_services->user_id=$this->session->user_id;
+                    $m_trans_services->set('trans_date','NOW()');
+                    $m_trans_services->trans_key_id=2; //CRUD
+                    $m_trans_services->trans_type_id=1; // TRANS TYPE
+                    $m_trans_services->connection_id=$connection_id; // CONNECTION ID
+                    $m_trans_services->trans_log='Deleted Service Connection: ('.$service_no.')';
+                    $m_trans_services->save();
 
                     echo json_encode($response);
                 }
@@ -201,7 +226,7 @@ class ServiceConnection extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=69; // TRANS TYPE
-                $m_trans->trans_log='Updated Service Connection: '.$service_no;
+                $m_trans->trans_log='Updated Service Connection: ID('.$connection_id.')';
                 $m_trans->save();
 
                 echo json_encode($response);

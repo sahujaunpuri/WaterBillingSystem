@@ -66,13 +66,16 @@ class Meter_reading_period extends CORE_Controller {
                 $response['msg'] = 'Meter Reading Period Successfully Created.';
                 $response['row_added'] = $this->response_rows($meter_reading_period_id);
 
-                // $m_trans=$this->Trans_model;
-                // $m_trans->user_id=$this->session->user_id;
-                // $m_trans->set('trans_date','NOW()');
-                // $m_trans->trans_key_id=1; //CRUD
-                // $m_trans->trans_type_id=49; // TRANS TYPE
-                // $m_trans->trans_log='Created Bank: '.$this->input->post('bank_name', TRUE);
-                // $m_trans->save();
+                // Audittrail Log          
+                $period = $response['row_added'][0]->month_name.' '.$response['row_added'][0]->meter_reading_year.' ('.$response['row_added'][0]->meter_reading_period_start.' - '.$response['row_added'][0]->meter_reading_period_end.')'; 
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=75; // TRANS TYPE
+                $m_trans->trans_log='Created New Meter Reading Period : '.$period;
+                $m_trans->save();
+
 
                 echo json_encode($response);
 
@@ -97,14 +100,14 @@ class Meter_reading_period extends CORE_Controller {
                     $response['stat']='success';
                     $response['msg']='Meter Reading Period information successfully deleted.';
 
-                    // $bank_name = $m_bank->get_list($bank_id,'bank_name');
-                    // $m_trans=$this->Trans_model;
-                    // $m_trans->user_id=$this->session->user_id;
-                    // $m_trans->set('trans_date','NOW()');
-                    // $m_trans->trans_key_id=3; //CRUD
-                    // $m_trans->trans_type_id=49; // TRANS TYPE
-                    // $m_trans->trans_log='Deleted Bank: '.$bank_name[0]->bank_name;
-                    // $m_trans->save();
+                    // Audittrail Log          
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=3; //CRUD
+                    $m_trans->trans_type_id=75; // TRANS TYPE
+                    $m_trans->trans_log='Deleted Meter Reading Period : ID('.$meter_reading_period_id.')';
+                    $m_trans->save();
 
                     echo json_encode($response);
                 }
@@ -145,6 +148,15 @@ class Meter_reading_period extends CORE_Controller {
                 $response['msg'] = 'Meter Reading Period Successfully Updated.';
                 $response['row_updated'] = $this->response_rows($meter_reading_period_id);
 
+                // Audittrail Log          
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=75; // TRANS TYPE
+                $m_trans->trans_log='Updated Meter Reading Period : ID('.$meter_reading_period_id.')';
+                $m_trans->save();
+
                 echo json_encode($response);
                 break;
         }
@@ -161,3 +173,6 @@ class Meter_reading_period extends CORE_Controller {
                     array('months','months.month_id = meter_reading_period.month_id','left') ));
     }
 }
+
+
+

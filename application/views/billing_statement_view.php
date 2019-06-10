@@ -131,12 +131,6 @@
                                                     <div class="col-lg-4">
                                                         <label> Batch No :</label> <br />
                                                         <select name="meter_reading_input_id" id="cbo_meter_reading_input" data-error-msg="Meter Reading Period is required." required style="width: 100%;">
-                                                            <option value="0">All</option>
-                                                            <?php foreach($batch as $batch){?>
-                                                                <option value="<?php echo $batch->meter_reading_input_id; ?>">
-                                                                    <?php echo $batch->batch_no; ?>
-                                                                </option>
-                                                            <?php }?>
                                                         </select>
                                                     </div>
                                                     <div class="col-lg-4">
@@ -151,9 +145,12 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-lg-offset-1 col-lg-3">
-                                                        <br/>
-                                                        <button type="button" class="btn btn-primary" id="print_billing" style="width: 100%;">
-                                                            <i class="fa fa-print"></i> Print
+                                                        <button type="button" class="btn btn-primary" id="print_billing" style="width: 100%;margin-top: 5px;">
+                                                            <i class="fa fa-print"></i> Print Billing
+                                                        </button>
+
+                                                        <button type="button" class="btn btn-success" id="print_report" style="width: 100%;margin-top: 5px;">
+                                                            <i class="fa fa-print"></i> Print Report
                                                         </button>
                                                     </div>
                                                 </div><br>
@@ -166,12 +163,11 @@
                                                             <th>Control No</th>
                                                             <th style="width: 100px;">Account No</th>
                                                             <th style="width: 200px;">Particular</th>
-                                                            <th>Meter Serial</th>
-                                                            <th>Previous Month</th>
-                                                            <th>Previous</th>
-                                                            <th>Current</th>
                                                             <th>Consumption</th>
                                                             <th>Due Amount</th>
+                                                            <th>Previous Balance</th>
+                                                            <th>Charges</th>
+                                                            <th>Grand Total</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody></tbody>
@@ -291,37 +287,41 @@ $(document).ready(function(){
                 { targets:[3],data: "control_no" },
                 { targets:[4],data: "account_no" },
                 { targets:[5],data: "customer_name" },
-                { targets:[6],data: "serial_no" },
-                { targets:[7],data: "previous_month" },
                 {
                     className: "text-right",
-                    targets:[8],data: "previous_reading",
+                    targets:[6],data: "total_consumption",
                     render: function(data){
                         return accounting.formatNumber(data,0);
                     }
                 },
                 {
                     className: "text-right",
-                    targets:[9],data: "current_reading",
-                    render: function(data){
-                        return accounting.formatNumber(data,0);
-                    }
-                },
-                {
-                    className: "text-right",
-                    targets:[10],data: "total_consumption",
-                    render: function(data){
-                        return accounting.formatNumber(data,0);
-                    }
-                },
-                {
-                    className: "text-right",
-                    targets:[11],data: "amount_due",
+                    targets:[7],data: "amount_due",
                     render: function(data){
                         return accounting.formatNumber(data,2);
                     }
                 },
-
+                {
+                    className: "text-right",
+                    targets:[8],data: "previous_balance",
+                    render: function(data){
+                        return accounting.formatNumber(data,2);
+                    }
+                },
+                {
+                    className: "text-right",
+                    targets:[9],data: "charges_amount",
+                    render: function(data){
+                        return accounting.formatNumber(data,2);
+                    }
+                },
+                {
+                    className: "text-right",
+                    targets:[10],data: "grand_total_amount",
+                    render: function(data){
+                        return accounting.formatNumber(data,2);
+                    }
+                },
             ],
             "drawCallback": function ( settings ) {
             var api = this.api();
@@ -407,8 +407,42 @@ $(document).ready(function(){
                 showNotification({title:"Error!",stat:"error",msg:"Meter Period is Required!"});
             }
 
-        });        
+        });
 
+        _cboPeriod.on('change',function(){
+            var i=$(this).select2('val');
+            batches(i).done(function(response){
+                var rows = response.data;
+
+                $("#cbo_meter_reading_input option").remove();
+                _cboBatchNo.select2('val',null);
+
+                if (rows.length > 0){
+                    $("#cbo_meter_reading_input").append('<option value="0">All</option>');
+                    $.each(rows,function(i,value){
+                       $("#cbo_meter_reading_input").append('<option value="'+ value.meter_reading_input_id +'">'+ value.batch_no +'</option>');
+                    });
+                    
+                    $('#cbo_meter_reading_input').val("").trigger("change")
+                    _cboBatchNo.select2('val',0);
+                }
+
+            });
+        }); 
+
+        $('#print_report').on( 'click', function () {
+
+            var period_id = _cboPeriod.select2('val');
+            var meter_reading_input_id = _cboBatchNo.select2('val');
+            var customer_id = _cboCustomer.select2('val');
+
+            if(period_id != null){
+                window.open("Templates/layout/billing_statement_period/"+period_id+"/"+meter_reading_input_id+"/"+customer_id+"?type=preview");
+            }else{
+                showNotification({title:"Error!",stat:"error",msg:"Meter Period is Required!"});
+            }
+
+        });                
 
         $('#tbl_billing tbody').on('click','button[name="edit_info"]',function(){
             _txnMode="edit";
@@ -568,6 +602,19 @@ $(document).ready(function(){
         });
 
         return stat;
+    };
+
+    var batches=function(i){
+        var _data=$('#').serializeArray();
+        _data.push({name : "period_id" ,value : i});
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Billing_statement/transaction/get_batches",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_process'))
+        });
     };
 
     var process_billing=function(){

@@ -158,6 +158,16 @@ class Billing_payments extends CORE_Controller
                     $response['stat']="success";
                     $response['msg']="Payment successfully recorded.";
                     $response['row_added']=$this->response_rows($billing_payment_id);
+
+                    // Audittrail Log          
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=1; //CRUD
+                    $m_trans->trans_type_id=81; // TRANS TYPE
+                    $m_trans->trans_log='Created New Billing Payment: '.$receipt_no;
+                    $m_trans->save();
+
                     echo json_encode($response);
                 }
 
@@ -167,6 +177,8 @@ class Billing_payments extends CORE_Controller
                 case 'cancel':
                     $billing_payment_id=$this->input->post('billing_payment_id',TRUE);
                     $m_payment=$this->Billing_payments_model;
+
+                    $receipt = $m_payment->get_list($billing_payment_id);
                     $m_payment->begin();
                     $m_payment->set('date_cancelled','NOW()');
                     $m_payment->is_active=0;
@@ -179,6 +191,16 @@ class Billing_payments extends CORE_Controller
                         $response['stat']="success";
                         $response['msg']="Payment successfully cancelled.";
                         $response['row_updated']=$this->response_rows($billing_payment_id);
+
+                        // Audittrail Log          
+                        $m_trans=$this->Trans_model;
+                        $m_trans->user_id=$this->session->user_id;
+                        $m_trans->set('trans_date','NOW()');
+                        $m_trans->trans_key_id=4; //CRUD
+                        $m_trans->trans_type_id=81; // TRANS TYPE
+                        $m_trans->trans_log='Cancelled Billing Payment: '.$receipt[0]->receipt_no;
+                        $m_trans->save();
+
                         echo json_encode($response);
                     }
                 break;

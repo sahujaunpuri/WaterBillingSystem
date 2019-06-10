@@ -43,16 +43,16 @@
     </table><br>
     <table width="100%" cellpadding="5" cellspacing="0">
         <tr>
-            <td class="" ><span>Batch No:</span></td>
-            <td class=""><?php echo $batch->batch_no?></td>
-            <td class="">Date Input:</td>
-            <td class=""><?php echo  date_format(new DateTime($batch->date_input ),"m/d/Y"); ?></td>
+            <td><span>Batch No:</span></td>
+            <td><?php echo $batch->batch_no?></td>
+            <td>Date Input:</td>
+            <td><?php echo  date_format(new DateTime($batch->date_input ),"m/d/Y"); ?></td>
 
         <tr>
-            <td class=""><span>Applicable Month:</span></td>
-            <td class=""><?php echo $batch->month_name;?> <?php echo $batch->meter_reading_year;?></td>
-            <td class""><span>Posted By:</span></td>
-            <td class=""=><?php echo $batch->posted_by ?></td>
+            <td><span>Applicable Month:</span></td>
+            <td><?php echo $batch->month_name;?> <?php echo $batch->meter_reading_year;?></td>
+            <td><span>Posted By:</span></td>
+            <td><?php echo $batch->posted_by ?></td>
         </tr>
     </table>
     <table width="100%"  style="font-family: tahoma;font-size: 11;" cellspacing="0" cellpadding="5">
@@ -71,13 +71,13 @@
             <tbody>
             <?php foreach($input_items as $inputs){ ?>
                 <tr>
-                    <td width="12%"  class="left" style="text-align: center;height: 30px;padding: 6px;"><?php echo $inputs->account_no; ?></td>
-                    <td width="50%"   class="" style="text-align: left;height: 30px;padding: 6px;"><?php echo $inputs->customer_name; ?></td>
-                    <td width="12%"  class="" style="text-align: left;height: 30px;padding: 6px;"><?php echo $inputs->serial_no; ?></td>
-                    <td width="12%"  class="" style="text-align: left;height: 30px;padding: 6px;"><?php echo $inputs->previous_month; ?></td>
-                    <td width="12%"  class="" style="text-align: right;height: 30px;padding: 6px;"><?php echo $inputs->previous_reading ?></td>
-                    <td width="12%"  class="" style="text-align: right;height: 30px;padding: 6px;"><?php echo $inputs->current_reading ?></td>
-                    <td width="12%"  class=" right" style="text-align: right;height: 30px;padding: 6px;"><?php echo $inputs->total_consumption ?></td>
+                    <td width="12%" style="text-align: center;height: 30px;padding: 6px;"><?php echo $inputs->account_no; ?></td>
+                    <td width="50%" style="text-align: left;height: 30px;padding: 6px;"><?php echo $inputs->customer_name; ?></td>
+                    <td width="12%" style="text-align: left;height: 30px;padding: 6px;"><?php echo $inputs->serial_no; ?></td>
+                    <td width="12%" style="text-align: left;height: 30px;padding: 6px;"><?php echo $inputs->previous_month; ?></td>
+                    <td width="12%" style="text-align: right;height: 30px;padding: 6px;"><?php echo $inputs->previous_reading ?></td>
+                    <td width="12%" style="text-align: right;height: 30px;padding: 6px;"><?php echo $inputs->current_reading ?></td>
+                    <td width="12%" class="right" style="text-align: right;height: 30px;padding: 6px;"><?php echo $inputs->total_consumption ?></td>
                 </tr>
             <?php } ?>
             <tr>

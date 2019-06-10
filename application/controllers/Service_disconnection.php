@@ -13,6 +13,7 @@ class Service_disconnection extends CORE_Controller {
         $this->load->model('Customers_model');
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
+        $this->load->model('Trans_services_model');
         $this->load->model('Meter_reading_period_model');
         $this->load->model('Other_charge_item_model');
         $this->load->model('Service_disconnection_charges_model');
@@ -239,6 +240,16 @@ class Service_disconnection extends CORE_Controller {
                 $m_trans->trans_log='Created New Disconnection: '.$disconnection_code.' - '.$customer[0]->customer_name.' ('.$serial_no.') ';
                 $m_trans->save();
 
+                // Service History
+                $m_trans_services=$this->Trans_services_model;
+                $m_trans_services->user_id=$this->session->user_id;
+                $m_trans_services->set('trans_date','NOW()');
+                $m_trans_services->trans_key_id=1; //CRUD
+                $m_trans_services->trans_type_id=2; // TRANS TYPE
+                $m_trans_services->connection_id=$connection_id; // CONNECTION ID
+                $m_trans_services->trans_log='Created Service Disconnection: ('.$disconnection_code.')';
+                $m_trans_services->save();
+
                 echo json_encode($response);
 
                 break;
@@ -299,7 +310,7 @@ class Service_disconnection extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=2; //CRUD
                 $m_trans->trans_type_id=70; // TRANS TYPE
-                $m_trans->trans_log='Updated Disconnection: '.$disconnection_code;
+                $m_trans->trans_log='Updated Disconnection: ID('.$disconnection_id.')';
                 $m_trans->save();
 
                 echo json_encode($response);
@@ -374,8 +385,19 @@ class Service_disconnection extends CORE_Controller {
                     $m_trans->set('trans_date','NOW()');
                     $m_trans->trans_key_id=3; //CRUD
                     $m_trans->trans_type_id=70; // TRANS TYPE
-                    $m_trans->trans_log='Deleted Disconnection: '.$disconnection_code;
+                    $m_trans->trans_log='Deleted Disconnection: ID('.$disconnection_id.')';
                     $m_trans->save();
+                    
+                    // Service History
+                    $m_trans_services=$this->Trans_services_model;
+                    $m_trans_services->user_id=$this->session->user_id;
+                    $m_trans_services->set('trans_date','NOW()');
+                    $m_trans_services->trans_key_id=2; //CRUD
+                    $m_trans_services->trans_type_id=2; // TRANS TYPE
+                    $m_trans_services->connection_id=$connection_id; // CONNECTION ID
+                    $m_trans_services->trans_log='Deleted Service Disconnection: ('.$disconnection_code.')';
+                    $m_trans_services->save();
+
 
                     echo json_encode($response);
                 }

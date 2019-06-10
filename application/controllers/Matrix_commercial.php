@@ -85,6 +85,16 @@ class Matrix_commercial extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Matrix successfully created.';
                     $response['row_added']=$this->Matrix_commercial_model->get_list($matrix_commercial_id);
+
+                    // Audittrail Log          
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=1; //CRUD
+                    $m_trans->trans_type_id=74; // TRANS TYPE
+                    $m_trans->trans_log='Created New Commercial Rate Matrix: (MATRIX-COMM-'.date('Y').'-'.$matrix_commercial_id.')';
+                    $m_trans->save();
+
                     echo json_encode($response);
                 }
 
@@ -122,6 +132,16 @@ class Matrix_commercial extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Matrix successfully Updated.';
                     $response['row_updated']=$this->Matrix_commercial_model->get_list($matrix_commercial_id);
+
+                    // Audittrail Log          
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=2; //CRUD
+                    $m_trans->trans_type_id=74; // TRANS TYPE
+                    $m_trans->trans_log='Updated Commercial Rate Matrix: ID('.$matrix_commercial_id.')';
+                    $m_trans->save();
+
                     echo json_encode($response);
                 }
 
@@ -142,8 +162,17 @@ class Matrix_commercial extends CORE_Controller
                     $response['title']='Success!';
                     $response['stat']='success';
                     $response['msg']='Record successfully deleted.';
-                }
 
+                    // Audittrail Log          
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=3; //CRUD
+                    $m_trans->trans_type_id=74; // TRANS TYPE
+                    $m_trans->trans_log='Deleted Commercial Rate Matrix: ID('.$matrix_commercial_id.')';
+                    $m_trans->save();
+
+                }
 
                 echo json_encode($response);
 

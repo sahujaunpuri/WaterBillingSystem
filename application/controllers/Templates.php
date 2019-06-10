@@ -115,6 +115,11 @@ class Templates extends CORE_Controller {
 
         $this->load->model('Meter_reading_period_model');
 
+        $this->load->model('Users_model');
+        $this->load->model('Trans_services_model');
+        $this->load->model('Trans_type_services_model');
+        $this->load->model('Trans_key_services_model');
+
         $this->load->library('M_pdf');
         $this->load->library('excel');
         $this->load->model('Email_settings_model');
@@ -126,7 +131,7 @@ class Templates extends CORE_Controller {
     }
 
 
-    function layout($layout=null,$filter_value=null,$type=null,$filter_value2=null,$filter_value3=null){
+    function layout($layout=null,$filter_value=null,$type=null,$filter_value2=null,$filter_value3=null,$filter_value4=null,$filter_value5=null){
         switch($layout){
               case 'services-journal-for-review':
 
@@ -5652,7 +5657,7 @@ class Templates extends CORE_Controller {
                     $m_company=$this->Company_model;
                     $type=$this->input->get('type',TRUE);
 
-                    $billing=$m_billing->billing_statement($period_id,$meter_reading_input_id,$customer_id);
+                    $billings=$m_billing->billing_statement($period_id,$meter_reading_input_id,$customer_id);
                     $charges=$m_billing_charges->billing_charges();
                     $company=$m_company->get_list();
 
@@ -5666,7 +5671,7 @@ class Templates extends CORE_Controller {
                         )
                     );
 
-                    $data['billing']=$billing;
+                    $data['billings']=$billings;
                     $data['charges']=$charges;
                     $data['charges_1']=$charges;
                     $data['charges_2']=$charges;
@@ -5700,6 +5705,117 @@ class Templates extends CORE_Controller {
                         $pdf->Output();
                     }
                 break;
+
+                case 'billing_statement_period': // Per Period Statement
+
+                    $period_id = $filter_value;
+                    $meter_reading_input_id = $type;
+                    $customer_id = $filter_value2;
+
+                    $m_billing=$this->Billing_model;
+                    $m_billing_charges=$this->Billing_charges_model;
+                    $m_period=$this->Meter_reading_period_model;
+                    $m_company=$this->Company_model;
+                    $type=$this->input->get('type',TRUE);
+
+                    $billings=$m_billing->billing_statement($period_id,$meter_reading_input_id,$customer_id);
+                    $charges=$m_billing_charges->billing_charges();
+                    $company=$m_company->get_list();
+
+                    $meter_period = $m_period->get_list(
+                        $period_id,
+                        array(
+                            "meter_reading_period.*, months.month_name, CONCAT(months.month_name,' ',meter_reading_period.meter_reading_year) as period,
+                            CONCAT((date_format(meter_reading_period.meter_reading_period_start,'%M %d, %Y')),' - ',(date_format(meter_reading_period.meter_reading_period_end,'%M %d, %Y'))) as date_inclusive"
+                        ),
+                        array(
+                            array('months','months.month_id = meter_reading_period.month_id','left')
+                        )
+                    );
+
+                    $data['billings']=$billings;
+                    $data['meter_period']=$meter_period[0];
+                    $data['company_info']=$company[0];
+
+                    //preview on browser
+                    if($type=='preview'){
+                        $file_name= 'Billing Statement Report - '.$meter_period[0]->period;
+                        $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                        $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                        $content=$this->load->view('template/billing_statement_period_content',$data,TRUE); //load the template
+                        $pdf->WriteHTML($content);
+                        //download it.
+                        $pdf->Output();
+
+                    }
+                break; 
+
+                case 'service_trail': // Print Service Tail
+
+                    $m_trans_services=$this->Trans_services_model;
+                    $m_trans_key_service=$this->Trans_key_services_model;
+                    $m_trans_type_service=$this->Trans_type_services_model;
+                    $m_connection=$this->Service_connection_model;
+                    $m_users=$this->Users_model;
+                    $m_company=$this->Company_model;
+
+                    $trans_type_id = $filter_value;
+                    $trans_key_id = $type;
+                    $user_id = $filter_value2;
+                    $connection_id = $filter_value3;
+                    $start_date = date('Y-m-d',strtotime($filter_value4));
+                    $end_date = date('Y-m-d',strtotime($filter_value5));
+
+                    $type = $this->input->get('type',TRUE);
+
+                    $history = $m_trans_services->trail($trans_type_id,$trans_key_id,$start_date,$end_date,$user_id,$connection_id);
+                    $company=$m_company->get_list();
+
+                    if ($trans_type_id != "all"){
+                        $data['trans_type'] = $m_trans_type_service->get_list($trans_type_id)[0]->trans_type_desc;
+                    }else{
+                        $data['trans_type'] = "All";
+                    }
+
+                    if ($trans_key_id != "all"){
+                        $data['trans_key'] = $m_trans_key_service->get_list($trans_key_id)[0]->trans_key_desc;
+                    }else{
+                        $data['trans_key'] = "All";
+                    }
+
+                    if ($user_id != "all"){
+                        $users = $m_users->get_list($user_id);
+                        $data['user'] = $users[0]->user_fname.' '.$users[0]->user_mname.' '.$users[0]->user_lname;
+                    }else{
+                        $data['user'] = "All";
+                    }
+
+                    if ($connection_id != "all"){
+                        $data['service_no'] = $m_connection->get_list($connection_id)[0]->service_no;
+                    }else{
+                        $data['service_no'] = "All";
+                    }
+
+                    $s_date = date('m/d/Y',strtotime($filter_value4));
+                    $e_date = date('m/d/Y',strtotime($filter_value5));
+
+                    $data['start_date'] = $s_date;
+                    $data['end_date'] = $e_date;
+                    $data['history']=$history;
+                    $data['company_info']=$company[0];
+
+                    //preview on browser
+                    if($type=='preview'){
+                        $file_name= 'Service Trail - ('.$s_date.' ~ '.$e_date.')';
+                        $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                        $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                        $content=$this->load->view('template/service_trail_content',$data,TRUE); //load the template
+                        $pdf->AddPage('L'); // Adds a new page in Landscape orientation
+                        $pdf->WriteHTML($content);
+                        //download it.
+                        $pdf->Output();                 
+                    }
+                break;                
 
         }
     }

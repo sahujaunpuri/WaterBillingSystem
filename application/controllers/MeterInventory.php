@@ -89,7 +89,7 @@ class MeterInventory extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=1; //CRUD
                 $m_trans->trans_type_id=68; // TRANS TYPE
-                $m_trans->trans_log='Created Meter Inventory: '.$meter_code;
+                $m_trans->trans_log='Created Meter Inventory: ('.$meter_code.')';
                 $m_trans->save();
 
                 echo json_encode($response);

@@ -13,6 +13,7 @@ class Other_charges extends CORE_Controller
         $this->load->model('Charges_model');
         $this->load->model('Users_model');
         $this->load->model('Other_charge_item_model');
+        $this->load->model('Trans_model');
 
     }
 
@@ -126,6 +127,16 @@ class Other_charges extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Other Charge successfully created.';
                     $response['row_added']=$this->response_rows_invoice($other_charge_id);
+
+                    // Audittrail Log          
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=1; //CRUD
+                    $m_trans->trans_type_id=78; // TRANS TYPE
+                    $m_trans->trans_log='Created New Other Charges Invoice: (OTH-CHR-'.date('Ymd').'-'.$other_charge_id.')';
+                    $m_trans->save();
+
                     echo json_encode($response);
                 }
 
@@ -178,6 +189,16 @@ class Other_charges extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Other Charge successfully updated.';
                     $response['row_updated']=$this->response_rows_invoice($other_charge_id);
+
+                    // Audittrail Log          
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=2; //CRUD
+                    $m_trans->trans_type_id=78; // TRANS TYPE
+                    $m_trans->trans_log='Updated Other Charges Invoice: ID('.$other_charge_id.')';
+                    $m_trans->save();
+
                     echo json_encode($response);
                 }
 
@@ -197,6 +218,16 @@ class Other_charges extends CORE_Controller
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Record successfully deleted.';
+
+                // Audittrail Log          
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=3; //CRUD
+                $m_trans->trans_type_id=78; // TRANS TYPE
+                $m_trans->trans_log='Deleted Other Charges Invoice: ID('.$other_charge_id.')';
+                $m_trans->save();
+
                 echo json_encode($response);
 
                 break;            

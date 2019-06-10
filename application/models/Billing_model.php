@@ -26,7 +26,8 @@ class Billing_model extends CORE_Model{
 			    CONCAT((DATE_FORMAT(mrp.meter_reading_period_start,'%m/%d/%Y')),' - ',(DATE_FORMAT(mrp.meter_reading_period_end,'%m/%d/%Y'))) AS period_covered,
 			    m.month_name,
 			    (billing.amount_due + billing.penalty_amount) as total_amount_due,
-			    (billing.grand_total_amount + billing.penalty_amount) as amount_after_due
+			    (billing.grand_total_amount + billing.penalty_amount) as amount_after_due,
+			    (billing.arrears_amount + billing.arrears_penalty_amount) as previous_balance
 
 			FROM
 			    billing
@@ -57,7 +58,6 @@ class Billing_model extends CORE_Model{
     	foreach($meter_reading_input_id as $id){
 
     		$total_amount_due = 0;
-    		$total_charges = 0;
 
     		// Check if billing is existing
     		$check_existing_billing = $this->db->query("SELECT * FROM billing WHERE meter_reading_input_id =".$id);
@@ -164,6 +164,7 @@ class Billing_model extends CORE_Model{
     		$i=0;
 
     		foreach ($meter_reading_input->result() as $row) {
+    			$total_charges = 0;
     			// GET PREVIOUS BILLING (LATEST)
     			$get_previous_billing_id = $this->db->query("SELECT * FROM (SELECT 
 											mrii.meter_reading_input_id,
@@ -336,7 +337,7 @@ class Billing_model extends CORE_Model{
                	}
 
                	$grand_total = $total_amount_due + $total_charges + $arrears_penalty_amount;
-               	$update_amount = "UPDATE billing SET grand_total_amount=$grand_total WHERE billing_id=".$billing_id;
+               	$update_amount = "UPDATE billing SET grand_total_amount=$grand_total, charges_amount=$total_charges WHERE billing_id=".$billing_id;
 	            $this->db->query($update_amount);
 
 				$i++;

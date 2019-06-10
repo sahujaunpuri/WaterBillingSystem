@@ -337,7 +337,7 @@
                                                                     <span class="input-group-addon">
                                                                         <i class="fa fa-calendar"></i>
                                                                     </span>
-                                                                    <input type="text" name="target_date" class="date-picker form-control" placeholder="MM/DD/YYYY">
+                                                                    <input type="text" name="target_date" class="date-picker form-control" placeholder="MM/DD/YYYY" autocomplete="off">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -356,7 +356,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                     <div class="row bottom-10">
                                                         <div class="form-group">
                                                             <label class="col-xs-12 col-md-4 control-label">

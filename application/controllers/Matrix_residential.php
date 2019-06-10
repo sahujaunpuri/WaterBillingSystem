@@ -85,6 +85,16 @@ class Matrix_residential extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Matrix successfully created.';
                     $response['row_added']=$this->Matrix_residential_model->get_list($matrix_residential_id);
+
+                    // Audittrail Log          
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=1; //CRUD
+                    $m_trans->trans_type_id=73; // TRANS TYPE
+                    $m_trans->trans_log='Created New Residential Rate Matrix: (MATRIX-RESI-'.date('Y').'-'.$matrix_residential_id.')';
+                    $m_trans->save();
+
                     echo json_encode($response);
                 }
 
@@ -122,6 +132,16 @@ class Matrix_residential extends CORE_Controller
                     $response['stat'] = 'success';
                     $response['msg'] = 'Matrix successfully Updated.';
                     $response['row_updated']=$this->Matrix_residential_model->get_list($matrix_residential_id);
+
+                    // Audittrail Log          
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=2; //CRUD
+                    $m_trans->trans_type_id=73; // TRANS TYPE
+                    $m_trans->trans_log='Updated Residential Rate Matrix: ID('.$matrix_residential_id.')';
+                    $m_trans->save();
+
                     echo json_encode($response);
                 }
 
@@ -146,6 +166,15 @@ class Matrix_residential extends CORE_Controller
                     $response['title']='Success!';
                     $response['stat']='success';
                     $response['msg']='Record successfully deleted.';
+                    
+                    // Audittrail Log          
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=3; //CRUD
+                    $m_trans->trans_type_id=73; // TRANS TYPE
+                    $m_trans->trans_log='Deleted Residential Rate Matrix: ID('.$matrix_residential_id.')';
+                    $m_trans->save();
                 }
 
                 echo json_encode($response);
