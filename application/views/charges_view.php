@@ -304,13 +304,21 @@
                                                 ?>
                                             </select>
                                         </div>
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                             <label><b class="required"> * </b>Link to Income Account :</label>
+                                                <select name="income_account_id" class="cbo_accounts" id="cbo_income_account_id" data-error-msg="Meter Penalty Income Account is required." required>
+                                                    <?php foreach($accounts as $account){ ?>
+                                                        <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                    <?php } ?>
+                                                </select>                                          
+                                        </div>
                                         <div class="form-group" style="">
                                         <label>Charge Amount</label>
                                             <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-file-code-o"></i>
                                                     </span>
-                                                    <input type="text" name="charge_amount" class="form-control numeric">
+                                                    <input type="text" name="charge_amount" id class="form-control numeric">
                                             </div>
                                         </div>
                                     </div>
@@ -398,7 +406,7 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; 
- var _cboMeasurement; 
+ var _cboMeasurement;  var _cboIncomeAccount;
 
     
 
@@ -442,6 +450,11 @@ $(document).ready(function(){
             allowClear: false
         });
 
+        _cboIncomeAccount=$('#cbo_income_account_id').select2({
+            placeholder: "Please Select an Income Account.",
+            allowClear: false
+        });
+
     }();
     
 
@@ -468,6 +481,7 @@ $(document).ready(function(){
             $('#modal_create_charges').modal('show');
             clearFields($('#frm_charges'));
             _cboMeasurement.select2('val',null);
+            _cboIncomeAccount.select2('val',null);
 
         });
 
@@ -489,6 +503,7 @@ $(document).ready(function(){
                 });
             });
 
+            _cboIncomeAccount.select2('val',data.income_account_id);
             _cboMeasurement.select2('val',data.charge_unit_id);
         });
 

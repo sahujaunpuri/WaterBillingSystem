@@ -22,7 +22,8 @@ class Accounts_receivable extends CORE_Controller
                 'Users_model',
                 'Accounting_period_model',
                 'Trans_model',
-                'Customer_type_model'
+                'Customer_type_model',
+                'Meter_reading_input_model'
  
             )
         );
@@ -134,6 +135,24 @@ class Accounts_receivable extends CORE_Controller
                 $m_trans->trans_key_id=8; //CRUD
                 $m_trans->trans_type_id=17; // TRANS TYPE
                 $m_trans->trans_log='Finalized Sales Invoice No.'.$sales_invoice[0]->sales_inv_no.' For Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->save();
+                //AUDIT TRAIL END
+                }
+
+                $meter_reading_input_id=$this->input->post('meter_reading_input_id',TRUE);
+                if($meter_reading_input_id!=null){
+                    $m_meter_model=$this->Meter_reading_input_model;
+                    $m_meter_model->journal_id=$journal_id;
+                    $m_meter_model->is_journal_posted=TRUE;
+                    $m_meter_model->modify($meter_reading_input_id);
+                // AUDIT TRAIL START
+                $meter_info=$m_meter_model->get_list($meter_reading_input_id,'batch_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=8; //CRUD
+                $m_trans->trans_type_id=17; // TRANS TYPE
+                $m_trans->trans_log='Finalized Sales Invoice No.'.$meter_info[0]->batch_no.' For Sales Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
                 $m_trans->save();
                 //AUDIT TRAIL END
                 }

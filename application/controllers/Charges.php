@@ -43,6 +43,7 @@ class Charges extends CORE_Controller
                 $m_charges = $this->Charges_model;
                 $m_charges->charge_code = $this->input->post('charge_code',TRUE);
                 $m_charges->charge_desc = $this->input->post('charge_desc',TRUE);
+                $m_charges->income_account_id = $this->input->post('income_account_id',TRUE);
                 $m_charges->charge_unit_id = $this->input->post('charge_unit_id',TRUE);
                 $m_charges->charge_amount = $this->get_numeric_value($this->input->post('charge_amount',TRUE));
                 $m_charges->save();
@@ -70,6 +71,7 @@ class Charges extends CORE_Controller
                 $m_charges->charge_code = $this->input->post('charge_code',TRUE);
                 $m_charges->charge_desc = $this->input->post('charge_desc',TRUE);
                 $m_charges->charge_unit_id = $this->input->post('charge_unit_id',TRUE);
+                $m_charges->income_account_id = $this->input->post('income_account_id',TRUE);
                 $m_charges->charge_amount = $this->get_numeric_value($this->input->post('charge_amount',TRUE));
                 $m_charges->modify($charge_id);
 

@@ -187,6 +187,51 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                             <span class="help-block m-b-none">Please Choose a default Commercial Rate to be used in creating Statement of Accounts. </span>
                             </div><br>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Meter Income Account :</label>
+                            <div class="col-md-7">
+                                <select name="billing_meter_account_id" class="cbo_accounts" data-error-msg=" Meter Income Account is required." required>
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                            <span class="help-block m-b-none">Please Choose a Default Income Account for Meter Charges. </span>
+                            </div><br>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Meter Penalty Income Account :</label>
+                            <div class="col-md-7">
+                                <select name="billing_penalty_account_id" class="cbo_accounts" data-error-msg="Meter Penalty Income Account is required." required>
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                            <span class="help-block m-b-none">Please Choose a Default Income Account for Meter Charges Penalty. </span>
+                            </div><br>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Department :</label>
+                            <div class="col-md-7">
+                                <select name="billing_department_id" class="cbo_accounts" data-error-msg="Department is required." required>
+                                    <?php foreach($departments as $department){ ?>
+                                        <option value="<?php echo $department->department_id; ?>" ><?php echo $department->department_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                            <span class="help-block m-b-none">Please Choose a default Department for Billing Transactions in Accounting. </span>
+                            </div><br>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Various Customers :</label>
+                            <div class="col-md-7">
+                                <select name="billing_customer_id" class="cbo_accounts" data-error-msg="Various Customers is required." required>
+                                <?php foreach($customers as $customer){ ?>
+                                    <option value="<?php echo $customer->customer_id; ?>" ><?php echo $customer->customer_name; ?></option>
+                                <?php } ?>
+                                </select>
+                            <span class="help-block m-b-none">Please Choose a default Customer for Billing Transactions in Accounting.</span>
+                            </div><br>
+                        </div>
                 </form>
                     <div class="col-sm-offset-3">
                         <button id="btn_save_water_billing" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Water Billing Configuration Changes</button>
