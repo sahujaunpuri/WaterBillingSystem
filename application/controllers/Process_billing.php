@@ -62,6 +62,13 @@ class Process_billing extends CORE_Controller {
                 echo json_encode($response);
                 break;
 
+
+            case 'chck_status':
+                $period_id = $this->input->post('period_id',true);
+                $response['data']=$this->Meter_reading_period_model->get_list($period_id);
+                echo json_encode($response);
+                break;
+
             case 'process':
                 $m_billing=$this->Billing_model;
                 $meter_reading_input_id = $this->input->post('meter_reading_input_id', TRUE);

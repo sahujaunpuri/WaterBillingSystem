@@ -111,6 +111,7 @@
                                                         <th>Month</th>
                                                         <th>Period Start</th>
                                                         <th>Period End</th>
+                                                        <th>Status</th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -149,6 +150,31 @@
                     </div>
                 </div>
             </div><!---modal-->
+
+
+            <div id="modal_close" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                            <h4 class="modal-title" style="color:white;"><span id="modal_mode"> </span>Confirm Close</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <p id="modal-body-message">
+                                <b>Are you sure you want to close this period?</b> <br />
+                                <span style="color: red;font-size: 8pt;">Note : It will close the Meter Reading Entry and Processing Billing within this Period.</span>
+                            </p>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button id="btn_yes_close" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                            <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!---modal-->
+
 
             <div id="modal_meter_reading_period" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog">
@@ -258,13 +284,15 @@ $(document).ready(function(){
                 { targets:[1],data: "month_name" },
                 { targets:[2],data: "meter_reading_period_start" },
                 { targets:[3],data: "meter_reading_period_end" },
+                { targets:[4],data: "status" },
                 {
-                    targets:[4],
+                    targets:[5],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+                        var btn_close='<button class="btn btn-orange btn-sm" name="close_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Close"><i class="fa fa-close"></i> </button>';
 
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'&nbsp;'+btn_close+'</center>';
                     }
                 }
             ]
@@ -376,11 +404,28 @@ $(document).ready(function(){
             $('#modal_confirmation').modal('show');
         });
 
+        $('#tbl_meter_reading_period tbody').on('click','button[name="close_info"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.meter_reading_period_id;
+
+            $('#modal_close').modal('show');
+        });
+
         $('#btn_yes').click(function(){
             removeMeterPeriod().done(function(response){
                 showNotification(response);
                 if(response.stat=='success') {
                     dt.row(_selectRowObj).remove().draw();
+                }
+            });
+        });
+
+        $('#btn_yes_close').click(function(){
+            closeMeterPeriod().done(function(response){
+                showNotification(response);
+                if(response.stat=='success') {
+                    dt.row(_selectRowObj).data(response.row_updated[0]).draw();
                 }
             });
         });
@@ -479,6 +524,15 @@ $(document).ready(function(){
         });
     };
 
+    var closeMeterPeriod=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Meter_reading_period/transaction/close",
+            "data":{meter_reading_period_id : _selectedID}
+        });
+    };    
+    
     var showList=function(b){
         if(b){
             $('#div_period_list').show();

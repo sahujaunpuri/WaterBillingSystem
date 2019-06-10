@@ -374,6 +374,16 @@ $(document).ready(function(){
         _cboPeriod.on('select2:select', function(){
             var i=$(this).select2('val');
             _currentMeterPeriod = $(this).select2('val'); // SET CURRENT METER READING PERIOD TO GET ALL ACCOUNTS
+
+            checkPeriodStatus(_currentMeterPeriod).done(function(response){
+                var rows = response.data[0];
+                if (rows.is_closed == 1){
+                    $('#btn_process').prop("disabled",true);
+                }else{
+                    $('#btn_process').prop("disabled",false);
+                }
+            });
+
             var obj_period=$('#cbo_period').find('option[value="' + i + '"]');
             $('#start_date').val(obj_period.data('start'));
             $('#end_date').val(obj_period.data('end'));
@@ -460,6 +470,18 @@ $(document).ready(function(){
         });
 
         return stat;
+    };
+
+    var checkPeriodStatus=function(period_id){
+        var _data=$('#').serializeArray();
+        _data.push({name : "period_id" ,value : period_id});
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Process_billing/transaction/chck_status",
+            "data":_data
+        });
     };
 
     var process_billing=function(){

@@ -147,7 +147,8 @@
                             <b class="required">*</b><label> Period :</label> <br />
                             <select name="meter_reading_period_id" id="cbo_period" data-error-msg="Meter Reading Period is required." required>
                                 <?php foreach($periods as $period){ ?>
-                                    <option value="<?php echo $period->meter_reading_period_id; ?>" data-start="<?php echo $period->meter_reading_period_start; ?>" data-end="<?php echo $period->meter_reading_period_end; ?>"><?php echo $period->month_name; ?> <?php echo $period->meter_reading_year; ?></option>
+                                    <option value="<?php echo $period->meter_reading_period_id; ?>" data-start="<?php echo $period->meter_reading_period_start; ?>" data-end="<?php echo $period->meter_reading_period_end; ?>"
+                                        <?php if($period->is_closed == 1){ echo 'disabled'; }?>><?php echo $period->month_name; ?> <?php echo $period->meter_reading_year; ?></option>
                                 <?php } ?>
                             </select>
                         </div>

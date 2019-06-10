@@ -114,6 +114,31 @@ class Meter_reading_period extends CORE_Controller {
 
                 break;
 
+            case 'close':
+                $m_period=$this->Meter_reading_period_model;
+                $meter_reading_period_id=$this->input->post('meter_reading_period_id',TRUE);
+
+                $m_period->is_closed=1;
+                if($m_period->modify($meter_reading_period_id)){
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Meter Reading Period was successfully closed.';
+                    $response['row_updated'] = $this->response_rows($meter_reading_period_id);
+
+                    // Audittrail Log          
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=13; //CRUD
+                    $m_trans->trans_type_id=75; // TRANS TYPE
+                    $m_trans->trans_log='Close Meter Reading Period : ID('.$meter_reading_period_id.')';
+                    $m_trans->save();
+
+                    echo json_encode($response);
+                }
+
+                break;                
+
             case 'update':
                 $m_period = $this->Meter_reading_period_model;
                 $meter_reading_period_id =$this->input->post('meter_reading_period_id', TRUE);
@@ -168,7 +193,13 @@ class Meter_reading_period extends CORE_Controller {
                 'meter_reading_period.*,
                 months.month_name,
                 DATE_FORMAT(meter_reading_period.meter_reading_period_start,"%m/%d/%Y") as meter_reading_period_start,
-                DATE_FORMAT(meter_reading_period.meter_reading_period_end,"%m/%d/%Y") as meter_reading_period_end',
+                DATE_FORMAT(meter_reading_period.meter_reading_period_end,"%m/%d/%Y") as meter_reading_period_end,
+                (CASE 
+                    WHEN meter_reading_period.is_closed = 0
+                        THEN "Open"
+                    ELSE "Closed"
+                END) as status 
+                ',
                 array(
                     array('months','months.month_id = meter_reading_period.month_id','left') ));
     }
