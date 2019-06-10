@@ -16,6 +16,13 @@ class Meter_reading_input extends CORE_Controller
         $this->load->model('Meter_reading_period_model');
         $this->load->model('Meter_reading_input_model');
         $this->load->model('Meter_reading_input_items_model');
+        $this->load->model('Customers_model');
+        $this->load->model('Account_title_model');
+        $this->load->model('Departments_model');
+        $this->load->model('Account_integration_model');
+        $this->load->model('Billing_model');
+
+
     }
 
     public function index() {
@@ -59,6 +66,12 @@ class Meter_reading_input extends CORE_Controller
             //******************************************* Datatable when page loads ****************************************************************
             case 'list' :
                 $response['data']= $this->response_rows_invoice('meter_reading_input.is_active=TRUE AND meter_reading_input.is_deleted=FALSE');
+                echo json_encode($response);
+
+                break;
+
+            case 'receivables-for-review' :
+                $response['data']= $this->response_rows_invoice('meter_reading_input.is_active=TRUE AND meter_reading_input.is_deleted=FALSE AND meter_reading_input.is_sent=TRUE AND meter_reading_input.is_journal_posted=FALSE ');
                 echo json_encode($response);
 
                 break;
@@ -179,6 +192,16 @@ class Meter_reading_input extends CORE_Controller
             case 'update-batch':
                 $m_invoice=$this->Meter_reading_input_model;
                 $meter_reading_input_id = $this->input->post('meter_reading_input_id',TRUE);
+
+
+                $info = $this->Meter_reading_input_model->get_list(array('meter_reading_input_id'=>$meter_reading_input_id,'is_sent'=>TRUE));
+                if(count($info) > 0){
+                    $response['stat']='error';
+                    $response['title'] = 'Cannot Edit';
+                    $response['msg'] = 'Batch Meter Input already sent to Accounting.';
+                    die(json_encode($response));
+                }
+
                 $m_invoice->date_input=date('Y-m-d',strtotime($this->input->post('date_input',TRUE)));
 
                 $m_invoice->modify($meter_reading_input_id);
@@ -229,7 +252,47 @@ class Meter_reading_input extends CORE_Controller
                 $response['msg']='Record successfully deleted.';
                 echo json_encode($response);
 
-                break;            
+                break;    
+
+            case 'billing-receivable-journal-for-review':
+                $meter_reading_input_id=$this->input->get('id',TRUE);
+
+                $m_customers=$this->Customers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_inputs=$this->Meter_reading_input_model;
+
+                $m_departments=$this->Departments_model;
+                $meter_reading_input_info = $m_inputs->get_list($meter_reading_input_id)[0];
+                $data['billing_info'] = $meter_reading_input_info;
+                $data['billing_items']=$this->Billing_model->billing_statement($meter_reading_input_info->meter_reading_period_id,$meter_reading_input_id);
+                $data['account_integration'] = $this->Account_integration_model->get_list()[0];
+
+                $data['departments']=$m_departments->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
+
+                $data['customers']=$m_customers->get_list(
+                    array(
+                        'customers.is_active'=>TRUE,
+                        'customers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'customers.customer_id',
+                        'customers.customer_name'
+                    )
+                );
+                $data['entries']=$m_inputs->get_journal_entries($meter_reading_input_id);
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+
+
+                echo $this->load->view('template/billing_journal_for_review',$data,TRUE); //details of the journal
+
+
+                break;        
         }
 
     }

@@ -140,7 +140,11 @@ class Account_integration extends CORE_Controller
             case 'save_water_billing':
                 $m_integration=$this->Account_integration_model;
                 $m_integration->default_matrix_residential_id=$this->input->post('default_matrix_residential_id',TRUE);
-                $m_integration->default_matrix_commercial_id=$this->input->post('default_matrix_commercial_id',TRUE);        
+                $m_integration->default_matrix_commercial_id=$this->input->post('default_matrix_commercial_id',TRUE);      
+                $m_integration->billing_meter_account_id=$this->input->post('billing_meter_account_id',TRUE);      
+                $m_integration->billing_penalty_account_id=$this->input->post('billing_penalty_account_id',TRUE);      
+                $m_integration->billing_department_id=$this->input->post('billing_department_id',TRUE);      
+                $m_integration->billing_customer_id=$this->input->post('billing_customer_id',TRUE);      
                 $m_integration->modify(1);
 
                 $response['stat']="success";

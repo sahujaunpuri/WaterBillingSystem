@@ -462,6 +462,7 @@ $(document).ready(function(){
             $('#txt_total_overall_discount_amount').val('0.00');
             $('#invoice_default').datepicker('setDate', 'today');
             $('#due_default').datepicker('setDate', 'today');
+            $('#btn_save').attr('disabled', false);
             _meter_reading_input_id_for_validation = 0; // FOR VALIDATION
             // getMeterInputs().done(function(data){
             //     meterins.clear();
@@ -514,7 +515,7 @@ $(document).ready(function(){
                 });
             });
             _cboPeriod.select2('val',data.meter_reading_period_id);
-            
+            if(data.is_sent == '1'){ $('#btn_save').attr('disabled', true); }else{ $('#btn_save').attr('disabled', false);}
             var obj_period=$('#cbo_period').find('option[value="' + data.meter_reading_period_id + '"]');
             $('#start_date').val(obj_period.data('start'));
             $('#end_date').val(obj_period.data('end'));
@@ -579,7 +580,8 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.meter_reading_input_id;
-            $('#modal_confirmation').modal('show');
+             if(data.is_sent == '1'){  showNotification({title:"Cannot Delete!",stat:"error",msg:"Batch already sent to Accounting."});
+              }else{  $('#modal_confirmation').modal('show'); }
         });
 
         $('#tbl_items tbody').on('keyup','input.numeric,input.number',function(){
@@ -633,9 +635,11 @@ $(document).ready(function(){
                 }else{
                     updateMeterInput().done(function(response){
                         showNotification(response);
-                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                        clearFields($('#frm_meter_reading_input'));
-                        showList(true);
+                        if(response.stat == 'success'){
+                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                            clearFields($('#frm_meter_reading_input'));
+                            showList(true);
+                        }
                     }).always(function(){
                         showSpinningProgress($('#btn_save'));
                     });

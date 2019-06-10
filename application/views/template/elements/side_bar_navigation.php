@@ -51,6 +51,8 @@
                                 <li class="<?php echo (in_array('17-14',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_payments">Billing Payments</a></li>
                                 <li class="<?php echo (in_array('17-15',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_consumption_history">Consumption History</a></li>
                                 <li class="<?php echo (in_array('17-16',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_statement">Billing Statement</a></li>
+                                <li class="<?php echo (in_array('17-16',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_sending">Billing Sending</a></li>
+                                <li class="<?php echo (in_array('17-16',$this->session->user_rights)?'':'hidden'); ?>"><a href="Payment_sending">Payment Sending</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('1',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-wallet"></i><span>Financing</span></a>
