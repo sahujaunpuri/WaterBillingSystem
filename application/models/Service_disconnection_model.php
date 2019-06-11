@@ -103,7 +103,7 @@ class Service_disconnection_model extends CORE_Model {
 
                 LEFT JOIN meter_reading_input mri ON mri.meter_reading_input_id = mrii.meter_reading_input_id
                 LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = mri.meter_reading_period_id
-                INNER JOIN billing b ON b.meter_reading_input_id = mrii.meter_reading_input_id
+                INNER JOIN billing b ON b.meter_reading_input_id = mrii.meter_reading_input_id AND b.connection_id= mrii.connection_id
                 WHERE mrii.connection_id = ".$connection_id.") as main
                  WHERE main.current_month = '".$previous_month."'");
                         return $query->result();

@@ -27,7 +27,8 @@ class Billing_model extends CORE_Model{
 			    m.month_name,
 			    (billing.amount_due + billing.penalty_amount) as total_amount_due,
 			    (billing.grand_total_amount + billing.penalty_amount) as amount_after_due,
-			    (billing.arrears_amount + billing.arrears_penalty_amount) as previous_balance
+			    (billing.arrears_amount + billing.arrears_penalty_amount) as previous_balance,
+			    (billing.amount_due + billing.arrears_amount + billing.arrears_penalty_amount ) as grand_total_amount_label_for_report # GRAND TOTAL AMOUNT WITH PREVIOUS BALANCE INCLUDED
 
 			FROM
 			    billing
@@ -162,27 +163,27 @@ class Billing_model extends CORE_Model{
 
 
     		$i=0;
-
     		foreach ($meter_reading_input->result() as $row) {
     			$total_charges = 0;
     			// GET PREVIOUS BILLING (LATEST)
     			$get_previous_billing_id = $this->db->query("SELECT * FROM (SELECT 
 											mrii.meter_reading_input_id,
 											b.billing_id,
+											mrii.connection_id,
 											DATE_FORMAT(meter_reading_period_start, '%b %Y') as current_month,
 											mri.meter_reading_period_id
 											FROM meter_reading_input_items mrii
 
 											LEFT JOIN meter_reading_input mri ON mri.meter_reading_input_id = mrii.meter_reading_input_id
 											LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = mri.meter_reading_period_id
-											LEFT JOIN billing b ON b.meter_reading_input_id = mrii.meter_reading_input_id
+											INNER JOIN billing b ON b.meter_reading_input_id = mrii.meter_reading_input_id AND b.connection_id= mrii.connection_id
 											WHERE mrii.connection_id = ".$row->connection_id.") as main
 											 WHERE main.current_month = '".$row->previous_month."'");
-
     			$previous_billing_info = $get_previous_billing_id->result();
 
     			$arrears_amount = 0;
     			$arrears_penalty_amount = 0;
+
     			if(count($previous_billing_info) > 0) { // CHECK IF THERE IS A PREVIOUS BILLING
     				// CHECK OF PREVIOUS IS PAID
 					$check_previous_billing_if_paid = $this->db->query("SELECT 

@@ -62,7 +62,7 @@
                 <td align="right"><?php echo number_format($billing->amount_due,2); ?></td>
                 <td align="right"><?php echo number_format($billing->previous_balance,2);?></td>
                 <td align="right"><?php echo number_format($billing->charges_amount,2);?></td>
-                <td align="right"><?php echo number_format($billing->grand_total_amount,2);?></td>
+                <td align="right"><?php echo number_format($billing->grand_total_amount_label_for_report,2);?></td>
             </tr>
         <?php }
             echo '<tr>';

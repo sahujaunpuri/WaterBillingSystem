@@ -98,8 +98,8 @@
                     <td>Penalty:&nbsp;&nbsp;<?php echo number_format($billing->penalty_amount,2);?></td>
                 </tr>
                 <tr>
-                    <td colspan="3">Charges</td>
-                    <td>Total Amount Due:&nbsp;&nbsp;<?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->arrears_penalty_amount),2);?></td>
+                    <td colspan="4">Charges</td>
+                    <!-- <td>Total Amount Due:&nbsp;&nbsp;<?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount),2);?></td> -->
                 </tr>
                 <?php foreach($charges as $charge){
                     if($charge->billing_id == $billing->billing_id){
@@ -114,8 +114,8 @@
                     <td colspan="4">&nbsp;&nbsp;</td>
                 </tr>
                 <tr>
-                    <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->arrears_penalty_amount) ,2);?></b></td>
-                    <td colspan="2">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b><?php echo number_format($billing->amount_after_due,2);?></b></td>
+                    <td colspan="2">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount) ,2);?></b></td>
+                    <td colspan="2">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->amount_after_due+$billing->arrears_amount),2);?></b></td>
                 </tr>
             </tbody>
         </table>   

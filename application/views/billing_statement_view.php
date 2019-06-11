@@ -317,7 +317,7 @@ $(document).ready(function(){
                 },
                 {
                     className: "text-right",
-                    targets:[10],data: "grand_total_amount",
+                    targets:[10],data: "grand_total_amount_label_for_report",
                     render: function(data){
                         return accounting.formatNumber(data,2);
                     }
