@@ -100,7 +100,6 @@ class Rights_link_model extends CORE_Model{
                                           (90,'16','16-2','Quarterly Percentage Tax Return'),
                                           (91,'16','16-3','Certificate of Creditable Tax'),
                                           (92,'6','6-14','Statement of Accounts Settings'),
-                                          (93,'5','5-5','Meter Inventory Management'),
                                           (94,'17','17-1','Service Connection'),
                                           (95,'17','17-2','Service Disconnection'),
                                           (96,'17','17-3','Service Reconnection'),

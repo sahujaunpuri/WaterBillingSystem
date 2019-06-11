@@ -187,19 +187,23 @@
                                         <th>Receipt #</th>
                                         <th>Customer</th>
                                         <th>Method</th>
-                                        <th>Amount</th>
+                                        <th style="text-align: right;">Amount</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <?php 
+                                    <?php $total_batch = 0; 
                                     foreach ($billing_payments_info as $binfo) { ?>
                                         <tr>
                                             <td><?php echo $binfo->receipt_no ?></td>
                                             <td><?php echo $binfo->customer_name ?></td>
                                             <td><?php echo $binfo->payment_method ?></td>
-                                            <td><?php echo $binfo->total_paid_amount ?></td>
+                                            <td style="text-align: right;"><?php echo number_format($binfo->total_paid_amount,2) ?></td>
                                         </tr>
-                                    <?php } ?>
+                                    <?php $total_batch += $binfo->total_paid_amount; } ?>
+                                    <<tr>
+                                        <td colspan="3" style="text-align: right;"><b>Total:</b></td>
+                                        <td style="text-align: right;"><b><?php echo number_format($total_batch,2) ?></b></td>
+                                    </tr>
                                     </tbody>
                                 </table>
                                 <br /><br />

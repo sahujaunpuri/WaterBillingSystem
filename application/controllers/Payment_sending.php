@@ -77,19 +77,19 @@ class Payment_sending extends CORE_Controller {
                 // PREPARE FOR TOTALS
                 $batch_total_paid_amount = 0; $batch_total_paid_cash = 0; $batch_total_paid_check = 0; $batch_total_paid_card = 0;
                 foreach ($payments as $payment) {
-                    if($payment->payment_method_id == 1){  $batch_total_paid_cash += $payment->total_paid_amount;
-                    } else if($payment->payment_method_id == 2){  $batch_total_paid_check += $payment->total_paid_amount;
-                    }else if($payment->payment_method_id == 3){ $batch_total_paid_card  += $payment->total_paid_amount; }
-                     $batch_total_paid_amount += $payment->total_paid_amount;
+                    if($payment->payment_method_id == 1){  $batch_total_paid_cash += $this->get_numeric_value($payment->total_paid_amount);
+                    } else if($payment->payment_method_id == 2){  $batch_total_paid_check += $this->get_numeric_value($payment->total_paid_amount);
+                    }else if($payment->payment_method_id == 3){ $batch_total_paid_card  += $this->get_numeric_value($payment->total_paid_amount); }
+                     $batch_total_paid_amount += $this->get_numeric_value($payment->total_paid_amount);
                 }
 
                 $m_payment_batch = $this->Billing_payment_batch_model;
                 $m_payment_batch->start_date = $tsd;
                 $m_payment_batch->end_date = $ted;
-                $m_payment_batch->batch_total_paid_amount = $batch_total_paid_amount;
-                $m_payment_batch->batch_total_paid_cash = $batch_total_paid_cash;
-                $m_payment_batch->batch_total_paid_check = $batch_total_paid_check;
-                $m_payment_batch->batch_total_paid_card = $batch_total_paid_card;
+                $m_payment_batch->batch_total_paid_amount = $this->get_numeric_value($batch_total_paid_amount);
+                $m_payment_batch->batch_total_paid_cash = $this->get_numeric_value($batch_total_paid_cash);
+                $m_payment_batch->batch_total_paid_check = $this->get_numeric_value($batch_total_paid_check);
+                $m_payment_batch->batch_total_paid_card = $this->get_numeric_value($batch_total_paid_card);
                 $m_payment_batch->save();
 
                 $billing_payment_batch_id = $m_payment_batch->last_insert_id();

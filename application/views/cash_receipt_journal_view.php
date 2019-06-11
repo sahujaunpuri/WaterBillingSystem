@@ -162,6 +162,9 @@
                 background: none!important; 
                 background-color: transparent!important; 
         } 
+        .right_align{
+            text-align: right;
+        }
     </style>
 
 </head>
@@ -1017,7 +1020,7 @@ $(document).ready(function(){
                 { targets:[1],data: "batch_code" },
                 { targets:[2],data: "start_date" },
                 { targets:[3],data: "end_date" },
-                { targets:[4],data: "batch_total_paid_amount" , render: $.fn.dataTable.render.number( ',', '.', 2)}
+                { sClass: "right_align", targets:[4],data: "batch_total_paid_amount" , render: $.fn.dataTable.render.number( ',', '.', 2)}
             ]
         });
 
