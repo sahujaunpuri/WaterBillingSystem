@@ -74,7 +74,7 @@ class Billing_sending extends CORE_Controller {
                 $m_period->batch_total_amount = $batch_total_amount;
                 $m_period->modify($meter_reading_input_id);
 
-                $batch = $this->Meter_reading_input_model->meter_reading($meter_reading_input_id);
+                $batch = $this->Meter_reading_input_model->get_list($meter_reading_input_id);
 
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
