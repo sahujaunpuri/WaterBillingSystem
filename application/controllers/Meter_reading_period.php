@@ -23,7 +23,7 @@ class Meter_reading_period extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Mater Reading Period Management';
         $data['months'] = $this->Months_model->get_list();
-        (in_array('17-4',$this->session->user_rights)? 
+        (in_array('20-4',$this->session->user_rights)? 
         $this->load->view('meter_reading_period_view', $data)
         :redirect(base_url('dashboard')));
         

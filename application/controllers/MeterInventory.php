@@ -30,7 +30,7 @@ class MeterInventory extends CORE_Controller {
             array('meter_status.is_deleted'=>FALSE,'meter_status.is_active'=>TRUE)
         );
 
-        (in_array('17-3',$this->session->user_rights)? 
+        (in_array('20-3',$this->session->user_rights)? 
         $this->load->view('meter_inventory_view',$data)
         :redirect(base_url('dashboard')));
         

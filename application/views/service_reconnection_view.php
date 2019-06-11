@@ -371,6 +371,8 @@ $(document).ready(function(){
 
         dt_account=$('#tbl_account_list').DataTable({
             "bLengthChange":false,
+            "scrollY":        "300px",
+            "scrollCollapse": true,
             "order": [[ 5, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'

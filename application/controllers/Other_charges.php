@@ -35,7 +35,7 @@ class Other_charges extends CORE_Controller
             );
 
         $data['title'] = 'Other Charges';
-        (in_array('17-11',$this->session->user_rights)? 
+        (in_array('19-3',$this->session->user_rights)? 
         $this->load->view('other_charges_view', $data)
         :redirect(base_url('dashboard')));
     }

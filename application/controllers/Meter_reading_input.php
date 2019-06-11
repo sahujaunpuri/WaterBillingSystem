@@ -12,7 +12,7 @@ class Meter_reading_input extends CORE_Controller
         $this->load->model('Other_charge_model');
         $this->load->model('Charges_model');
         $this->load->model('Users_model');
-        $this->load->model('trans_model');
+        $this->load->model('Trans_model');
         $this->load->model('Other_charge_item_model');
         $this->load->model('Meter_reading_period_model');
         $this->load->model('Meter_reading_input_model');
@@ -55,7 +55,7 @@ class Meter_reading_input extends CORE_Controller
       
 
         $data['title'] = 'Meter Reading Input';
-        (in_array('17-12',$this->session->user_rights)? 
+        (in_array('18-1',$this->session->user_rights)? 
         $this->load->view('meter_reading_input_view', $data)
         :redirect(base_url('dashboard')));
     }

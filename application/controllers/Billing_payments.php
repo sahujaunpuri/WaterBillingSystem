@@ -38,7 +38,7 @@ class Billing_payments extends CORE_Controller
             );
         $data['title'] = 'Billing Payments';
         $data['methods']=$this->Payment_method_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
-        (in_array('17-14',$this->session->user_rights)? 
+        (in_array('18-3',$this->session->user_rights)? 
         $this->load->view('billing_payments_view', $data)
         :redirect(base_url('dashboard')));
 

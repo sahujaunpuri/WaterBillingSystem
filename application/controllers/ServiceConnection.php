@@ -62,7 +62,7 @@ class ServiceConnection extends CORE_Controller {
             array('rate_types.is_deleted'=>FALSE,'rate_types.is_active'=>TRUE)
         );
 
-        (in_array('17-6',$this->session->user_rights)? 
+        (in_array('17-1',$this->session->user_rights)? 
         $this->load->view('service_connection_view',$data)
         :redirect(base_url('dashboard')));
         

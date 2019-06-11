@@ -32,27 +32,47 @@
                     <ul class="acc-menu">
                         <li class="nav-separator"><span>Explore</span></li>
                         <li><a href="Dashboard"><i class="ti ti-home"></i><span>Dashboard</span>
-
-                        <li class="<?php echo (in_array('1',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-wallet"></i><span>Water Billing</span></a>
+                        <li class="<?php echo (in_array('17',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-wallet"></i><span>Billing Services</span></a>
                             <ul class="acc-menu">
-                                <li class="<?php echo (in_array('17-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Matrix_residential">Residential Rate Matrix</a></li>
-                                <li class="<?php echo (in_array('17-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Matrix_commercial">Commercial Rate Matrix</a></li>
-                                <li class="<?php echo (in_array('17-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="MeterInventory">Meter Inventory</a></li>
-                                <li class="<?php echo (in_array('17-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Meter_reading_period">Meter Reading Period</a></li>
-                                <li class="<?php echo (in_array('17-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Attendant">Attendant Management</a></li>
-                                <li class="<?php echo (in_array('17-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="ServiceConnection">Service Connection</a></li>
-                                <li class="<?php echo (in_array('17-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_disconnection">Service Disconnection</a></li>
-                                <li class="<?php echo (in_array('17-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_reconnection">Service Reconnection</a></li>
-                                <li class="<?php echo (in_array('17-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="Charges">Charges Management</a></li>
-                                <li class="<?php echo (in_array('17-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="Charge_unit">Charge Unit Management</a></li>
-                                <li class="<?php echo (in_array('17-11',$this->session->user_rights)?'':'hidden'); ?>"><a href="Other_charges">Other Charges</a></li>
-                                <li class="<?php echo (in_array('17-12',$this->session->user_rights)?'':'hidden'); ?>"><a href="Meter_reading_input">Meter Reading Entry</a></li>
-                                <li class="<?php echo (in_array('17-13',$this->session->user_rights)?'':'hidden'); ?>"><a href="Process_billing">Process Billing</a></li>
-                                <li class="<?php echo (in_array('17-14',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_payments">Billing Payments</a></li>
-                                <li class="<?php echo (in_array('17-15',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_consumption_history">Consumption History</a></li>
-                                <li class="<?php echo (in_array('17-16',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_statement">Billing Statement</a></li>
-                                <li class="<?php echo (in_array('17-16',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_sending">Billing Sending</a></li>
-                                <li class="<?php echo (in_array('17-16',$this->session->user_rights)?'':'hidden'); ?>"><a href="Payment_sending">Payment Sending</a></li>
+                                <li class="<?php echo (in_array('17-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="ServiceConnection">Service Connection</a></li>
+                                <li class="<?php echo (in_array('17-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_disconnection">Service Disconnection</a></li>
+                                <li class="<?php echo (in_array('17-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_reconnection">Service Reconnection</a></li>
+                            </ul>
+                        </li>
+                        <li class="<?php echo (in_array('18',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="fa fa-circle-o-notch"></i><span>Process Billing</span></a>
+                            <ul class="acc-menu">
+                                <li class="<?php echo (in_array('18-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Meter_reading_input">Meter Reading Entry</a></li>
+                                <li class="<?php echo (in_array('18-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Process_billing">Process Billing</a></li>
+                                <li class="<?php echo (in_array('18-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_payments">Billing Payments</a></li>
+                            </ul>
+                        </li>
+                        <li class="<?php echo (in_array('19',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="fa fa-money "></i><span>Charges</span></a>
+                            <ul class="acc-menu">
+                                <li class="<?php echo (in_array('19-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Charges">Charges Management</a></li>
+                                <li class="<?php echo (in_array('19-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Charge_unit">Charge Unit Management</a></li>
+                                <li class="<?php echo (in_array('19-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Other_charges">Other Charges</a></li>
+                            </ul>
+                        </li>
+                        <li class="<?php echo (in_array('20',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-view-list-alt"></i><span>Billing References</span></a>
+                            <ul class="acc-menu">
+                                <li class="<?php echo (in_array('20-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Matrix_residential">Residential Rate Matrix</a></li>
+                                <li class="<?php echo (in_array('20-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Matrix_commercial">Commercial Rate Matrix</a></li>
+                                <li class="<?php echo (in_array('20-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="MeterInventory">Meter Inventory</a></li>
+                                <li class="<?php echo (in_array('20-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Meter_reading_period">Meter Reading Period</a></li>
+                                <li class="<?php echo (in_array('20-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Attendant">Attendant Management</a></li>
+                            </ul>
+                        </li>
+                        <li class="<?php echo (in_array('21',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-file"></i><span>Billing Reports</span></a>
+                            <ul class="acc-menu">
+                                <li class="<?php echo (in_array('21-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_trail">Service Trail</a></li>
+                                <li class="<?php echo (in_array('21-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_consumption_history">Consumption History</a></li>
+                                <li class="<?php echo (in_array('21-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_statement">Billing Statement</a></li>
+                            </ul>
+                        </li>
+                        <li class="<?php echo (in_array('22',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="fa fa-paper-plane "></i><span>Billing Transfer</span></a>
+                            <ul class="acc-menu">
+                                <li class="<?php echo (in_array('22-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_sending">Billing Sending</a></li>
+                                <li class="<?php echo (in_array('22-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Payment_sending">Payment Sending</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('1',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-wallet"></i><span>Financing</span></a>

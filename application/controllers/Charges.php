@@ -27,7 +27,7 @@ class Charges extends CORE_Controller
         $data['units'] = $this->Charge_unit_model->get_list(array('charge_unit.is_deleted'=>FALSE));
         $data['accounts'] = $this->Account_title_model->get_list(null,'account_id,account_title');
 
-        (in_array('17-9',$this->session->user_rights)? 
+        (in_array('19-1',$this->session->user_rights)? 
         $this->load->view('charges_view', $data)
         :redirect(base_url('dashboard')));
     }
