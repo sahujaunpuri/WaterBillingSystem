@@ -16,10 +16,6 @@
         .align-center {
             text-align: center;
         }
-
-        .report-header {
-            font-weight: bolder;
-        }
             table{
         border:none!important;
     }
@@ -61,8 +57,8 @@
                 <th>Target Installation Date & Time</th>
                 <th>Contract Type</th>
                 <th>Rate Type</th>
-                <th>Initial Reading</th>
-                <th>Initial Deposit</th>
+                <th style="text-align: right;">Initial Reading</th>
+                <th style="text-align: right;">Initial Deposit</th>
                 <th>Attended By</th>
             </tr>
             </thead>
