@@ -19,7 +19,7 @@ class Charge_unit extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Charges Unit Management';
         
-        (in_array('17-10',$this->session->user_rights)? 
+        (in_array('19-2',$this->session->user_rights)? 
         $this->load->view('charge_unit_view', $data)
         :redirect(base_url('dashboard')));
     }

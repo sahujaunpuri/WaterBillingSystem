@@ -40,7 +40,7 @@ class Customer_consumption_history extends CORE_Controller {
         		)
         	);
 
-        (in_array('17-15',$this->session->user_rights)? 
+        (in_array('21-2',$this->session->user_rights)? 
         $this->load->view('customer_consumption_history_view',$data)
         :redirect(base_url('dashboard')));
     }

@@ -75,8 +75,8 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
+	'hostname' => 'DESKTOP-8BSPB25:3307',
+	'username' => 'jdev',
 	'password' => 'jdev',
 	'database' => 'waterbilling2019',
 	'dbdriver' => 'mysqli',

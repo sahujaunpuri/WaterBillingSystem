@@ -37,7 +37,7 @@ class Billing_sending extends CORE_Controller {
         'meter_reading_period.meter_reading_year DESC, months.month_id ASC'
         );        
 
-        (in_array('17-16',$this->session->user_rights)? 
+        (in_array('22-1',$this->session->user_rights)? 
         $this->load->view('billing_sending_view', $data)
         :redirect(base_url('dashboard')));
         

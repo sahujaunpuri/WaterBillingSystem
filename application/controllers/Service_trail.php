@@ -30,7 +30,7 @@ class Service_trail extends CORE_Controller
         $data['users']=$this->Users_model->get_user_list();
         $data['services'] = $this->Service_connection_model->get_list();
 
-        (in_array('6-13',$this->session->user_rights)? $this->load->view('service_trail_view', $data)  :redirect(base_url('dashboard')));
+        (in_array('21-1',$this->session->user_rights)? $this->load->view('service_trail_view', $data)  :redirect(base_url('dashboard')));
 
         
     }

@@ -40,7 +40,7 @@ class Service_disconnection extends CORE_Controller {
             array('disconnection_reason.is_deleted'=>FALSE)
         );        
 
-        (in_array('17-7',$this->session->user_rights)? 
+        (in_array('17-2',$this->session->user_rights)? 
         $this->load->view('service_disconnection_view', $data)
         :redirect(base_url('dashboard')));
         
