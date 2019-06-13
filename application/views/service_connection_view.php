@@ -222,7 +222,7 @@
                                                                 <select name="customer_id" id="cbo_customer" class="form-control" style="width: 100%;" required data-error-msg="Customer is required!">
                                                                     <option value="0">[ Create New Customer ]</option>
                                                                     <?php foreach($customers as $customer){?>
-                                                                        <option value="<?php echo $customer->customer_id; ?>" data-address="<?php echo $customer->address; ?>"><?php echo $customer->customer_name; ?></option>
+                                                                        <option value="<?php echo $customer->customer_id; ?>" data-address="<?php echo $customer->address; ?>" data-account-type="<?php echo $customer->customer_account_type_desc; ?>" ><?php echo $customer->customer_name; ?></option>
                                                                     <?php }?>
                                                                 </select>
                                                             </div>
@@ -253,6 +253,19 @@
                                                                     <span class="input-group-addon">
                                                                         <a href="#" id="link_browse_cu"><b>...</b></a>
                                                                         <i class="fa fa-code" id="ms_icon"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row bottom-10">
+                                                        <div class="form-group">
+                                                            <label class="col-xs-12 col-md-4 control-label"><strong> Account Type:</strong></label>
+                                                            <div class="col-xs-12 col-md-8">
+                                                                <div class="input-group">
+                                                                    <input type="text" id="customer_account_type" class="form-control" readonly placeholder="Account Type">
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-code"></i>
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -488,13 +501,13 @@
                                             </div>
                                         </div>
                                         <div class="col-md-12">
-                                                 Contact No :
+                                            <b class="required">* </b> Contact No :
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-phone"></i>
                                                     </span>
-                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
+                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No" required data-error-msg="Contact No. is required!">
                                                 </div>
                                             </div>
                                         </div>
@@ -558,8 +571,6 @@
                                             </select>
                                             </div>
                                         </div>
-
-
                                         <div class="col-md-12">
                                             Sex:
                                             <div style="padding: 5px 0px 5px 0px">
@@ -570,17 +581,24 @@
                                             </select>
                                             </div>
                                         </div>
-
-                                      
-
-
                                         <div class="col-md-12">
+                                            <br><br>
                                                 Customer Type :
                                             <div style="padding: 5px 0px 5px 0px;">
                                             <select name="customer_type_id" id="cbo_customer_type" style="width: 100%">
                                                 <option value="0">None</option>
                                                 <?php foreach($customer_type as $customer_type){ ?>
                                                     <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                                Customer Account Type :
+                                            <div style="padding: 5px 0px 5px 0px;">
+                                            <select name="customer_account_type_id" id="cbo_customer_account_type" style="width: 100%">
+                                                <?php foreach($customer_account_types as $customer_account_type){ ?>
+                                                    <option value="<?php echo $customer_account_type->customer_account_type_id; ?>"><?php echo $customer_account_type->customer_account_type_desc; ?></option>
                                                 <?php } ?>
                                             </select>
                                             </div>
@@ -607,6 +625,8 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="col-md-12">
                                                 TIN :
                                             <div class="form-group">
@@ -618,8 +638,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
                                         <div class="col-md-12">
                                             If Married (Spouse):
                                             <div class="form-group">
@@ -831,7 +849,7 @@
 
     $(document).ready(function(){
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectRowObjMeter;
-        var _cboCustomer; var _cboContractType; var _cboRateType;var _cboCustomerType; 
+        var _cboCustomer; var _cboContractType; var _cboRateType;var _cboCustomerType; var _cboCustomerAccountType;
         var _cboNationality; var _cboCivilStatus; var _cboSex; var _cboSpouseNationality;
         var _cboAttendant; var _cboDepartment;
         
@@ -854,6 +872,10 @@
             });    
 
             _cboCustomerType=$("#cbo_customer_type").select2({
+                allowClear: false
+            });
+
+            _cboCustomerAccountType=$("#cbo_customer_account_type").select2({
                 allowClear: false
             });
 
@@ -1000,6 +1022,7 @@
                 if(i==0){ //new customer
                     _cboCustomer.select2('val',null);
                     _cboCustomerType.select2('val', 0);
+                    _cboCustomerAccountType.select2('val', 1);
                     _cboNationality.select2('val', 0);
                     _cboSpouseNationality.select2('val', 0);
                     _cboCivilStatus.select2('val', 0);
@@ -1013,6 +1036,7 @@
                     var obj_customer=$('#cbo_customer').find('option[value="'+i+'"]');
                     $('#receipt_name').val(obj_customer.text());
                     $('#address').val(obj_customer.data('address'));
+                    $('#customer_account_type').val(obj_customer.data('account-type'));
                 }
             });
 
@@ -1211,7 +1235,7 @@
                     createCustomer().done(function(response){
                         var customer=response.row_added[0];
 
-                        $('#cbo_customer').append('<option value="'+ customer.customer_id +'" data-address="'+ customer.address +'">'+ customer.customer_name +'</option>');
+                        $('#cbo_customer').append('<option value="'+ customer.customer_id +'" data-address="'+ customer.address +'"  data-account-type="'+customer.customer_account_type_desc+'">'+ customer.customer_name +'</option>');
                         _cboCustomer.select2('val',customer.customer_id);
 
                         $('#modal_new_customer').modal('hide');

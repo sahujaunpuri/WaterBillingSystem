@@ -185,6 +185,7 @@ class Billing_model extends CORE_Model{
     			$arrears_penalty_amount = 0;
 
     			if(count($previous_billing_info) > 0) { // CHECK IF THERE IS A PREVIOUS BILLING
+
     				// CHECK OF PREVIOUS IS PAID
 					$check_previous_billing_if_paid = $this->db->query("SELECT 
 						b.connection_id,
@@ -205,15 +206,15 @@ class Billing_model extends CORE_Model{
 						LEFT JOIN
 						(SELECT 
 						bpi.billing_id,
+						bp.date_paid,
 						SUM(bpi.payment_amount) as paid_amount
 
 						FROM billing_payment_items bpi
 						LEFT JOIN billing_payments bp on bp.billing_payment_id = bpi.billing_payment_id
+						LEFT JOIN billing b ON b.billing_id = bpi.billing_id
 						WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE 
-						
-
+							AND bp.date_paid <= b.due_date
 						GROUP BY bpi.billing_id) as payment ON payment.billing_id = b.billing_id
-
 						WHERE b.billing_id  = ".$previous_billing_info[0]->billing_id."");
 					$result_previous_payment = $check_previous_billing_if_paid->result()[0];
 
@@ -403,7 +404,7 @@ class Billing_model extends CORE_Model{
 				FROM billing_payment_items bpi
 				LEFT JOIN billing_payments bp on bp.billing_payment_id = bpi.billing_payment_id
 				WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE AND bpi.billing_id = 0
-				GROUP BY bpi.disconnection_id) as payment ON payment.disconnection_id= sd.payment.disconnection_id
+				GROUP BY bpi.disconnection_id) as payment ON payment.disconnection_id= sd.disconnection_id
 			    
 			    WHERE sd.is_active = TRUE AND sd.is_deleted= FALSE
 			    ".($connection_id==0?"":" AND sd.connection_id=".$connection_id)." 

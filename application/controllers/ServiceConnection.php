@@ -17,6 +17,7 @@ class ServiceConnection extends CORE_Controller {
         $this->load->model('Trans_services_model');
         $this->load->model('Company_model');
         $this->load->model('Customer_type_model');
+        $this->load->model('Customer_account_type_model');
         $this->load->model('Nationality_model');
         $this->load->model('Civil_status_model');
         $this->load->model('Attendant_model');
@@ -35,11 +36,18 @@ class ServiceConnection extends CORE_Controller {
         $data['title']='Connection Service';
         
         $data['customers']=$this->Customers_model->get_list(
-            array('customers.is_deleted'=>FALSE)
+            array('customers.is_deleted'=>FALSE),
+            'customers.*, customer_account_type.customer_account_type_desc',
+            array(
+                array('customer_account_type','customers.customer_account_type_id = customer_account_type.customer_account_type_id','left')
+            )
         );
         $data['customer_type']=$this->Customer_type_model->get_list(
             array('customer_type.is_deleted'=>FALSE)
         );
+        $data['customer_account_types']=$this->Customer_account_type_model->get_list(
+            array('customer_account_type.is_deleted'=>FALSE)
+        );        
         $data['nationalities']=$this->Nationality_model->get_list(  
             array('nationality.is_deleted'=>FALSE,'nationality.is_active'=>TRUE)
         );
@@ -319,6 +327,7 @@ class ServiceConnection extends CORE_Controller {
                 $excel->getActiveSheet()->getColumnDimension('L')->setWidth('20');
                 $excel->getActiveSheet()->getColumnDimension('M')->setWidth('20');
                 $excel->getActiveSheet()->getColumnDimension('N')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('O')->setWidth('20');
 
                  $style_header = array(
 
@@ -332,7 +341,7 @@ class ServiceConnection extends CORE_Controller {
                 );
 
 
-                $excel->getActiveSheet()->getStyle('A9:N9')->applyFromArray( $style_header );
+                $excel->getActiveSheet()->getStyle('A9:O9')->applyFromArray( $style_header );
 
                 $excel->getActiveSheet()->setCellValue('A9','#')
                                         ->getStyle('A9')->getFont()->setBold(TRUE);
@@ -356,12 +365,14 @@ class ServiceConnection extends CORE_Controller {
                                         ->getStyle('J9')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('K9','Rate Type')
                                         ->getStyle('K9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('L9','Initial Reading')
+                $excel->getActiveSheet()->setCellValue('L9','Account Type')
                                         ->getStyle('L9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('M9','Initial Deposit')
+                $excel->getActiveSheet()->setCellValue('M9','Initial Reading')
                                         ->getStyle('M9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('N9','Attended By')
+                $excel->getActiveSheet()->setCellValue('N9','Initial Deposit')
                                         ->getStyle('N9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('O9','Attended By')
+                                        ->getStyle('O9')->getFont()->setBold(TRUE);
 
                 $a=1;
                 $i=10;
@@ -378,9 +389,10 @@ class ServiceConnection extends CORE_Controller {
                                         ->setCellValue('I'.$i,$row->target_date.' '.$row->target_time)
                                         ->setCellValue('J'.$i,$row->contract_type_name)
                                         ->setCellValue('K'.$i,$row->rate_type_name)
-                                        ->setCellValue('L'.$i,$row->initial_meter_reading)
-                                        ->setCellValue('M'.$i,$row->initial_meter_deposit)
-                                        ->setCellValue('N'.$i,$row->attendant);
+                                        ->setCellValue('L'.$i,$row->customer_account_type_desc)
+                                        ->setCellValue('M'.$i,$row->initial_meter_reading)
+                                        ->setCellValue('N'.$i,$row->initial_meter_deposit)
+                                        ->setCellValue('O'.$i,$row->attendant);
                 $i++;
                 $a++;
 

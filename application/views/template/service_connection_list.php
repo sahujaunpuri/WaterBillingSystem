@@ -1,4 +1,7 @@
-<head>  <title>Connection Masterfile </title></head>
+<head>  
+    <title>Connection Masterfile </title>
+    <link rel="icon" href="<?php echo base_url('assets/img/companyico.ico'); ?>" type="image/ico" sizes="16x16">
+</head>
 <body> <style type="text/css">
            body {
             font-family: 'Calibri',sans-serif;
@@ -57,6 +60,7 @@
                 <th>Target Installation Date & Time</th>
                 <th>Contract Type</th>
                 <th>Rate Type</th>
+                <th>Account Type</th>
                 <th style="text-align: right;">Initial Reading</th>
                 <th style="text-align: right;">Initial Deposit</th>
                 <th>Attended By</th>
@@ -79,7 +83,7 @@
                 <td><?php echo $row->target_date.' '.$row->target_time ?></td>
                 <td><?php echo $row->contract_type_name ?></td>
                 <td><?php echo $row->rate_type_name ?></td>
-
+                <td><?php echo $row->customer_account_type_desc; ?></td>
                 <td align="right"><?php echo number_format($row->initial_meter_reading,0) ?></td>
                 <td align="right"><?php echo number_format($row->initial_meter_deposit,2) ?></td>
 

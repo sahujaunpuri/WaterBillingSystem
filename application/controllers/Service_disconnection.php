@@ -58,7 +58,14 @@ class Service_disconnection extends CORE_Controller {
                 $m_disconnection = $this->Service_disconnection_model;
                 $connection_id = $this->input->post('connection_id',TRUE);
                 $consumption = $this->get_numeric_value($this->input->post('consumption',TRUE));
+
+                
+
                 $response['data']=$m_disconnection->get_disconnection_rate($connection_id,$consumption);
+
+                $response['penalty']=$ 
+
+
                 echo json_encode($response);
                 break;
 
@@ -73,12 +80,14 @@ class Service_disconnection extends CORE_Controller {
             case 'get-latest-reading':
                 $connection_id = $this->input->post('connection_id',TRUE);
                 $before_date = date('Y-m-d',strtotime($this->input->post('service_date',TRUE)));
+
                 $get_meter_reading_for_inputs = $this->Meter_reading_period_model->get_meter_reading_for_inputs($before_date,$connection_id);
                 
                 $previous_month = $get_meter_reading_for_inputs[0]->previous_month;
                 $previous_billing_info = $this->Service_disconnection_model->previous_billing_info($connection_id,$previous_month);
                 $arrears_penalty_amount=0;
                 $arrears_amount = 0;
+
                 if(count($previous_billing_info) > 0){
                     $check_previous_billing_if_paid = $this->Service_disconnection_model->check_previous_billing_if_paid($previous_billing_info[0]->billing_id);
                     // print_r($check_previous_billing_if_paid);
@@ -95,6 +104,7 @@ class Service_disconnection extends CORE_Controller {
                     $arrears_amount_info = $this->Service_disconnection_model->arrears_amount_info($connection_id);
                     $arrears_amount= $arrears_amount_info[0]->arrears_amount;
                 }
+
                 $response['arrears_penalty_amount']= $arrears_penalty_amount;
                 $response['arrears_amount']= $arrears_amount;
                 $response['data']= $get_meter_reading_for_inputs;

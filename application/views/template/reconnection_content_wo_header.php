@@ -1,4 +1,7 @@
-<head><title>Reconnection Services</title></head>
+<head>
+    <title>Reconnection Services</title>
+    <link rel="icon" href="<?php echo base_url('assets/img/companyico.ico'); ?>" type="image/ico" sizes="16x16">
+</head>
 <body>
 <style>
     .bottom-only{
@@ -29,25 +32,27 @@
             <tr>
                 <td style="width: 15%;">Reconnection No :</td>
                 <td style="width: 35%;"><?php echo $reconnection->reconnection_code; ?></td>
-                <td style="width: 15%;">Date : </td>
-                <td style="width: 30%;"><?php echo $reconnection->service_date; ?></td>
+                <td style="width: 15%;">Account Type : </td>
+                <td style="width: 30%;"><?php echo $reconnection->customer_account_type_desc; ?></td>
+
             </tr>
             <tr>               
-                <td style="width: 15%;">Service No :</td>
-                <td style="width: 35%;"><?php echo $reconnection->disconnection_code; ?></td>
-                <td>Disconnection Date : </td>
-                <td><?php echo $reconnection->date_disconnection_date; ?></td>
+                <td>Service No :</td>
+                <td><?php echo $reconnection->disconnection_code; ?></td>
+                <td>Date : </td>
+                <td><?php echo $reconnection->service_date; ?></td>
             </tr>
             <tr>
                 <td>Account No : </td>
                 <td><?php echo $reconnection->account_no; ?></td>
-                <td>Reinstallation Date : </td>
-                <td><?php echo $reconnection->date_connection_target.' '.$reconnection->time_connection_target; ?></td>
+                <td>Disconnection Date : </td>
+                <td><?php echo $reconnection->date_disconnection_date; ?></td>
             </tr>
             <tr>
                 <td>Meter Serial : </td>
                 <td><?php echo $reconnection->serial_no; ?></td>
-                <td colspan="2"></td>
+                <td>Reinstallation Date : </td>
+                <td><?php echo $reconnection->date_connection_target.' '.$reconnection->time_connection_target; ?></td>
             </tr>
             <tr>
                 <td style="background: lightgray;" colspan="4"><b>CUSTOMER DETAILS</b></td>

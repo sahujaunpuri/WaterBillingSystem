@@ -23,6 +23,7 @@ class Customers extends CORE_Controller {
         $this->load->model('Nationality_model');
         $this->load->model('Civil_status_model');
         $this->load->model('Sex_model');
+        $this->load->model('Customer_account_type_model');
         $this->load->library('excel');
 
     }
@@ -40,6 +41,11 @@ class Customers extends CORE_Controller {
         $data['customer_type']=$this->Customer_type_model->get_list(
             'is_deleted=FALSE'
         );
+
+        $data['customer_account_types']=$this->Customer_account_type_model->get_list(
+            'is_deleted=FALSE'
+        );
+
         $data['nationalities']=$this->Nationality_model->get_list(
             'is_deleted=FALSE AND is_active=TRUE'
         );
@@ -100,6 +106,7 @@ class Customers extends CORE_Controller {
                 $m_customers->contact_no=$this->input->post('contact_no',TRUE);
                 $m_customers->tin_no=$this->input->post('tin_no',TRUE);
                 $m_customers->refcustomertype_id=$this->input->post('refcustomertype_id',TRUE);
+                $m_customers->customer_account_type_id=$this->input->post('customer_account_type_id',TRUE);
                 $m_customers->department_id=$this->input->post('department_id',TRUE);
                 $m_customers->photo_path=$this->input->post('photo_path',TRUE);
                 $m_customers->term=$this->input->post('term',TRUE);
@@ -151,6 +158,7 @@ class Customers extends CORE_Controller {
                 $m_customers->address=$this->input->post('address',TRUE);
                 $m_customers->email_address=$this->input->post('email_address',TRUE);
                 $m_customers->customer_type_id=$this->input->post('customer_type_id_create',TRUE);
+                $m_customers->customer_account_type_id=$this->input->post('customer_account_type_id',TRUE);
                 $m_customers->contact_no=$this->input->post('contact_no',TRUE);
                 $m_customers->tin_no=$this->input->post('tin_no',TRUE);
                 $m_customers->refcustomertype_id=$this->input->post('refcustomertype_id',TRUE);
@@ -277,6 +285,7 @@ class Customers extends CORE_Controller {
                 $m_customers->term=$this->input->post('term',TRUE);
                 $m_customers->credit_limit=$this->input->post('credit_limit',TRUE);
                 $m_customers->customer_type_id=$this->input->post('customer_type_id',TRUE);
+                $m_customers->customer_account_type_id=$this->input->post('customer_account_type_id',TRUE);
 
                 $m_customers->spouse_nationality_id=$this->input->post('spouse_nationality_id',TRUE);
                 $m_customers->spouse_occupation=$this->input->post('spouse_occupation',TRUE);
@@ -552,11 +561,13 @@ class Customers extends CORE_Controller {
             'customers.*,
             DATE_FORMAT(customers.date_move_in,"%m/%d/%Y") as date_move_in,
             DATE_FORMAT(customers.tenant_birth_date,"%m/%d/%Y") as tenant_birth_date,
-            departments.department_name,refcustomertype.customer_type',
+            departments.department_name,refcustomertype.customer_type,
+            customer_account_type.customer_account_type_desc',
 
             array(
                 array('departments','departments.department_id=customers.department_id','left'),
-                array('refcustomertype','refcustomertype.refcustomertype_id=customers.refcustomertype_id','left')
+                array('refcustomertype','refcustomertype.refcustomertype_id=customers.refcustomertype_id','left'),
+                array('customer_account_type','customer_account_type.customer_account_type_id=customers.customer_account_type_id','left')
             ),
             'customers.customer_name ASC'
         );

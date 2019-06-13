@@ -1,4 +1,7 @@
-<head>  <title>Reconnection Masterfile </title></head>
+<head>  
+    <title>Reconnection Masterfile </title>
+    <link rel="icon" href="<?php echo base_url('assets/img/companyico.ico'); ?>" type="image/ico" sizes="16x16">
+</head>
 <body> <style type="text/css">
            body {
             font-family: 'Calibri',sans-serif;

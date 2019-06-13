@@ -23,6 +23,7 @@ class Service_disconnection_model extends CORE_Model {
                     inv.serial_no,
                     customers.customer_name,
                     ct.contract_type_name,
+                    cat.customer_account_type_desc,
                     rt.rate_type_name,
                     dr.reason_desc
                 FROM
@@ -31,6 +32,8 @@ class Service_disconnection_model extends CORE_Model {
                     service_connection sc ON sc.connection_id = sd.connection_id
                         LEFT JOIN
                     customers ON customers.customer_id = sc.customer_id
+                        LEFT JOIN
+                    customer_account_type cat ON cat.customer_account_type_id = customers.customer_account_type_id
                         LEFT JOIN 
                     meter_inventory inv ON inv.meter_inventory_id = sc.meter_inventory_id
                         LEFT JOIN
@@ -135,8 +138,9 @@ class Service_disconnection_model extends CORE_Model {
 
             FROM billing_payment_items bpi
             LEFT JOIN billing_payments bp on bp.billing_payment_id = bpi.billing_payment_id
+            LEFT JOIN billing b ON b.billing_id = bpi.billing_id
             WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE 
-            
+            AND bp.date_paid <= b.due_date
 
             GROUP BY bpi.billing_id) as payment ON payment.billing_id = b.billing_id
 

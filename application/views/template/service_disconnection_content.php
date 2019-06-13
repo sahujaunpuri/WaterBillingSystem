@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Service Disconnection</title>
+    <link rel="icon" href="<?php echo base_url('assets/img/companyico.ico'); ?>" type="image/ico" sizes="16x16">
     <style type="text/css">
     body {
             font-family: 'Calibri',sans-serif;
@@ -65,8 +66,8 @@
         </tr>
       <tr>
           <td width="15%">Disconnection No:</td>
-          <td width=""><?php echo $dis_info->disconnection_code; ?></td>
-          <td width="">Date:</td>
+          <td width="55%"><?php echo $dis_info->disconnection_code; ?></td>
+          <td width="15%">Date:</td>
           <td width="15%" colspan="4"><?php echo $dis_info->service_date; ?></td>
       </tr>
       <tr>
@@ -78,12 +79,15 @@
       <tr>
           <td>Account No:</td>
           <td><?php echo $dis_info->account_no; ?></td>
-          <td>Meter Serial:</td>
-          <td colspan="4"><?php echo $dis_info->serial_no; ?></td>
+          <td>Account Type:</td>
+          <td colspan="4"><?php echo $dis_info->customer_account_type_desc; ?></td>
       </tr>
       <tr>
           <td>Customer Name:</td>
-          <td colspan="6"><?php echo $dis_info->customer_name; ?></td>
+          <td><?php echo $dis_info->customer_name; ?></td>
+
+          <td>Meter Serial:</td>
+          <td colspan="4"><?php echo $dis_info->serial_no; ?></td>
       </tr>
       <tr>
           <td>Name on Receipt:</td>
@@ -94,8 +98,8 @@
           <td colspan="6"><?php echo $dis_info->address; ?></td>
       </tr>
       <tr>
-          <td colspan="2">Reason for Disconnection:</td>
-          <td colspan="5"><?php echo $dis_info->reason_desc; ?></td>
+          <td>Reason for Disconnection:</td>
+          <td colspan="6"><?php echo $dis_info->reason_desc; ?></td>
       </tr>
       <tr>
           <td colspan="2">Note:</td>

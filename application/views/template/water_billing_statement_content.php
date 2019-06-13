@@ -122,26 +122,30 @@
                 <td class="right-align"><?php echo $billing->current_reading; ?></td>
                 <td class="right-align"><?php echo $billing->total_consumption; ?></td>
                 <td class="right-align"><?php echo number_format($billing->amount_due,2); ?></td>
-           </tr>         
+           </tr>    
+
+           <?php 
+           $total_charges = 0;
+           if(count($charges) > 0){?>
+
            <tr>
                 <td ></td>
                 <td colspan="6">OTHER CHARGES:</td>
            </tr>
           <?php 
-            $total_charges = 0;
-            foreach($charges as $charges){
-            $total_charges += $charges->charge_line_total;
+            foreach($charges as $charge){
+            $total_charges += $charge->charge_line_total;
           ?>
             <tr>
                 <td colspan="2"></td>
-                <!-- <td><?php echo number_format($charges->charge_qty,0); ?></td> -->
-                <td><?php echo $charges->charge_desc.' ('.$charges->other_charge_no.')'; ?></td>
+                <!-- <td><?php echo number_format($charge->charge_qty,0); ?></td> -->
+                <td><?php echo $charge->charge_desc.' ('.$charge->other_charge_no.')'; ?></td>
                 <td colspan="3"></td>
-                <!-- <td><?php echo $charges->charge_unit_name; ?></td> -->
-                <!-- <td class="right-align"><?php echo number_format($charges->charge_amount,2); ?></td> -->
-                <td class="right-align"><?php echo number_format($charges->charge_line_total,2); ?></td>
+                <!-- <td><?php echo $charge->charge_unit_name; ?></td> -->
+                <!-- <td class="right-align"><?php echo number_format($charge->charge_amount,2); ?></td> -->
+                <td class="right-align"><?php echo number_format($charge->charge_line_total,2); ?></td>
            </tr>  
-           <?php }?>
+           <?php }}?>
            <tr>
                 <td></td>
                 <td colspan="5"><b>TOTAL CURRENT CHARGES</b></td>

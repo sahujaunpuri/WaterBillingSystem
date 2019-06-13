@@ -11,7 +11,6 @@ class Rate_type_model extends CORE_Model{
         parent::__construct();
     }
 
-
 }
 
 ?>

@@ -25,6 +25,7 @@ class Service_reconnection_model extends CORE_Model {
                     c.customer_name,
                     sc.customer_id,
                     ct.contract_type_name,
+                    cat.customer_account_type_desc,
                     rt.rate_type_name,
                     rrt.rate_type_name as new_rate_type
                 FROM
@@ -37,6 +38,8 @@ class Service_reconnection_model extends CORE_Model {
                     meter_inventory inv ON inv.meter_inventory_id = sc.meter_inventory_id
                         LEFT JOIN
                     customers c ON c.customer_id = sc.customer_id
+                        LEFT JOIN
+                    customer_account_type cat ON cat.customer_account_type_id = c.customer_account_type_id
                         LEFT JOIN
                     contract_types ct ON ct.contract_type_id = sc.contract_type_id
                         LEFT JOIN

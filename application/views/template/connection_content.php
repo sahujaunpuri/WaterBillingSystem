@@ -43,19 +43,20 @@
             <tr>
                 <td style="width: 15%;">Service No :</td>
                 <td style="width: 35%;"><?php echo $connection->service_no; ?></td>
-                <td style="width: 15%;">Date : </td>
-                <td style="width: 30%;"><?php echo $connection->service_date; ?></td>
+                <td style="width: 15%;">Account Type : 
+                <td style="width: 30%;"><?php echo $connection->customer_account_type_desc; ?></td>
             </tr>
             <tr>
                 <td>Account No : </td>
                 <td><?php echo $connection->account_no; ?></td>
-                <td>Installation Date : </td>
-                <td><?php echo $connection->target_date.' '.$connection->target_time; ?></td>
+                <td>Date : </td>
+                <td><?php echo $connection->service_date; ?></td>
             </tr>
             <tr>
                 <td>Meter Serial : </td>
                 <td><?php echo $connection->serial_no; ?></td>
-                <td colspan="2"></td>
+                <td>Installation Date : </td>
+                <td><?php echo $connection->target_date.' '.$connection->target_time; ?></td>
             </tr>
             <tr>
                 <td style="background: lightgray;" colspan="4"><b>CUSTOMER DETAILS</b></td>

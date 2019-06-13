@@ -58,7 +58,8 @@
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboCustomerType; var _cboNationality; var _cboCivilStatus; var _cboSex; var _cboSpouseNationality;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboCustomerType;
+        var _cboNationality; var _cboCivilStatus; var _cboSex; var _cboSpouseNationality; var _cboCustomerAccountType;
 
         /*$(document).ready(function(){
             $('#modal_filter').modal('show');
@@ -108,6 +109,10 @@
             _cboCustomerType=$("#cbo_customer_type").select2({
                 allowClear: false
             });
+
+            _cboCustomerAccountType=$("#cbo_customer_account_type").select2({
+                allowClear: false
+            });            
 
             _cboNationality=$("#cbo_nationality").select2({
                 allowClear: false
@@ -186,6 +191,7 @@
                 $('#modal_create_customer').modal('show');
                 clearFields($('#frm_customer'));
                 $('#cbo_customer_type').select2('val', 0);
+                $('#cbo_customer_account_type').select2('val', 1);
                 $('#cbo_nationality').select2('val', 0);
                 $('#cbo_spouse_nationality').select2('val', 0);
                 $('#cbo_civil_status').select2('val', 0);
@@ -214,6 +220,7 @@
                     $('#branch').val(data.department_id);
                     $('#refcustomertype_id').val(data.refcustomertype_id);
                     _cboCustomerType.select2('val',data.customer_type_id);
+                    _cboCustomerAccountType.select2('val',data.customer_account_type_id);
                     $('#cbo_nationality').select2('val', data.nationality_id);
                     $('#cbo_spouse_nationality').select2('val', data.spouse_nationality_id);
                     $('#cbo_civil_status').select2('val', data.civil_status_id);
@@ -974,13 +981,13 @@
                                             </div>
                                         </div>
                                         <div class="col-md-12">
-                                                 Contact No :
+                                            <b class="required">* </b> Contact No :
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-phone"></i>
                                                     </span>
-                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No">
+                                                    <input type="text" name="contact_no" id="contact_no" class="form-control" placeholder="Contact No" required data-error-msg="Contact No. is required!">
                                                 </div>
                                             </div>
                                         </div>
@@ -1056,17 +1063,24 @@
                                             </select>
                                             </div>
                                         </div>
-
-                                      
-
-
                                         <div class="col-md-12">
+                                            <br>
                                                 Customer Type :
                                             <div style="padding: 5px 0px 5px 0px;">
                                             <select name="customer_type_id" id="cbo_customer_type" style="width: 100%">
                                                 <option value="0">None</option>
                                                 <?php foreach($customer_type as $customer_type){ ?>
                                                     <option value="<?php echo $customer_type->customer_type_id; ?>"><?php echo $customer_type->customer_type_name?></option>
+                                                <?php } ?>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                                Customer Account Type :
+                                            <div style="padding: 5px 0px 5px 0px;">
+                                            <select name="customer_account_type_id" id="cbo_customer_account_type" style="width: 100%">
+                                                <?php foreach($customer_account_types as $customer_account_type){ ?>
+                                                    <option value="<?php echo $customer_account_type->customer_account_type_id; ?>"><?php echo $customer_account_type->customer_account_type_desc?></option>
                                                 <?php } ?>
                                             </select>
                                             </div>
@@ -1093,6 +1107,8 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="col-md-12">
                                                 TIN :
                                             <div class="form-group">
@@ -1104,8 +1120,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
                                         <div class="col-md-12">
                                             If Married (Spouse):
                                             <div class="form-group">

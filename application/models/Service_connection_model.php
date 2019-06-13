@@ -17,6 +17,7 @@ class Service_connection_model extends CORE_Model{
 		    inv.serial_no,
 		    c.customer_name,
 		    ct.contract_type_name,
+            cat.customer_account_type_desc,
 		    rt.rate_type_name,
             CONCAT_WS(' ',a.first_name,a.middle_name,a.last_name) as attendant,
 		    DATE_FORMAT(sc.service_date, '%m/%d/%Y') AS service_date,
@@ -28,6 +29,8 @@ class Service_connection_model extends CORE_Model{
 		    meter_inventory inv ON inv.meter_inventory_id = sc.meter_inventory_id
 		        LEFT JOIN
 		    customers c ON c.customer_id = sc.customer_id
+                LEFT JOIN
+            customer_account_type cat ON cat.customer_account_type_id = c.customer_account_type_id
 		        LEFT JOIN
 		    contract_types ct ON ct.contract_type_id = sc.contract_type_id
 		        LEFT JOIN
