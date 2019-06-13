@@ -70,6 +70,7 @@ class Billing_payments extends CORE_Controller
         
             case 'billing-receivables':
                 $response['receivables'] = $this->Billing_model->billing_receivables($filter_value);
+                $response['deposit_info'] = $this->Billing_payments_model->get_account_with_allowable_deposit($filter_value);
                 echo json_encode($response);
             break;
     
@@ -79,7 +80,7 @@ class Billing_payments extends CORE_Controller
                 $m_billing_payment=$this->Billing_payments_model;
                 $m_billing_payment_items=$this->Billing_payment_items_model;
 
-                $receipt_no=$this->input->post('receipt_no',TRUE);
+                // $receipt_no=$this->input->post('receipt_no',TRUE);
 
                 // //******************************************************************************************************
                 // //IMPORTANT!!!!!
@@ -110,11 +111,9 @@ class Billing_payments extends CORE_Controller
                 //details for auditing
                 $m_billing_payment->set('date_created','NOW()');
                 $m_billing_payment->created_by_user=$this->session->user_id;
-
-                //payment details
-                $m_billing_payment->receipt_no=$receipt_no;
                 $m_billing_payment->connection_id=$this->input->post('connection_id',TRUE);
                 // $m_billing_payment->department_id=$this->input->post('department',TRUE);
+                $m_billing_payment->is_refund=$this->get_numeric_value($this->input->post('is_refund',TRUE)); 
 
                 $payment_method_id=$this->input->post('payment_method_id',TRUE);
                 $m_billing_payment->payment_method_id=$payment_method_id;
@@ -123,27 +122,36 @@ class Billing_payments extends CORE_Controller
                     $m_billing_payment->check_no=$this->input->post('check_no',TRUE);
                     $m_billing_payment->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
                 }
+                // SUMMARY
+                $m_billing_payment->total_paid_amount=$this->get_numeric_value($this->input->post('total_paid_amount',TRUE)); // TOTAL PAYMENT FROM DEPOST AND CASH
+                $m_billing_payment->total_deposit_amount=$this->get_numeric_value($this->input->post('total_deposit_amount',TRUE)); // PAYMENT FROM DEPOSIT
+                $m_billing_payment->total_payment_amount=$this->get_numeric_value($this->input->post('total_payment_amount',TRUE)); // CASH CHECK OR CARD PAYMENT
+                $m_billing_payment->deposit_allowed=$this->get_numeric_value($this->input->post('deposit_allowed',TRUE)); // Deposit allowed to use
+                $m_billing_payment->remaining_deposit=$this->get_numeric_value($this->input->post('remaining_deposit',TRUE)); // Deposit remaining after use
 
-
-                $m_billing_payment->total_paid_amount=$this->get_numeric_value($this->input->post('total_paid_amount',TRUE));
                 $m_billing_payment->remarks=$this->input->post('remarks',TRUE);
                 $m_billing_payment->date_paid=date('Y-m-d',strtotime($this->input->post('date_paid',TRUE)));
                 $m_billing_payment->save();
 
+
                 $billing_payment_id=$m_billing_payment->last_insert_id();
+                $m_billing_payment->receipt_no = date('Y').'-'.str_pad($billing_payment_id, 6, "0", STR_PAD_LEFT);
+                $m_billing_payment->modify($billing_payment_id);
                 $receivable_amount = $this->input->post('receivable_amount',TRUE);
                 $payment_amount = $this->input->post('payment_amount',TRUE);
+                $deposit_payment = $this->input->post('deposit_payment',TRUE);
                 $billing_id = $this->input->post('billing_id',TRUE);
                 $disconnection_id = $this->input->post('disconnection_id',TRUE);
 
 
 
                 for($i=0;$i<=count($billing_id)-1;$i++){
-                    if($payment_amount[$i] > 0){
+                    if($payment_amount[$i] > 0 || $deposit_payment[$i] > 0 ){
                     $m_billing_payment_items->billing_payment_id=$billing_payment_id;
                     $m_billing_payment_items->billing_id=$billing_id[$i];
                     $m_billing_payment_items->disconnection_id=$disconnection_id[$i];
                     $m_billing_payment_items->receivable_amount=$this->get_numeric_value($receivable_amount[$i]);
+                    $m_billing_payment_items->deposit_payment=$this->get_numeric_value($deposit_payment[$i]);
                     $m_billing_payment_items->payment_amount=$this->get_numeric_value($payment_amount[$i]);
                     $m_billing_payment_items->save();
                 }
@@ -165,7 +173,7 @@ class Billing_payments extends CORE_Controller
                     $m_trans->set('trans_date','NOW()');
                     $m_trans->trans_key_id=1; //CRUD
                     $m_trans->trans_type_id=81; // TRANS TYPE
-                    $m_trans->trans_log='Created New Billing Payment: '.$receipt_no;
+                    $m_trans->trans_log='Created New Billing Payment: ('.$billing_payment_id.')';
                     $m_trans->save();
 
                     echo json_encode($response);
@@ -176,9 +184,19 @@ class Billing_payments extends CORE_Controller
 
                 case 'cancel':
                     $billing_payment_id=$this->input->post('billing_payment_id',TRUE);
+
                     $m_payment=$this->Billing_payments_model;
 
                     $receipt = $m_payment->get_list($billing_payment_id);
+
+                    if($receipt[0]->billing_payment_batch_id > 0){
+
+                    $response['stat']='error';
+                    $response['title']='Error !';
+                    $response['msg']='Payment already sent to Accounting';
+                    die(json_encode($response));
+
+                    }
                     $m_payment->begin();
                     $m_payment->set('date_cancelled','NOW()');
                     $m_payment->is_active=0;

@@ -348,8 +348,8 @@ $(document).ready(function(){
             // $('.date-picker').datepicker('setDate','today');
             $('#cbo_applicable_year').select2('val', yearNow);
             $('#cbo_month_id').select2('val', monthNow);
-            $('#period_start').datepicker('setDate', new Date(yearNow, (monthNow-1), 1));
-            $('#period_end').datepicker('setDate', new Date(yearNow, (monthNow-1)+1,0));
+            $('#period_start').datepicker('setDate', new Date(yearNow, (monthNow-2), 1));
+            $('#period_end').datepicker('setDate', new Date(yearNow, (monthNow-2)+1,0));
              // $("#datepicker").datepicker("setDate", startDate);
             $('#modal_period_title').text('New Meter Reading Period');
             $('#modal_meter_reading_period').modal('show');
@@ -364,14 +364,14 @@ $(document).ready(function(){
 
         _cboMonth.on('select2:select',function(){
             now =$(this).val();
-            $('#period_start').datepicker('setDate', new Date(yearNow, (now-1), 1));
-            $('#period_end').datepicker('setDate', new Date(yearNow, (now-1)+1,0));
+            $('#period_start').datepicker('setDate', new Date(yearNow, (now-2), 1));
+            $('#period_end').datepicker('setDate', new Date(yearNow, (now-2)+1,0));
         });
 
         _cboApplicableYear.on('select2:select',function(){
             yearnow =$(this).val();
-            $('#period_start').datepicker('setDate', new Date(yearnow, (monthNow-1), 1));
-            $('#period_end').datepicker('setDate', new Date(yearnow, (monthNow-1)+1,0));
+            $('#period_start').datepicker('setDate', new Date(yearnow, (monthNow-2), 1));
+            $('#period_end').datepicker('setDate', new Date(yearnow, (monthNow-2)+1,0));
         });
 
         $('#tbl_meter_reading_period tbody').on('click','button[name="edit_info"]',function(){

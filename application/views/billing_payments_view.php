@@ -111,6 +111,14 @@
        .select2-results__options {
                 overflow-x: hidden;
         } 
+        .table-summary{
+            width: 100%;margin-bottom: 0px;border: none!important;
+        }
+
+        .table-summary tr td{
+            border: none!important;
+        }
+
     </style>
 </head>
 
@@ -186,6 +194,7 @@
                                                     <th>Amount</th>
                                                     <th>Status</th>
                                                     <th><center>Action</center></th>
+                                                    <th></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -206,19 +215,17 @@
                                         <div class="container-fluid">
                                         <form id="frm_payments" role="form" class="form-horizontal">
                                             <div class="row">
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-9">
                                                     <div class="row">
-                                                        <div class="col-lg-6">
+                                                        <div class="col-lg-4">
                                                            <b class="required">*</b>  <label>Receipt type :</label> <br />
                                                             <select id="cbo_receipt_type" name="receipt_type">
                                                                 <option value="1" selected>Official Receipt</option>
                                                                 <option value="2">Acknowledgement Receipt</option>
                                                             </select>
                                                         </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-6">
-                                                           <b class="required">*</b>  <label>Payment Date:</label> <br />
+                                                        <div class="col-lg-4">
+                                                           <label>Payment Date:</label> <br />
                                                             <div class="input-group">
                                                                 <span class="input-group-addon">
                                                                      <i class="fa fa-calendar"></i>
@@ -226,21 +233,19 @@
                                                                 <input type="text" name="date_paid" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date of Payment" data-error-msg="Payment Date is required!" required>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-6">
+                                                        <div class="col-lg-4">
                                                            <b class="required">*</b> <label>Receipt # :</label> <br />
                                                             <div class="input-group">
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-code"></i>
                                                             </span>
-                                                                <input type="text" name="receipt_no" class="form-control" placeholder="Receipt #" data-error-msg="Receipt number is required!" required>
+                                                                <input type="text" class="form-control" placeholder="YYYY-XXXXXX" readonly>
                                                             </div>
                                                         </div>
-                                                    </div>
 
+                                                    </div>
                                                 </div>
-                                                    <div class="col-lg-3 col-lg-offset-3">
+                                                    <div class="col-lg-3 ">
                                                         <div class="row">
 
                                                         </div>
@@ -280,6 +285,18 @@
                                                         </div>
                                                     </div>
                                             </div>
+                                            <div class="row">
+                                                <div class="col-lg-3 col-lg-offset-6">
+                                                   <b class="required">*</b>  <label>Refund Remaining Deposit? :</label> <br />
+                                                    <select id="cbo_is_refund" name="is_refund">
+                                                        <option value="0" selected>No</option>
+                                                        <option value="1">Yes</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                <b class="required">*</b>  <label>Deposit / Advances :</label> <br />
+                                                <input type="text" name="deposit_allowed_label" class="form-control numeric" readonly style="background-color: transparent;">
+                                            </div>
                                         </form>
                                         <hr>
                                         <form id="frm_payment_items">
@@ -306,7 +323,8 @@
                                                                 <th>Control No</th>
                                                                 <th>Description</th>
                                                                 <th width="15%">Due Date</th>
-                                                                <th width="15%" style="text-align: right;">Amount due</th>
+                                                                <th width="15%" style="text-align: right;">Amount Due</th>
+                                                                <th width="15%">Deposit</th>
                                                                 <th width="15%">Payment</th>
                                                                 <th width="5%">Action</th>
                                                                 <th width="5%" style="display: none;">Billing ID</th>
@@ -318,53 +336,122 @@
                                                         </tbody>
                                                         <tfoot>
                                                         <tr>
-                                                            <td colspan="6" style="height: 50px;">&nbsp;</td>
+                                                            <td colspan="7" style="height: 50px;">&nbsp;</td>
                                                         </tr>
                                                         <tr>
                                                             <td colspan="3" align="right"><b>Total : </b></td>
                                                             <td id="td_total_payables" align="right"><b>0.00</b></td>
+                                                            <td id="td_total_deposits" align="right"><b>0.00</b></td>
                                                             <td id="td_total_payments" align="right"><b>0.00</b></td>
                                                             <td></td>
                                                         </tr>
-
                                                         </tfoot>
                                                     </table>
                                                 </div>
                                             </div>
                                         </form>
                                         <br />
-
-                                        <div class="row" style="margin: 3px;">
-                                            Remarks :<br />
-                                            <textarea name="remarks" class="form-control" placeholder="Remarks"></textarea>
-                                        </div>
                                         <div class="row" style="display: none;">
                                             <div class="col-lg-3 col-lg-offset-9">
                                                 <div class="table-responsive">
                                                     <table id="tbl_purchase_summary" width="100%" class="table" style="font-family: tahoma;">
                                                         <tbody>
-
                                                         <tr style="border-bottom: 1px solid lightgray;">
-                                                            <td align="right"><strong>Total Payable :</strong></td>
-                                                            <td id="td_total_payable" align="right"><b>0.00</b></td>
+                                                            <td align="right"><strong>Deposit Allowed:</strong></td>
+                                                            <td align="right"><input type="text" name="deposit_allowed" class="form-control numeric" ></td>
                                                         </tr>
-
+                                                        <tr style="border-bottom: 1px solid lightgray;">
+                                                            <td align="right"><strong>Total Deposit :</strong></td>
+                                                            <td align="right"><input type="text" name="total_deposit_amount" class="numeric form-control"></td>
+                                                        </tr>
+                                                        <tr style="border-bottom: 1px solid lightgray;">
+                                                            <td align="right"><strong>Remaining Deposit:</strong></td>
+                                                            <td align="right"><input type="text" name="remaining_deposit" class="form-control numeric" ></td>
+                                                        </tr>
                                                         <tr style="border-bottom: 1px solid lightgray;">
                                                             <td align="right"><strong>Total Payment :</strong></td>
-                                                            <td id="td_total_payment" align="right"><b>0.00</b></td>
+                                                            <td align="right"><input type="text" name="total_payment_amount" class="numeric form-control"></td>
                                                         </tr>
-
-
+                                                        <tr style="border-bottom: 1px solid lightgray;">
+                                                            <td align="right"><strong>Total Paid  :</strong></td>
+                                                            <td align="right"><input type="text" name="total_paid_amount" class="numeric form-control"></td>
+                                                        </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="row" style="margin: 3px;">
+                                            <div class="col-lg-4">
+                                                Remarks :<br />
+                                                <textarea name="remarks" class="form-control" placeholder="Remarks"></textarea>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <table style="" class="table table-striped table-summary">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><b>Total Deposit / Advances</b></td>
+                                                            <td style="text-align: right;" class="deposit_allowed_label">0.00</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="border-bottom: 1px solid gray!important;"><i>less:</i> Deposit Used</td>
+                                                            <td style="border-bottom: 1px solid gray!important;text-align: right;" class="td_total_deposits_label"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><b>Remaining Deposit / Advances:<b></td>
+                                                            <td style="text-align: right;" id="td_remaining_deposit">0.00</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <table style="" class="table table-striped table-summary">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><b>Total Receivables</b></td>
+                                                            <td style="text-align: right;" id="td_total_payables_label">0.00</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2"><b>Payments</b></td>
+                                                        </tr>
+
+                                                    </tbody>
+                                                </table>
+                                                <table style="" class="table table-striped table-summary">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td width="10%"></td>
+                                                            <td width="40%">Deposit Used</td>
+                                                            <td style="text-align: right;" class="td_total_deposits_label">0.00</td>
+                                                            <td width="30%"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="10%"></td>
+                                                            <td width="40%">Payment Amount</td>
+                                                            <td style="text-align: right;" id="td_total_payments_label">0.00</td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <table style="" class="table table-striped table-summary">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="border-bottom: 1px solid gray!important;; "><i>Less: </i><b>Total Payment</b></td>
+                                                            <td style="text-align: right;border-bottom: 1px solid gray!important;" id="td_total_paid_label">0.00</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><b>Remaining Receivables:<b></td>
+                                                            <td style="text-align: right;" id="td_remaining_receivables">0.00</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                         <br /> <br />
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> <i class="fa fa-floppy-o"></i> Record Payment</button>
-                                                <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
+                                                <button id="btn_save" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> <i class="fa fa-floppy-o"></i> Record Payment</button>
+                                                <button id="btn_cancel" type="button" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
                                             </div>
                                         </div>
                                     </div>
@@ -449,11 +536,14 @@
 
     $(document).ready(function(){
         var dt; var _txnMode; var _selectedID; var _selectRowObj;  var _cboFilterActive; 
-        var _cboReceiptType; var _cboPaymentMethod;
-
+        var _cboReceiptType; var _cboPaymentMethod; var _cboIsRefund;
+        var yearNow = new Date().getFullYear();
+        var dayNow = new Date().getDate();
+        var monthNow = new Date().getMonth() + 1;
         var oTableItems={
             amount_due : 'td:eq(3)',
-            amount_payment : 'td:eq(4)'
+            deposit_payment : 'td:eq(4)',
+            amount_payment : 'td:eq(5)'
 
         };
 
@@ -487,9 +577,16 @@
                 allowClear: false
             });
 
+            _cboIsRefund = $('#cbo_is_refund').select2({
+                placeholder: "Please Select.",
+                minimumResultsForSearch: -1,
+                allowClear: false
+            });
+
             dt=$('#tbl_payments').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
+                "order": [[ 10, "desc" ]],
                 oLanguage: {
                         sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
                 },
@@ -532,7 +629,7 @@
                         }
                     },
                     {
-                        targets:[8],data: "is_active",
+                        targets:[9],data: "is_active",
                         render: function (data, type, full, meta){
                             if(data=="1"){
                                 return '<center><button type="button" class="btn btn-default btn_cancel_or"><i class="fa fa-times-circle"></i></button></center>';
@@ -543,7 +640,9 @@
                             
                         }
 
-                    }
+                    },
+                    { targets:[10],data: "billing_payment_id", visible:false },
+
                 ]
             });
 
@@ -555,6 +654,8 @@
             });
 
             $('.date-picker').datepicker({
+                startDate: new Date(yearNow, (monthNow-1), dayNow),
+                endDate: new Date(yearNow, (monthNow-1)+1,0),
                 todayBtn: "linked",
                 keyboardNavigation: false,
                 forceParse: false,
@@ -615,7 +716,16 @@
                 clearFields($('#div_payment_fields'));
                 $('#td_total_payables').html('<b>0.00</b>');
                 $('#td_total_payments').html('<b>0.00</b>');
+                $('#td_total_deposits').html('<b>0.00</b>');
+                $('#td_total_payables_label').html('<b>0.00</b>');
+                $('#td_total_payments_label').html('0.00');
+                $('.td_total_deposits_label').html('0.00');
+                $('#td_total_paid_label').html('<b>0.00</b>');
+                $('#td_remaining_receivables').html('<b>0.00</b>');
+
+                $('#rd_to').html('<b>0.00</b>');
                 _cboAccounts.select2('val',null);
+                _cboIsRefund.select2('val',0);
                 showList(false);
 
 
@@ -646,6 +756,17 @@
                 $('#tbl_payments').DataTable().ajax.reload()
             });
 
+            _cboIsRefund.on('select2:select',function(e){
+                if(getFloat($('input[name="deposit_allowed"]').val()) == 0){
+                    showNotification({
+                        "title": "Invalid!",
+                        "stat" : "error",
+                        "msg" : "No refundable amount."
+                    });
+                    _cboIsRefund.select2('val',0);
+                }
+            });
+
             _cboPaymentMethod.on("select2:select", function (e) {
                 var method_id=$(this).select2('val');
                 if(method_id==2){
@@ -662,7 +783,8 @@
 
             _cboAccounts.on('select2:select', function(){
             var i= $(this).val();
-            $.ajax({
+            _cboIsRefund.select2('val',0);
+           $.ajax({
                 url : 'Billing_payments/transaction/billing-receivables/'+i,
                 type : "GET",
                 cache : false,
@@ -674,15 +796,15 @@
                 },
                 success : function(response){
                     var rows=response.receivables;
+                    var deposit_row = response.deposit_info[0];
+                    // console.log(deposit_row)
+                    $('input[name="deposit_allowed"]').val(accounting.formatNumber(deposit_row.allowable_deposit,2));
+                    $('input[name="deposit_allowed_label"]').val(accounting.formatNumber(deposit_row.allowable_deposit,2));
+                    $('.deposit_allowed_label').html(accounting.formatNumber(deposit_row.allowable_deposit,2));
                     $('#tbl_items > tbody').html('');
-
                     if(rows.length == 0){
-
                         $('#tbl_items > tbody').append(newRowItemBlank());
-
                     }
-
-
                     $.each(rows,function(i,value){
                         $('#tbl_items > tbody').append(newRowItem({
                             disconnection_id: value.disconnection_id,
@@ -690,6 +812,7 @@
                             control_no: value.control_no,
                             receivable_amount:value.receivable_amount,
                             description: value.description,
+                            deposit_payment: 0,
                             due_date: value.due_date,
                             amount_due: value.amount_due,
                             payment_amount: value.payment_amount
@@ -733,15 +856,17 @@
             $('#tbl_items > tbody').on('click','button.btn_set_amount',function(e){
                 var row=$(this).closest('tr');
                 var payableAmount=getFloat(row.find('input[name="receivable_amount[]"]').val());
-                row.find('input[name="payment_amount[]"]').val(accounting.formatNumber(payableAmount,2));
+                var depositPayment=getFloat(row.find('input[name="deposit_payment[]"]').val());
+                row.find('input[name="payment_amount[]"]').val(accounting.formatNumber((payableAmount-depositPayment),2));
                 reComputeDetails();
             });
 
             $('#tbl_items > tbody').on('keyup','input.numeric',function(e){
                 var row=$(this).closest('tr');
-                var payment=getFloat($(this).val());
+                var payment=getFloat(row.find('input[name="payment_amount[]"]').val());
                 var payable=getFloat(row.find('input[name="receivable_amount[]"]').val());
-                if(payment>payable){
+                var deposit=getFloat(row.find('input[name="deposit_payment[]"]').val());
+                if((payment + deposit)>payable){
                     showNotification({
                         "title": "Invalid!",
                         "stat" : "error",
@@ -785,7 +910,6 @@
 
         var postPayment=function(){
             var _data=$('#frm_payments,#frm_payment_items').serializeArray();
-            _data.push({name:"total_paid_amount",value:getFloat($('#td_total_payment').text())});
             _data.push({name:"remarks",value:$('textarea[name="remarks"]').val()});
             console.log(_data);
             return $.ajax({
@@ -860,26 +984,52 @@
 
         var reComputeDetails=function(){
             var rows=$('#tbl_items > tbody > tr');
-            var total_payment=0; var total_payable=0;
+            var total_payment=0; var total_payable=0; var total_deposit = 0;
 
             $.each(rows,function(i,value){
                 var row=$(this);
                 total_payment+=getFloat(row.find('input[name="payment_amount[]"]').val());
                 total_payable+=getFloat(row.find('input[name="receivable_amount[]"]').val());
+                total_deposit+=getFloat(row.find('input[name="deposit_payment[]"]').val());
             });
-
-            $('#td_total_payment').html('<b>'+accounting.formatNumber(total_payment,2)+'</b>');
-            $('#td_total_payable').html('<b>'+accounting.formatNumber(total_payable,2)+'</b>');
-
-
             $('#td_total_payments').html('<b>'+accounting.formatNumber(total_payment,2)+'</b>');
             $('#td_total_payables').html('<b>'+accounting.formatNumber(total_payable,2)+'</b>');
+            $('#td_total_deposits').html('<b>'+accounting.formatNumber(total_deposit,2)+'</b>');
 
-        };
+            $('#td_total_payments_label').html(''+accounting.formatNumber(total_payment,2)+'');
+            $('#td_total_payables_label').html('<b>'+accounting.formatNumber(total_payable,2)+'</b>');
+            $('.td_total_deposits_label').html(''+accounting.formatNumber(total_deposit,2)+'');
 
-        var resetSummaryDetails=function(){
-            $('#td_total_payment').html('<b>0.00</b>');
-            $('#td_total_payable').html('<b>0.00</b>');
+            $('#td_total_paid_label').html('<b>'+accounting.formatNumber((total_payment+total_deposit),2)+'</b>');
+            $('#td_remaining_receivables').html('<b>'+accounting.formatNumber((total_payable -(total_payment+total_deposit)),2)+'</b>');
+
+                
+            $('input[name="total_deposit_amount"]').val(accounting.formatNumber(total_deposit,2));
+            $('input[name="total_payment_amount"]').val(accounting.formatNumber(total_payment,2));
+            $('input[name="total_paid_amount"]').val(accounting.formatNumber((total_payment+total_deposit),2)); // THE SUM OF THE TWO ABOVE
+
+
+            var deposit_allowed =  getFloat($('input[name="deposit_allowed"]').val());
+
+            deposit_remaining = deposit_allowed - total_deposit;
+            $('#td_remaining_deposit').html('<b>'+accounting.formatNumber(deposit_remaining,2)+'</b>');
+            $('input[name="remaining_deposit"]').val(accounting.formatNumber(deposit_remaining,2));
+            $('input[name="total_payment_amount"]').val(accounting.formatNumber(total_payment,2));
+
+            if((deposit_allowed) < total_deposit){
+                showNotification({
+                    "title": "Invalid!",
+                    "stat" : "error",
+                    "msg" : "Sorry, Deposit Amount Used is greater than the Allowable Deposit."
+                });
+                $.each(rows,function(i,value){
+                    var row=$(this);
+                    row.find('input[name="deposit_payment[]"]').val(accounting.formatNumber(0,2));
+                    row.find('input[name="deposit_payment[]"]').trigger('keyup');
+                });
+
+            }
+
         };
 
         var showTableLoader=function(obj){
@@ -894,6 +1044,7 @@
         '<td>'+d.description+'</td>'+
         '<td>'+d.due_date+'</td>'+
         '<td><input name="receivable_amount[]" type="text" class="numeric form-control" value="'+d.amount_due+'" readonly></td>'+
+        '<td><input name="deposit_payment[]" type="text" class="numeric form-control" value="'+d.deposit_payment+'" ></td>'+
         '<td><input name="payment_amount[]" type="text" class="numeric form-control" value="'+d.payment_amount+'" ></td>'+
         '<td align="center"><button type="button" class="btn btn-success btn_set_amount"><i class="fa fa-check"></i></button></td>'+
         '<td class="hidden"><input name="billing_id[]" type="text" class="number form-control" value="'+d.billing_id+'" readonly></td>'+
