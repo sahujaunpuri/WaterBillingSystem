@@ -41,12 +41,12 @@
             </tbody>
         </table>
         <div class="center" style="text-transform: uppercase;">
-            <?php echo $company_info->company_name; ?><br/>
+            <b style="font-size: 15px;"><?php echo $company_info->company_name; ?></b><br/>
             <?php echo $company_info->company_address; ?>
         </div>
-        <hr style="margin: 0px!important;">
+        <hr style="margin: 0px!important;margin-top:10px;">
         <div class="center">
-            <b>BILLING STATEMENTS</b>
+            <b>BILLING STATEMENT</b>
         </div>
         <hr style="margin: 0px!important;">
         <table style="font-size: 12px;">
@@ -55,10 +55,10 @@
                     <td>ACCOUNT NO : &nbsp;&nbsp; <?php echo $billing->account_no; ?></td>
                 </tr>
                 <tr>
-                    <td>Customer Name : &nbsp;&nbsp; <?php echo $billing->customer_name; ?></td>
+                    <td style="text-transform: uppercase;">Customer Name : &nbsp;&nbsp; <?php echo $billing->customer_name; ?></td>
                 </tr>
                 <tr>
-                    <td>Address: &nbsp;&nbsp; <?php echo $billing->address; ?>
+                    <td style="text-transform: uppercase;">Address: &nbsp;&nbsp; <?php echo $billing->address; ?>
                 </tr>
             </tbody>
         </table>
@@ -70,8 +70,8 @@
                     <td colspan="2">Due Date: <?php echo $billing->due_date?></td>
                 </tr>
                 <tr>
-                    <td colspan="2">Meter Reading</td>
-                    <td colspan="2">Payables</td>
+                    <td colspan="2"><b>Meter Reading</b></td>
+                    <td colspan="2"><b>Payables</b></td>
                 </tr>
                 <tr>
                     <td width="10%"></td>
@@ -98,7 +98,7 @@
                     <td>Penalty:&nbsp;&nbsp;<?php echo number_format($billing->penalty_amount,2);?></td>
                 </tr>
                 <tr>
-                    <td colspan="4">Charges</td>
+                    <td colspan="4"><b>Other Charges</b></td>
                     <!-- <td>Total Amount Due:&nbsp;&nbsp;<?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount),2);?></td> -->
                 </tr>
                 <?php foreach($charges as $charge){
@@ -119,8 +119,10 @@
                 </tr>
             </tbody>
         </table>   
-    <div style="float: right!important;margin-right: auto;display: block;text-align: right;margin-right: 10px;">
-        <?php 
+        <table width="100%">
+        <tr>
+            <td width="85%">  NOTE:  For check payments, please make checks payable to <b>DON PEPE HENSON ENTERPRISES INC.</b></td>    
+            <td width="15%" style="text-align: right;font-size: ">  <?php 
             if($x == 1){
                 echo 'File Copy';
             }else if ($x == 2){
@@ -128,8 +130,11 @@
             }else{
                 echo 'Accounting Copy';
             }
-        ?>
-    </div>
+        ?></td>    
+        </tr>
+        </table>
+
+<br>
     <center><div style="border-top: 1px dashed black;height: 1px;width: 100%;text-align: center!important;margin-left: auto;margin-right: auto;display: block;margin-top: 5px;margin-bottom: 5px;"></div></center>
     </div>
     <!-- End -->   
