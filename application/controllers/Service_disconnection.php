@@ -59,17 +59,27 @@ class Service_disconnection extends CORE_Controller {
                 $connection_id = $this->input->post('connection_id',TRUE);
                 $consumption = $this->get_numeric_value($this->input->post('consumption',TRUE));
 
-                
+                $current = date('Y-m',strtotime($this->input->post('service_date',TRUE)));
+                $due_date = date('Y-m-d',strtotime($current.'-15'));
+                $service_date = date('Y-m-d',strtotime($this->input->post('service_date',TRUE)));
+                $penalty_amount = 0;
 
-                $response['data']=$m_disconnection->get_disconnection_rate($connection_id,$consumption);
+                $meter = $m_disconnection->get_disconnection_rate($connection_id,$consumption);
+                if($due_date < $service_date){
 
-                $response['penalty']=$ 
+                    if (count($meter) > 0){
+                        $response['penalty']=$meter[0]->penalty_amount;
+                    }else{
+                        $response['penalty']=$penalty_amount;
+                    }
 
+                }else{
+                    $response['penalty']=$penalty_amount;
+                }
 
+                $response['data'] = $meter;
                 echo json_encode($response);
                 break;
-
-
 
             case 'accounts':
                 $customer_id = $this->input->get('customer_id',TRUE);

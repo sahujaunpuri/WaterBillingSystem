@@ -770,7 +770,14 @@ $(document).ready(function(){
                  $('input[name="total_consumption"]').val(accounting.formatNumber(total_consumption,0));
                  // GET DETAILS
                     getLatestReadingAmount(total_consumption).done(function(response){
+
+                        $('input[name="arrears_penalty_amount"]').val(0.00);
                         var rate=response.data[0];
+                        var penalty_amount=response.penalty;
+                        var arrears_penalty = parseFloat(accounting.unformat($('input[name="arrears_penalty_amount"]').val()));
+                        var total_penalty_amount = penalty_amount + arrears_penalty
+
+                        $('input[name="arrears_penalty_amount"]').val(accounting.formatNumber(total_penalty_amount,2));
                         $('input[name="meter_amount_due"]').val(accounting.formatNumber(rate.amount_due,2));
                         $('input[name="default_matrix_id"]').val(rate.default_matrix_id);
                         $('input[name="rate_amount"]').val(rate.rate);
@@ -862,7 +869,7 @@ $(document).ready(function(){
             "dataType":"json",
             "type":"POST",
             "url":"Service_disconnection/transaction/get-latest-reading-amount",
-            "data":{connection_id : _connection_id_get, consumption : consumption_get}
+            "data":{connection_id : _connection_id_get, consumption : consumption_get, service_date : $('input[name="service_date"]').val()}
         });
     };
 
