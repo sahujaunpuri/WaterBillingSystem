@@ -8,7 +8,7 @@ class Meter_reading_period_model extends CORE_Model {
         parent::__construct();
     }
 
-    function get_meter_reading_for_inputs($before_date,$connection_id=null){
+    function get_meter_reading_for_inputs($before_date=null,$connection_id=null){
         $sql='SELECT
 			main.connection_id,
 			sc.account_no,
@@ -61,8 +61,8 @@ class Meter_reading_period_model extends CORE_Model {
 			WHERE scr.is_active= TRUE AND scr.is_deleted = FALSE )
 			 as main
 			 
-			 
-			WHERE applicable_month < DATE("'.$before_date.'")
+			 '.($before_date==null?'':'WHERE applicable_month < DATE("'.$before_date.'")').'
+			
 			ORDER BY connection_id ASC,applicable_month ASC)  as n
 
 			LEFT OUTER JOIN 
@@ -108,7 +108,7 @@ class Meter_reading_period_model extends CORE_Model {
 			WHERE scr.is_active= TRUE AND scr.is_deleted = FALSE )
 			 as main
 			 
-			WHERE applicable_month < DATE("'.$before_date.'")
+			'.($before_date==null?'':'WHERE applicable_month < DATE("'.$before_date.'")').'
 			ORDER BY connection_id ASC,applicable_month ASC) as o
 
 			on (n.connection_id = o.connection_id and n.applicable_month < o.applicable_month)

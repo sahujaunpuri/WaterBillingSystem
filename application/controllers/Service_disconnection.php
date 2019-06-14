@@ -91,28 +91,30 @@ class Service_disconnection extends CORE_Controller {
                 $connection_id = $this->input->post('connection_id',TRUE);
                 $before_date = date('Y-m-d',strtotime($this->input->post('service_date',TRUE)));
 
-                $get_meter_reading_for_inputs = $this->Meter_reading_period_model->get_meter_reading_for_inputs($before_date,$connection_id);
-                
+                $get_meter_reading_for_inputs = $this->Meter_reading_period_model->get_meter_reading_for_inputs(null,$connection_id);
                 $previous_month = $get_meter_reading_for_inputs[0]->previous_month;
                 $previous_billing_info = $this->Service_disconnection_model->previous_billing_info($connection_id,$previous_month);
                 $arrears_penalty_amount=0;
                 $arrears_amount = 0;
-
                 if(count($previous_billing_info) > 0){
-                    $check_previous_billing_if_paid = $this->Service_disconnection_model->check_previous_billing_if_paid($previous_billing_info[0]->billing_id);
-                    // print_r($check_previous_billing_if_paid);
-
-                    $check_billing_date = $check_previous_billing_if_paid[0]->meter_reading_year.'-'.str_pad($check_previous_billing_if_paid[0]->month_id, 2, 0,STR_PAD_LEFT);
-                    $check_before_date = date('Y-m',strtotime($before_date));
-                    if($check_billing_date != $check_before_date){ // CHECK IF IT ALREADY HAS A BILLING FOR THE SAME MONTH
-                        if($check_previous_billing_if_paid[0]->amount_due > 0){
-                            $get_penalty_for_last_billing = $this->Billing_model->get_list($check_previous_billing_if_paid[0]->billing_id,'penalty_amount')[0];
-                            $arrears_penalty_amount = $get_penalty_for_last_billing->penalty_amount;
-                        }
+                    if($previous_billing_info[0]->billing_id == '' || $previous_billing_info[0]->billing_id == null){
+                        $response['stat']='error';
+                        $response['title']='<b>Cannot Fetch Data!</b>';
+                        $response['msg']='Latest Meter Reading is still unprocessed.<br />';
+                        die(json_encode($response));
+                    }else{
+                        $check_previous_billing_if_paid = $this->Service_disconnection_model->check_previous_billing_if_paid($previous_billing_info[0]->billing_id);
+                        $check_billing_date = $check_previous_billing_if_paid[0]->meter_reading_year.'-'.str_pad($check_previous_billing_if_paid[0]->month_id, 2, 0,STR_PAD_LEFT);
+                        $check_before_date = date('Y-m',strtotime($before_date));
+                        // if($check_billing_date != $check_before_date){ // CHECK IF IT ALREADY HAS A BILLING FOR THE SAME MONTH
+                            if($check_previous_billing_if_paid[0]->amount_due > 0){
+                                $get_penalty_for_last_billing = $this->Billing_model->get_list($check_previous_billing_if_paid[0]->billing_id,'penalty_amount')[0];
+                                $arrears_penalty_amount = $get_penalty_for_last_billing->penalty_amount;
+                            }
+                        // }
+                        $arrears_amount_info = $this->Service_disconnection_model->arrears_amount_info($connection_id);
+                        $arrears_amount= $arrears_amount_info[0]->arrears_amount;
                     }
-
-                    $arrears_amount_info = $this->Service_disconnection_model->arrears_amount_info($connection_id);
-                    $arrears_amount= $arrears_amount_info[0]->arrears_amount;
                 }
 
                 $response['arrears_penalty_amount']= $arrears_penalty_amount;
@@ -133,6 +135,8 @@ class Service_disconnection extends CORE_Controller {
                         array('charges','charges.charge_id = other_charges_items.charge_id','left'))
 
                     );
+                $response['stat']='success'; // FOR STAT CHECKING
+
                 echo json_encode($response);
                 break;
 
