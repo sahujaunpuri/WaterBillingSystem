@@ -193,7 +193,7 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                             <div class="col-md-7">
                                 <select name="billing_meter_account_id" class="cbo_accounts" data-error-msg=" Meter Income Account is required." required>
                                     <?php foreach($accounts as $account){ ?>
-                                        <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->billing_meter_account_id==$account->account_id?'selected':''); ?> ><?php echo $account->account_title; ?></option>
                                     <?php } ?>
                                 </select>
                             <span class="help-block m-b-none">Please Choose a Default Income Account for Meter Charges. </span>
@@ -204,10 +204,21 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                             <div class="col-md-7">
                                 <select name="billing_penalty_account_id" class="cbo_accounts" data-error-msg="Meter Penalty Income Account is required." required>
                                     <?php foreach($accounts as $account){ ?>
-                                        <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->billing_penalty_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
                                     <?php } ?>
                                 </select>
                             <span class="help-block m-b-none">Please Choose a Default Income Account for Meter Charges Penalty. </span>
+                            </div><br>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> <b class="required"> * </b> Security Deposit Account :</label>
+                            <div class="col-md-7">
+                                <select name="billing_security_deposit_account_id" class="cbo_accounts" data-error-msg="Security Deposit Account is required." required>
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->billing_security_deposit_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+                            <span class="help-block m-b-none">Please Choose a Default Income Account for Security Deposits. </span>
                             </div><br>
                         </div>
                         <div class="form-group">

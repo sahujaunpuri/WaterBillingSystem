@@ -186,23 +186,32 @@
                                     <tr>
                                         <th>Receipt #</th>
                                         <th>Customer</th>
+                                        <th>Account No</th>
                                         <th>Method</th>
-                                        <th style="text-align: right;">Amount</th>
+                                        <th style="text-align: right;">Amount Payment</th>
+                                        <th style="text-align: right;">Deposit Payment</th>
+                                        <th style="text-align: right;">Total Payment</th>
+                                        <th style="text-align: right;">Refund</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <?php $total_batch = 0; 
+                                    <?php $total_batch = 0;  $total_refund = 0;
                                     foreach ($billing_payments_info as $binfo) { ?>
                                         <tr>
                                             <td><?php echo $binfo->receipt_no ?></td>
                                             <td><?php echo $binfo->customer_name ?></td>
+                                            <td><?php echo $binfo->account_no ?></td>
                                             <td><?php echo $binfo->payment_method ?></td>
+                                            <td style="text-align: right;"><?php echo number_format($binfo->total_payment_amount,2) ?></td>
+                                            <td style="text-align: right;"><?php echo number_format($binfo->total_deposit_amount,2) ?></td>
                                             <td style="text-align: right;"><?php echo number_format($binfo->total_paid_amount,2) ?></td>
+                                            <td style="text-align: right;"><?php if($binfo->is_refund == TRUE){ echo number_format($binfo->remaining_deposit,2); $total_refund += $binfo->remaining_deposit; }else { echo '0.00'; } ; ?> </td>
                                         </tr>
                                     <?php $total_batch += $binfo->total_paid_amount; } ?>
-                                    <<tr>
-                                        <td colspan="3" style="text-align: right;"><b>Total:</b></td>
+                                    <tr>
+                                        <td colspan="6" style="text-align: right;"><b>Total:</b></td>
                                         <td style="text-align: right;"><b><?php echo number_format($total_batch,2) ?></b></td>
+                                        <td style="text-align: right;"><b><?php echo number_format($total_refund,2) ?></b></td>
                                     </tr>
                                     </tbody>
                                 </table>

@@ -106,7 +106,7 @@ class Service_disconnection_model extends CORE_Model {
 
                 LEFT JOIN meter_reading_input mri ON mri.meter_reading_input_id = mrii.meter_reading_input_id
                 LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = mri.meter_reading_period_id
-                INNER JOIN billing b ON b.meter_reading_input_id = mrii.meter_reading_input_id AND b.connection_id= mrii.connection_id
+                LEFT JOIN billing b ON b.meter_reading_input_id = mrii.meter_reading_input_id AND b.connection_id= mrii.connection_id
                 WHERE mrii.connection_id = ".$connection_id.") as main
                  WHERE main.current_month = '".$previous_month."'");
                         return $query->result();
@@ -134,7 +134,7 @@ class Service_disconnection_model extends CORE_Model {
             LEFT JOIN
             (SELECT 
             bpi.billing_id,
-            SUM(bpi.payment_amount) as paid_amount
+            (SUM(bpi.payment_amount) + SUM(bpi.deposit_payment)) as paid_amount
 
             FROM billing_payment_items bpi
             LEFT JOIN billing_payments bp on bp.billing_payment_id = bpi.billing_payment_id
