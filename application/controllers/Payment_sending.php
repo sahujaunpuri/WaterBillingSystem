@@ -97,7 +97,7 @@ class Payment_sending extends CORE_Controller {
                 $m_payment_batch->batch_total_paid_card = $this->get_numeric_value($batch_total_paid_card);
                 $m_payment_batch->batch_total_paid_deposit = $this->get_numeric_value($batch_total_paid_deposit);
                 $m_payment_batch->batch_total_deposit_refund = $this->get_numeric_value($batch_total_deposit_refund);
-
+                $m_payment_batch->set('date_created','NOW()'); 
 
 
                 $m_payment_batch->save();

@@ -75,6 +75,7 @@
                         </li>
                         <li class="<?php echo (in_array('22',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="fa fa-paper-plane "></i><span>Billing Transfer</span></a>
                             <ul class="acc-menu">
+                                <li class="<?php echo (in_array('22-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Connection_sending">Connection Deposits Sending</a></li>
                                 <li class="<?php echo (in_array('22-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_sending">Billing Sending</a></li>
                                 <li class="<?php echo (in_array('22-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Payment_sending">Payment Sending</a></li>
                             </ul>

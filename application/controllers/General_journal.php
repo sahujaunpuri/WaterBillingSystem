@@ -25,6 +25,7 @@ class General_journal extends CORE_Controller
                 'Trans_model',
                 'Adjustment_model',
                 'Issuance_department_model',
+                'Billing_connection_batch_model',
                 'Customer_type_model'
 
             )
@@ -69,6 +70,14 @@ class General_journal extends CORE_Controller
                 $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
+
+            case 'list-deposit-for-review':
+                $response['data']=$this->Billing_connection_batch_model->get_list(array('is_journal_posted'=>FALSE),
+                    '*,DATE_FORMAT(start_date,"%m/%d/%Y") as start_date,DATE_FORMAT(end_date,"%m/%d/%Y") as end_date'
+                    );
+                echo json_encode($response);
+                break;
+
             case 'get-entries':
                 $journal_id=$this->input->get('id');
                 $m_accounts=$this->Account_title_model;
@@ -181,6 +190,25 @@ class General_journal extends CORE_Controller
                 $m_trans->trans_key_id=8; //CRUD
                 $m_trans->trans_type_id=15; // TRANS TYPE
                 $m_trans->trans_log='Finalized Adjustment No. '.$adjustment[0]->adjustment_code.' For General Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
+                $m_trans->save();
+                //AUDIT TRAIL END
+                }
+
+                $service_connection_batch_id=$this->input->post('service_connection_batch_id',TRUE);
+                if($service_connection_batch_id!=null){
+                    $m_batch=$this->Billing_connection_batch_model;
+                    $m_batch->journal_id=$journal_id;
+                    $m_batch->is_journal_posted=TRUE;
+                    $m_batch->modify($service_connection_batch_id);
+
+                // AUDIT TRAIL START
+                $batch_info=$m_batch->get_list($service_connection_batch_id,'batch_code');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=8; //CRUD
+                $m_trans->trans_type_id=84; // TRANS TYPE
+                $m_trans->trans_log='Finalized Connection Deposit Batch No. '.$batch_info[0]->batch_code.' For General Journal Entry TXN-'.date('Ymd').'-'.$journal_id;
                 $m_trans->save();
                 //AUDIT TRAIL END
                 }
