@@ -27,11 +27,15 @@
             float: left;
         }
         td.details-control {
-            background: url('assets/img/Folder_Closed.png') no-repeat center center;
+            background: url('assets/img/print.png') no-repeat center center;
+            cursor: pointer;
+        }
+        td.details-control-refund {
+            background: url('assets/img/print-2.png') no-repeat center center;
             cursor: pointer;
         }
         tr.details td.details-control {
-            background: url('assets/img/Folder_Opened.png') no-repeat center center;
+            background: url('assets/img/print.png') no-repeat center center;
         }
 
         .child_table{
@@ -184,6 +188,7 @@
                                             <table id="tbl_payments" class="table table-striped" cellspacing="0" width="100%">
                                                 <thead class="">
                                                 <tr>
+                                                    <th></th>
                                                     <th></th>
                                                     <th>Receipt #</th>
                                                     <th>Customer</th>
@@ -571,6 +576,7 @@
                 allowClear: false
             });
 
+            _cboReceiptType.select2('val',2);
             _cboPaymentMethod = $('#cbo_payment_method').select2({
                 placeholder: "Please select receipt type.",
                 minimumResultsForSearch: -1,
@@ -586,7 +592,7 @@
             dt=$('#tbl_payments').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
-                "order": [[ 10, "desc" ]],
+                "order": [[ 11, "desc" ]],
                 oLanguage: {
                         sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
                 },
@@ -605,20 +611,32 @@
                 "columns": [
                     {
                         "targets": [0],
-                        "class":          "details-control hidden",
+                        "class":          "details-control",
                         "orderable":      false,
                         "data":           null,
                         "defaultContent": ""
                     },
-                    { targets:[1],data: "receipt_no" },
-                    { targets:[2],data: "customer_name" },
-                    { targets:[3],data: "account_no" },
-                    { targets:[4],data: "payment_method" },
-                    { targets:[5],data: "posted_by_user" },
-                    { targets:[6],data: "date_paid" },
-                    { targets:[7],data: "total_paid_amount" },
                     {
-                        targets:[8],data: "is_active",
+                        targets:[10],data: "is_refund",
+                        render: function (data, type, full, meta){
+                            if(data=="1"){
+                                return '<center><button type="button" class="btn btn-default btn_refund" title="Print Refund AR"><i class="fa fa-print"></i></button></center>';
+                            } else {
+                                return '';
+                            }
+
+                            
+                        }
+                    },
+                    { targets:[2],data: "receipt_no" },
+                    { targets:[3],data: "customer_name" },
+                    { targets:[4],data: "account_no" },
+                    { targets:[5],data: "payment_method" },
+                    { targets:[6],data: "posted_by_user" },
+                    { targets:[7],data: "date_paid" },
+                    { targets:[8],data: "total_paid_amount" },
+                    {
+                        targets:[9],data: "is_active",
                         render: function (data, type, full, meta){
                             if(data=="1"){
                                 _attribute='class="fa fa-check" style="color:#4caf50;font-size:30px;"';
@@ -629,7 +647,7 @@
                         }
                     },
                     {
-                        targets:[9],data: "is_active",
+                        targets:[10],data: "is_active",
                         render: function (data, type, full, meta){
                             if(data=="1"){
                                 return '<center><button type="button" class="btn btn-default btn_cancel_or"><i class="fa fa-times-circle"></i></button></center>';
@@ -641,7 +659,7 @@
                         }
 
                     },
-                    { targets:[10],data: "billing_payment_id", visible:false },
+                    { targets:[11],data: "billing_payment_id", visible:false },
 
                 ]
             });
@@ -690,25 +708,29 @@
                 else {
                     tr.addClass( 'details' );
                     var d=row.data();
-
-                    console.log(d);
-
-                    $.ajax({
-                        "dataType":"html",
-                        "type":"POST",
-                        "url":"Templates/layout/po/" + d.purchase_order_id,
-                        "beforeSend" : function(){
-                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
-                        }
-                    }).done(function(response){
-                        row.child( response,'no-padding' ).show();
-                        // Add to the 'open' array
-                        if ( idx === -1 ) {
-                            detailRows.push( tr.attr('id') );
-                        }
-                    });
+                    window.open('Billing_payments/transaction/billing-payment-print/'+ d.billing_payment_id);
                 }
             });
+
+
+            // $('#tbl_payments tbody').on( 'click', 'tr td.details-control-refund', function () {
+            //     var tr = $(this).closest('tr');
+            //     var row = dt.row( tr );
+            //     var idx = $.inArray( tr.attr('id'), detailRows );
+
+            //     if ( row.child.isShown() ) {
+            //         tr.removeClass( 'details' );
+            //         row.child.hide();
+
+            //         // Remove from the 'open' array
+            //         detailRows.splice( idx, 1 );
+            //     }
+            //     else {
+            //         tr.addClass( 'details' );
+            //         var d=row.data();
+            //         window.open('Billing_payments/transaction/billing-payment-print-refund/'+ d.billing_payment_id);
+            //     }
+            // });
 
 
             $('#btn_new').click(function(){
@@ -851,6 +873,12 @@
                 var d=dt.row(_selectRowObj).data();
                 _selectedID= d.billing_payment_id;
                 $('#modal_confirmation').modal('show');
+            });
+
+            $('#tbl_payments > tbody').on('click','button.btn_refund',function(e){
+                _selectRowObj=$(this).closest('tr');
+                var d=dt.row(_selectRowObj).data();
+                window.open('Billing_payments/transaction/billing-payment-print-refund/'+ d.billing_payment_id);
             });
 
             $('#tbl_items > tbody').on('click','button.btn_set_amount',function(e){

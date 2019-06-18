@@ -14,6 +14,7 @@ class Billing_payments extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Service_connection_model');
+        $this->load->model('Company_model');
         $this->load->model('Billing_payments_model');
         $this->load->model('Billing_payment_items_model');
         $this->load->model('Payment_method_model');
@@ -74,6 +75,28 @@ class Billing_payments extends CORE_Controller
                 echo json_encode($response);
             break;
     
+
+        
+            case 'billing-payment-print':
+                $info= $this->response_rows($filter_value)[0];
+                $data['num_words']=$this->convertDecimalToWords($info->total_payment_amount);
+                $data['info'] =$info;
+                $m_company_info=$this->Company_model;
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+                echo $this->load->view('template/billing_payment_print_content',$data,TRUE); 
+            break;
+
+            case 'billing-payment-print-refund':
+                $info= $this->response_rows($filter_value)[0];
+                $data['num_words']=$this->convertDecimalToWords($info->remaining_deposit);
+                $data['info'] =$info;
+                $m_company_info=$this->Company_model;
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+                echo $this->load->view('template/billing_payment_print_refund_content',$data,TRUE); 
+            break;
+
 
 
             case 'create':
@@ -243,6 +266,7 @@ class Billing_payments extends CORE_Controller
             //fields
             array(
                 'billing_payments.*',
+                'meter_inventory.serial_no',
                 'DATE_FORMAT(billing_payments.date_paid,"%m/%d/%Y")as date_paid',
                 'FORMAT(billing_payments.total_paid_amount,2)as total_paid_amount',
                 'payment_methods.payment_method',
@@ -254,6 +278,7 @@ class Billing_payments extends CORE_Controller
             array(
                 array('user_accounts','user_accounts.user_id=billing_payments.created_by_user','left'),
                 array('service_connection','service_connection.connection_id=billing_payments.connection_id','left'),
+                array('meter_inventory','meter_inventory.meter_inventory_id=service_connection.meter_inventory_id','left'),
                 array('customers','customers.customer_id=service_connection.customer_id','left'),
                 array('payment_methods','payment_methods.payment_method_id=billing_payments.payment_method_id','left')
             ),
