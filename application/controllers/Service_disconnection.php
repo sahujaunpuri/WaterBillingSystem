@@ -252,6 +252,7 @@ class Service_disconnection extends CORE_Controller {
                 }
 
                 $m_disconnection->grand_total_amount =   $this->get_numeric_value($total_charges) + $this->get_numeric_value($meter_amount_due) + $this->get_numeric_value($arrears_penalty_amount);
+                $m_disconnection->charges_amount =   $this->get_numeric_value($total_charges);
                 $m_disconnection->modify($disconnection_id);
                 $response['title']='Success!';
                 $response['stat']='success';
@@ -321,11 +322,12 @@ class Service_disconnection extends CORE_Controller {
                 
                 $total_charges = 0;
                 $disconnection_charges_info = $this->Service_disconnection_charges_model->get_list(array('disconnection_id'=>$disconnection_id));
-                foreach ($disconnection_charges_info as $$cinfo) {
+                foreach ($disconnection_charges_info as $cinfo) {
                    $total_charges+= $cinfo->charge_line_total;
                 }
                 $m_disconnection->arrears_penalty_amount= $arrears_penalty_amount;
                 $m_disconnection->grand_total_amount =  $this->get_numeric_value($total_charges) + $this->get_numeric_value($meter_amount_due) + $this->get_numeric_value($arrears_penalty_amount);
+                $m_disconnection->charges_amount =   $this->get_numeric_value($total_charges);
                 $m_disconnection->modify($disconnection_id);   
 
                 $response['title']='Success!';
