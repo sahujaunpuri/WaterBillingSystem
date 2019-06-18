@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Customer Subsidiary Report</title>
+    <link rel="icon" href="<?php echo base_url('assets/img/companyico.ico'); ?>" type="image/ico" sizes="16x16">
 	<style type="text/css">
         body {
             font-family: 'Calibri',sans-serif;

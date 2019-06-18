@@ -12,6 +12,54 @@ class Billing_model extends CORE_Model{
         parent::__construct();
     }
 
+    function get_customer_billing_subsidiary($connection_id,$startDate,$endDate){
+    	$this->db->query("SET @balance:=0.00;");
+    	$sql="SELECT 
+				    main.*,
+				    CONVERT( (@balance:=@balance + (main.fee - main.payment)) , DECIMAL (20 , 2 )) AS balance
+				FROM
+				    (SELECT 
+				        b.control_no AS ref_no,
+				        CONCAT('Billing Statement (','',m.month_name,' ',mrp.meter_reading_year,')') as transaction,
+				            DATE_FORMAT(b.date_processed, '%m/%d/%Y') AS date_txn,
+				            b.grand_total_amount AS fee,
+				            0 AS payment
+				    FROM
+				        billing b
+				        LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = b.meter_reading_period_id
+				        LEFT JOIN months m ON m.month_id = mrp.month_id
+				    WHERE
+				        b.connection_id = $connection_id
+				            AND b.date_processed BETWEEN '$startDate' AND '$endDate' UNION ALL SELECT 
+				        bp.receipt_no AS ref_no,
+				        'Payment' as transaction,
+				            DATE_FORMAT(bp.date_paid, '%m/%d/%Y') AS date_txn,
+				            0 AS fee,
+				            bp.total_paid_amount AS payment
+				    FROM
+				        billing_payments bp
+				    WHERE
+				        bp.connection_id = $connection_id
+				            AND bp.is_active = TRUE
+				            AND bp.is_deleted = FALSE
+				            AND bp.date_paid BETWEEN '$startDate' AND '$endDate' UNION ALL SELECT 
+				        sd.disconnection_code AS ref_no,
+				        'Service Disconnection' as transaction,
+				            sd.service_date AS date_txn,
+				            sd.grand_total_amount AS fee,
+				            0 AS payment
+				    FROM
+				        service_disconnection sd
+				    WHERE
+				        sd.connection_id = $connection_id
+				            AND sd.is_active = TRUE
+				            AND sd.is_deleted = FALSE
+				            AND sd.service_date BETWEEN '$startDate' AND '$endDate') main
+				ORDER BY main.date_txn ASC";
+		return $this->db->query($sql)->result();
+    }
+
+
     function billing_statement($period_id=null,$meter_reading_input_id=null,$customer_id=null,$billing_id=null){
     	$query = $this->db->query("SELECT 
     		billing.*,

@@ -118,7 +118,8 @@ class Rights_link_model extends CORE_Model{
                                           (109,'21','21-2','Consumption History'),
                                           (110,'21','21-3','Billing Statement'),
                                           (111,'22','22-1','Billing Sending'),
-                                          (112,'22','22-2','Payment Sending')
+                                          (112,'22','22-2','Payment Sending'),
+                                          (113,'21','21-4','Customer Billing Subsidiary')
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
                                           rights_links.link_code=VALUES(rights_links.link_code),
