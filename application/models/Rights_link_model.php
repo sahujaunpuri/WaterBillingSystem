@@ -121,7 +121,8 @@ class Rights_link_model extends CORE_Model{
                                           (112,'22','22-2','Payment Sending'),
                                           (113,'21','21-4','Customer Billing Subsidiary'),
                                           (114,'21','21-5','Batch Payment Report'),
-                                          (115,'22','22-3','Connection Deposits Sending')
+                                          (115,'22','22-3','Connection Deposits Sending'),
+                                          (116,'21','21-6','Batch Connection Deposits Report')
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
                                           rights_links.link_code=VALUES(rights_links.link_code),

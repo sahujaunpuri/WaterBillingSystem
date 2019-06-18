@@ -1222,7 +1222,10 @@
             $('#btn_yes').click(function(){
                 removeConnection().done(function(response){
                     showNotification(response);
-                    dt.row(_selectRowObj).remove().draw();
+                    if(response.stat == 'success'){
+                        dt.row(_selectRowObj).remove().draw();
+                    }
+                    
                 });
             });
 

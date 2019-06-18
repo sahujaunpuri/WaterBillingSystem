@@ -167,8 +167,16 @@ class ServiceConnection extends CORE_Controller {
                 $service_no = $connection[0]->service_no;
                 $customer_name = $connection[0]->customer_name;
                 $serial_no = $connection[0]->serial_no;
+                if($connection[0]->service_connection_batch_id > 0){
+                    $response['stat']='error';
+                    $response['title']='<b>Error!</b>';
+                    $response['msg']='Service Connection already sent in Accounting!<br />';
+                    die(json_encode($response));
+                }
 
                 $m_connection->is_deleted=1;
+
+
                 if($m_connection->modify($connection_id)){     
 
                     $response['title']='Success!';
