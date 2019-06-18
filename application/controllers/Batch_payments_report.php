@@ -24,7 +24,7 @@ class Batch_payments_report extends CORE_Controller {
 
         $data['batches'] = $this->Billing_payment_batch_model->get_list(null,'*,DATE_FORMAT(start_date,"%m/%d/%Y")as start_date,DATE_FORMAT(end_date,"%m/%d/%Y")as end_date');
 
-        (in_array('22-2',$this->session->user_rights)? 
+        (in_array('21-5',$this->session->user_rights)? 
         $this->load->view('batch_payment_report_view', $data)
         :redirect(base_url('dashboard')));
         

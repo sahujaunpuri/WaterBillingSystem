@@ -68,6 +68,9 @@
                                 <li class="<?php echo (in_array('21-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_consumption_history">Consumption History</a></li>
                                 <li class="<?php echo (in_array('21-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_statement">Billing Statement</a></li>
                                 <li class="<?php echo (in_array('21-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_billing_subsidiary">Customer Billing Subsidiary</a></li>
+                                <li class="<?php echo (in_array('21-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Batch_payments_report">Batch Payments Report</a></li>
+
+
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('22',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="fa fa-paper-plane "></i><span>Billing Transfer</span></a>
