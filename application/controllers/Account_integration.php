@@ -145,6 +145,9 @@ class Account_integration extends CORE_Controller
                 $m_integration->billing_penalty_account_id=$this->input->post('billing_penalty_account_id',TRUE);      
                 $m_integration->billing_department_id=$this->input->post('billing_department_id',TRUE);      
                 $m_integration->billing_customer_id=$this->input->post('billing_customer_id',TRUE);      
+                $m_integration->billing_security_deposit_account_id=$this->input->post('billing_security_deposit_account_id',TRUE);      
+
+                
                 $m_integration->modify(1);
 
                 $response['stat']="success";

@@ -20,7 +20,9 @@ class Service_disconnection extends CORE_Controller {
         $this->load->library('excel');
         $this->load->library('M_pdf');
         $this->load->model('Other_charge_model');        
-        $this->load->model('Billing_model');        
+        $this->load->model('Billing_model');
+        $this->load->model('Billing_payments_model');     
+
     }
 
     public function index() {
@@ -136,7 +138,7 @@ class Service_disconnection extends CORE_Controller {
 
                     );
                 $response['stat']='success'; // FOR STAT CHECKING
-
+                $response['deposit_info'] = $this->Billing_payments_model->get_account_with_allowable_deposit($connection_id);
                 echo json_encode($response);
                 break;
 
@@ -199,6 +201,7 @@ class Service_disconnection extends CORE_Controller {
                 $m_disconnection->last_meter_reading=$this->get_numeric_value($this->input->post('last_meter_reading',TRUE));
                 $m_disconnection->total_consumption=$this->get_numeric_value($this->input->post('total_consumption',TRUE));
                 $m_disconnection->arrears_amount=$this->get_numeric_value($this->input->post('arrears_amount',TRUE));
+                $m_disconnection->remaining_deposit=$this->get_numeric_value($this->input->post('remaining_deposit',TRUE));
             
                 $m_disconnection->meter_amount_due=$meter_amount_due;
                 $m_disconnection->arrears_penalty_amount= $arrears_penalty_amount;
@@ -314,7 +317,8 @@ class Service_disconnection extends CORE_Controller {
                 $m_disconnection->total_consumption=$this->get_numeric_value($this->input->post('total_consumption',TRUE));
                 $m_disconnection->meter_amount_due=$meter_amount_due;
                 $m_disconnection->arrears_amount=$this->get_numeric_value($this->input->post('arrears_amount',TRUE));
-
+                $m_disconnection->remaining_deposit=$this->get_numeric_value($this->input->post('remaining_deposit',TRUE));
+                
                 $total_charges = 0;
                 $disconnection_charges_info = $this->Service_disconnection_charges_model->get_list(array('disconnection_id'=>$disconnection_id));
                 foreach ($disconnection_charges_info as $$cinfo) {

@@ -20,6 +20,15 @@ class Billing_payment_batch_model extends CORE_Model {
 			FROM billing_payment_batch 
 
 			WHERE billing_payment_batch_id = $billing_payment_batch_id
+			UNION ALL
+			SELECT
+			(SELECT billing_security_deposit_account_id FROM account_integration) as account_id,
+			'' as memo,
+			(batch_total_deposit_refund + batch_total_paid_deposit) as dr_amount,
+			0 as cr_amount
+			FROM billing_payment_batch 
+
+			WHERE billing_payment_batch_id = $billing_payment_batch_id
 
 			UNION ALL 
 			SELECT
@@ -46,6 +55,15 @@ class Billing_payment_batch_model extends CORE_Model {
 			0 as dr_amount,
 			batch_total_paid_amount  as cr_amount FROM billing_payment_batch 
 			WHERE billing_payment_batch_id = $billing_payment_batch_id
+
+			UNION ALL
+			SELECT
+			(SELECT payment_from_customer_id FROM account_integration) as account_id,
+			'' as memo,
+			0 as dr_amount,
+			batch_total_deposit_refund  as cr_amount FROM billing_payment_batch 
+			WHERE billing_payment_batch_id = $billing_payment_batch_id
+
 
 			) main WHERE main.dr_amount > 0 or main.cr_amount > 0
 			";

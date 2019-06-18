@@ -271,7 +271,7 @@
                                     </div>
                                     <div class="col-lg-offset-1 col-lg-4">
                                         <div class="form-group" style="margin-bottom:0px;">
-                                            <label class=""><B class="required"> * </B> Last Meter Reading:</label>
+                                            <label class=""></label>
                                             <!-- <input type="text" name="last_meter_reading" class="number form-control" placeholder="Last Meter Reading" data-error-msg="Last Meter Reading is required!" required style="text-align: right;"> -->
                                         </div>
                                     </div>
@@ -334,20 +334,24 @@
                                 </div>
                                 
                                 <div class="row">
-                                <h4>Arrears</h4>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-3">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class="">Arrears as of Date:</label>
                                             <input type="text" name="arrears_amount" class="form-control numeric" placeholder="" readonly>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-lg-offset-4">
+                                    <div class="col-lg-3 col-lg-offset-1">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class="">Arrears Penalty:</label>
                                             <input type="text" name="arrears_penalty_amount" class="form-control numeric" placeholder="" readonly>
                                         </div>
                                     </div>
-
+                                    <div class="col-lg-3 col-lg-offset-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class="">Remaining Deposit: </label>
+                                            <input type="text" name="remaining_deposit" class="form-control numeric" placeholder="" readonly>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             </div>
@@ -595,6 +599,7 @@ $(document).ready(function(){
             $('input[name="customer_name"]').val(data.customer_name);
             $('textarea[name="address"]').val(data.address);
             $('input[name="previous_id"]').val(data.previous_id);
+            
 
             _connection_id_get = data.connection_id;
             getLatestReading(_connection_id_get).done(function(response){
@@ -611,13 +616,14 @@ $(document).ready(function(){
                 }else if (response.stat == 'success'){
                      
                     var latest=response.data[0];
-                    console.log(latest);
+                    var deposit_info = response.deposit_info[0];
+                    $('input[name="remaining_deposit"]').val(accounting.formatNumber(deposit_info.allowable_deposit,2));
                     $('input[name="previous_month"]').val(latest.previous_month);
                     $('input[name="previous_reading"]').val(latest.previous_reading);
                     $('input[name="last_meter_reading"]').val(0);
                     $('input[name="last_meter_reading"]').keyup();
-                    $('input[name="arrears_amount"]').val(response.arrears_amount);
-                    $('input[name="arrears_penalty_amount"]').val(response.arrears_penalty_amount);
+                    $('input[name="arrears_amount"]').val(accounting.formatNumber(response.arrears_amount,2));
+                    $('input[name="arrears_penalty_amount"]').val(accounting.formatNumber(response.arrears_penalty_amount,2));
                     _arrears_penalty =  response.arrears_penalty_amount;
                     $('#tbl_other_items > tbody').html('');
                     var rows=response.other_charges;
@@ -637,7 +643,7 @@ $(document).ready(function(){
 
                     reInitializeNumeric();  
                 }
-
+                reInitializeNumeric();  
             });
 
              

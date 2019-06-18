@@ -187,8 +187,8 @@
                                                     <th></th>
                                                     <th>Receipt #</th>
                                                     <th>Customer</th>
+                                                    <th width="20%">Account No</th>
                                                     <th>Method</th>
-                                                    <th width="20%">Remarks</th>
                                                     <th>Posted by</th>
                                                     <th>Date Paid</th>
                                                     <th>Amount</th>
@@ -612,8 +612,8 @@
                     },
                     { targets:[1],data: "receipt_no" },
                     { targets:[2],data: "customer_name" },
-                    { targets:[3],data: "payment_method" },
-                    { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
+                    { targets:[3],data: "account_no" },
+                    { targets:[4],data: "payment_method" },
                     { targets:[5],data: "posted_by_user" },
                     { targets:[6],data: "date_paid" },
                     { targets:[7],data: "total_paid_amount" },

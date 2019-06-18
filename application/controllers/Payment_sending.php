@@ -75,12 +75,17 @@ class Payment_sending extends CORE_Controller {
                 $payments=$this->response_rows($filter_value,$filter_active);
 
                 // PREPARE FOR TOTALS
-                $batch_total_paid_amount = 0; $batch_total_paid_cash = 0; $batch_total_paid_check = 0; $batch_total_paid_card = 0;
+                $batch_total_paid_amount = 0; $batch_total_paid_cash = 0; $batch_total_paid_check = 0; $batch_total_paid_card = 0; $batch_total_paid_deposit = 0; $batch_total_deposit_refund = 0;
                 foreach ($payments as $payment) {
-                    if($payment->payment_method_id == 1){  $batch_total_paid_cash += $this->get_numeric_value($payment->total_paid_amount);
-                    } else if($payment->payment_method_id == 2){  $batch_total_paid_check += $this->get_numeric_value($payment->total_paid_amount);
-                    }else if($payment->payment_method_id == 3){ $batch_total_paid_card  += $this->get_numeric_value($payment->total_paid_amount); }
+                    if($payment->payment_method_id == 1){  $batch_total_paid_cash += $this->get_numeric_value($payment->total_payment_amount);
+                    } else if($payment->payment_method_id == 2){  $batch_total_paid_check += $this->get_numeric_value($payment->total_payment_amount);
+                    }else if($payment->payment_method_id == 3){ $batch_total_paid_card  += $this->get_numeric_value($payment->total_payment_amount); }
                      $batch_total_paid_amount += $this->get_numeric_value($payment->total_paid_amount);
+                     $batch_total_paid_deposit += $this->get_numeric_value($payment->total_deposit_amount);
+                    if($payment->is_refund == TRUE){
+                       $batch_total_deposit_refund += $this->get_numeric_value($payment->remaining_deposit); 
+                    }
+
                 }
 
                 $m_payment_batch = $this->Billing_payment_batch_model;
@@ -90,10 +95,17 @@ class Payment_sending extends CORE_Controller {
                 $m_payment_batch->batch_total_paid_cash = $this->get_numeric_value($batch_total_paid_cash);
                 $m_payment_batch->batch_total_paid_check = $this->get_numeric_value($batch_total_paid_check);
                 $m_payment_batch->batch_total_paid_card = $this->get_numeric_value($batch_total_paid_card);
+                $m_payment_batch->batch_total_paid_deposit = $this->get_numeric_value($batch_total_paid_deposit);
+                $m_payment_batch->batch_total_deposit_refund = $this->get_numeric_value($batch_total_deposit_refund);
+
+
+
                 $m_payment_batch->save();
 
                 $billing_payment_batch_id = $m_payment_batch->last_insert_id();
                 $m_payment_batch->batch_code = 'BATCH-PAYMENT-'.$billing_payment_batch_id;
+                $m_payment_batch->posted_by_user_id = $this->session->user_id;
+
                 $m_payment_batch->modify($billing_payment_batch_id);
                 $m_billing_payments = $this->Billing_payments_model;
                 foreach ($payments as $payment) { // MODIFY PAYMENTS 
@@ -148,7 +160,7 @@ class Payment_sending extends CORE_Controller {
                 );
                 $data['entries']=$this->Billing_payment_batch_model->get_journal_entries($billing_payment_batch_id);
                 $data['billing_payments_info']=$this->Billing_payments_model->get_list(array('billing_payment_batch_id'=>$billing_payment_batch_id),
-                    'billing_payments.*,payment_methods.payment_method,customers.customer_name',
+                    'billing_payments.*,payment_methods.payment_method,customers.customer_name,service_connection.account_no',
                     array(array('payment_methods','payment_methods.payment_method_id = billing_payments.payment_method_id','left'),
                         array('service_connection','service_connection.connection_id = billing_payments.connection_id','left'),
                         array('customers', 'customers.customer_id= service_connection.customer_id','left')

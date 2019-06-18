@@ -89,6 +89,10 @@
           <td colspan="2">Note:</td>
           <td colspan="4"><?php echo $dis_info->disconnection_notes; ?></td>
       </tr>
+      <tr>
+          <td colspan="1">Remaining Deposit:</td>
+          <td colspan="5" ><b><?php echo number_format($dis_info->remaining_deposit,2); ?></b></td>
+      </tr>
     </table>
    <table width="100%" style="font-family: tahoma;font-size: 11;border: 0px!important;" class="table table-bordered tbl_service_disconnection" border="0">
         <?php 
