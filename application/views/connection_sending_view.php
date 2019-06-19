@@ -120,7 +120,7 @@
                                                         <input type="text"  class="form-control date-picker" id="end_date" value="<?php echo date("m/d/Y"); ?>">
                                                     </div>
                                                     <div class="col-lg-4"><br><br>
-                                                        <button type="button" class="btn btn-primary" id="sent_to_accounting" style="width: 100%;">
+                                                        <button type="button" class="btn btn-primary btn_sending_connection_deposits" id="sent_to_accounting" style="width: 100%;">
                                                             <i class="fa fa-send"></i> Send to Accounting
                                                         </button>
                                                     </div>
@@ -129,15 +129,7 @@
                                                         <input type="text" id="searchbox_connections" class="form-control">
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-lg-4">
-                                                        <label> Batch No :</label> <br />
-                                                    </div>
-
-                                                    <div class="col-lg-offset-1 col-lg-3">
-                                                       
-                                                    </div>
-                                                </div><br>
+                                                <br />
                                                 <table id="tbl_connection" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
@@ -214,6 +206,7 @@
 <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
 <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 
+<?php echo $_rights; ?>
 <script>
 
 $(document).ready(function(){

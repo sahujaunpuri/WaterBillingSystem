@@ -175,7 +175,7 @@
                                             <div class="panel-body table-responsive">
                                                 <h2 class="h2-panel-heading"> Charges</h2><hr>
                                             <div class="row-panel">
-                                                <button class="btn btn-primary" id="btn_new" style="float: left; text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important;" data-toggle="modal" data-target="" data-placement="left" title="Create New Charge" ><i class="fa fa-plus"></i> Create New Charge</button>
+                                                <button class="btn btn-primary create_charges_management" id="btn_new" style="float: left; text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important;" data-toggle="modal" data-target="" data-placement="left" title="Create New Charge" ><i class="fa fa-plus"></i> Create New Charge</button>
                                                 <table id="tbl_charges" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                     <tr>    
@@ -402,6 +402,7 @@
     <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
     <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 
+    <?php echo $_rights; ?>
     <script>
 
 $(document).ready(function(){
@@ -427,10 +428,7 @@ $(document).ready(function(){
                 {
                     targets:[4],
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
-
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        return '<center>'+btn_edit_charges_management+'&nbsp;'+btn_trash_charges_management+'</center>';
                     }
                 },
                 { targets:[5],data: "charge_id", visible:false}

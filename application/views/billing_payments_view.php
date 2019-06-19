@@ -151,7 +151,7 @@
                                       <h2 class="h2-panel-heading">Billing Payments</h2><hr>   
                                         <div class="row">
                                             <div class="col-lg-3"><br>
-                                                <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Payment" ><i class="fa fa-plus"></i>  New Payment</button>
+                                                <button class="btn btn-primary create_billing_payment"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Payment" ><i class="fa fa-plus"></i>  New Payment</button>
                                             </div>
                                             <div class="col-lg-2">
                                                     From :<br />
@@ -534,6 +534,7 @@
 <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
 <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 
+<?php echo $_rights; ?>
 <script>
 
 
@@ -650,9 +651,9 @@
                         targets:[10],data: "is_active",
                         render: function (data, type, full, meta){
                             if(data=="1"){
-                                return '<center><button type="button" class="btn btn-default btn_cancel_or"><i class="fa fa-times-circle"></i></button></center>';
+                                return btn_cancel_billing_payment;
                             } else {
-                                return '<center><button type="button" class="btn btn-default btn_cancel_or" disabled><i class="fa fa-times-circle"></i></button></center>';
+                                return btn_cancel_billing_payment_disabled;
                             }
 
                             

@@ -112,7 +112,7 @@
                                         <div class="panel-body table-responsive" style="padding-left: 1px!important;border-top-color:transparent!important;">
                                             <div class="row">
                                                 <div class="col-sm-3">
-                                                    <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Matrix" ><i class="fa fa-plus"></i> New Matrix</button>
+                                                    <button class="btn btn-primary create_commercial_rate" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Matrix" ><i class="fa fa-plus"></i> New Matrix</button>
                                                 </div>
                                                 <div class="col-sm-3">
                                                 </div>
@@ -280,6 +280,8 @@
 <script type="text/javascript" src="assets/plugins/zTree/jquery.ztree.core.js"></script>
 <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
 <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
+
+<?php echo $_rights; ?>
 <script>
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; 
@@ -306,10 +308,7 @@ $(document).ready(function(){
                 {
                     targets:[4],
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        return '<center>'+btn_edit_residential_rate+'&nbsp;'+btn_trash_residential_rate+'</center>';
                     }
                 }
             ]

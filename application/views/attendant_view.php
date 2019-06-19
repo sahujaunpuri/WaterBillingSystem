@@ -62,6 +62,9 @@
                 z-index: 999999;
             }
 
+            #tbl_attendant_filter{
+                display: none;
+            }
         </style>
 
     </head>
@@ -93,6 +96,15 @@
                                                 <div class="panel panel-default">
                                                     <div class="panel-body table-responsive">
                                                     <h2 class="h2-panel-heading">Attendant Management</h2><hr>
+                                                    <div class="row">
+                                                            <div class="col-lg-3"><br>
+                                                                    <button class="btn btn-primary create_attendant_management"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Attendant" ><i class="fa fa-plus"></i> New Attendant person</button>
+                                                            </div>
+                                                            <div class="col-lg-offset-6 col-lg-3">
+                                                                    Search :<br />
+                                                                     <input type="text" id="searchbox_attendant" class="form-control">
+                                                            </div>
+                                                    </div><br>
                                                         <table id="tbl_attendant" class="table table-striped" cellspacing="0" width="100%">
                                                             <thead class="">
                                                                 <tr>
@@ -271,6 +283,7 @@
     <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
     <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
+    <?php echo $_rights; ?>
     <script>
 
     $(document).ready(function(){
@@ -289,10 +302,7 @@
                     {
                         targets:[3],
                         render: function (data, type, full, meta){
-                            var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                            var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-
-                            return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                            return '<center>'+btn_edit_attendant_management+'&nbsp;'+btn_trash_attendant_management+'</center>';
                         }
                     },
                     { targets:[4],data: "attendant_id", visible:false},
@@ -305,16 +315,16 @@
             });
 
             _cboDepartment.select2('val',null);
-
-            var createToolBarButton=function(){
-                var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Attendant" >'+
-                    '<i class="fa fa-plus"></i> New Attendant person</button>';
-                $("div.toolbar").html(_btnNew);
-            }();
         }();
 
         var bindEventHandlers=(function(){
             var detailRows = [];
+
+            $("#searchbox_attendant").keyup(function(){         
+                dt
+                    .search(this.value)
+                    .draw();
+            });
 
             _cboDepartment.on('select2:select', function(){
                 if (_cboDepartment.val() == 0) {

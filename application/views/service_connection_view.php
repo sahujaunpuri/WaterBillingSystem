@@ -115,7 +115,7 @@
 
                                                          <div class="row">
                                                             <div class="col-lg-3"><br>
-                                                                    <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title="New Meter" ><i class="fa fa-plus"></i>  New Connection</button>
+                                                                    <button class="btn btn-primary create_service_connection" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title="New Meter" ><i class="fa fa-plus"></i>  New Connection</button>
                                                             </div>
                                                             <div class="col-lg-offset-3 col-lg-3" style="text-align: right;">
                                                             &nbsp;<br>
@@ -845,6 +845,8 @@
     <!-- numeric formatter -->
     <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
     <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
+
+    <?php echo $_rights;?>
     <script>
 
     $(document).ready(function(){
@@ -936,10 +938,7 @@
                     {
                         targets:[6],
                         render: function (data, type, full, meta){
-                            var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                            var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-
-                            return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                            return '<center>'+btn_edit_service_connection+'&nbsp;'+btn_trash_service_connection+'</center>';
                         }
                     },
                     { targets:[7],data: "connection_id", visible:false}

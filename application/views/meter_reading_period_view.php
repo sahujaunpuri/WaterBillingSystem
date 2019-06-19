@@ -96,7 +96,7 @@
 
                                                 <div class="row">
                                                     <div class="col-lg-3"><br>
-                                                        <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Period" ><i class="fa fa-plus"></i> New Period</button>
+                                                        <button class="btn btn-primary create_meter_reading_period"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Period" ><i class="fa fa-plus"></i> New Period</button>
                                                     </div>
                                                     <div class="col-lg-3 col-lg-offset-6">
                                                             Search :<br />
@@ -265,6 +265,8 @@
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+<?php echo $_rights; ?>
 <script>
 
 $(document).ready(function(){
@@ -288,11 +290,7 @@ $(document).ready(function(){
                 {
                     targets:[5],
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-                        var btn_close='<button class="btn btn-orange btn-sm" name="close_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Close"><i class="fa fa-close"></i> </button>';
-
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'&nbsp;'+btn_close+'</center>';
+                        return '<center>'+btn_edit_meter_reading_period+'&nbsp;'+btn_trash_meter_reading_period+'&nbsp;'+btn_close_meter_reading_period+'</center>';
                     }
                 }
             ]

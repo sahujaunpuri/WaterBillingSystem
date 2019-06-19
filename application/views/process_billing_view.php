@@ -131,7 +131,7 @@
                                                     </div>
                                                     <div class="col-lg-3">
                                                         <br>
-                                                        <button class="btn btn-primary" id="btn_process" style="width: 100%;">
+                                                        <button class="btn btn-primary btn_process_billing" id="btn_process" style="width: 100%;">
                                                             <i class="fa fa-check-circle"></i>
                                                             <span>Process</span>
                                                         </button>
@@ -202,6 +202,8 @@
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 <script src="assets/plugins/select2/select2.full.min.js"></script>
+
+<?php echo $_rights; ?>
 <script>
 
 $(document).ready(function(){

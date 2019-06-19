@@ -88,6 +88,9 @@
             background-color: transparent;
             border: 0;
         }
+        #tbl_meter_input_filter{
+                display: none;
+        }
     </style>
 </head>
 
@@ -104,7 +107,7 @@
     <li><a href="Dashboard">Dashboard</a></li>
     <li><a href="Meter_reading_input">Meter Reading Input</a></li>
 </ol>
-<div class="container-fluid"">
+<div class="container-fluid">
 <div data-widget-group="group1">
 <div class="row">
 <div class="col-md-12">
@@ -112,7 +115,16 @@
     <div class="panel panel-default">
         <div class="panel-body table-responsive">
             <div class="row panel-row">
-             <h2 class="h2-panel-heading">Meter Reading Input</h2><hr>           
+             <h2 class="h2-panel-heading">Meter Reading Input</h2><hr>
+             <div class="row">
+                <div class="col-lg-3"><br>
+                    <button class="btn btn-success create_meter_reading_entry" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;"  title="Record New Batch" ><i class="fa fa-plus"></i> Record New Batch</button>
+                </div>
+                <div class="col-lg-offset-6 col-lg-3">
+                    Search :<br />
+                     <input type="text" id="searchbox_reading" class="form-control">
+                </div>
+                </div><br>           
                 <table id="tbl_meter_input" class="table table-striped"  cellspacing="0" width="100%" style="">
                 <thead class="">
                 <tr>
@@ -294,6 +306,8 @@
 <!-- numeric formatter -->
 <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
 <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
+
+<?php echo $_rights; ?>
 <script>
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboPeriod; var meterins; var _meter_reading_input_id_for_validation;
@@ -336,9 +350,7 @@ $(document).ready(function(){
                 {
                     targets:[6],
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-                        return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
+                        return '<center>'+btn_edit_meter_reading_entry+"&nbsp;"+btn_trash_meter_reading_entry+'</center>';
                     }
                 },
                 { targets:[7],data: "meter_reading_input_id",visible:false },
@@ -360,12 +372,6 @@ $(document).ready(function(){
             calendarWeeks: true,
             autoclose: true
         });
-
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-success" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;"  title="Record New Batch" >'+
-                '<i class="fa fa-plus"></i> Record New Batch</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
 
         $('#custom-templates .typeahead').keypress(function(event){
             if (event.keyCode == 13) {
@@ -437,6 +443,12 @@ $(document).ready(function(){
     }();
     var bindEventHandlers=(function(){
         var detailRows = [];
+
+        $("#searchbox_reading").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
 
         $('#tbl_meter_input tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
