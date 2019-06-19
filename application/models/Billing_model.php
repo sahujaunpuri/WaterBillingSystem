@@ -31,6 +31,18 @@ class Billing_model extends CORE_Model{
 				    WHERE
 				        b.connection_id = $connection_id
 				            AND b.date_processed BETWEEN '$startDate' AND '$endDate' UNION ALL SELECT 
+				        sd.disconnection_code AS ref_no,
+				        'Service Disconnection' as transaction,
+				            DATE_FORMAT(sd.service_date, '%m/%d/%Y') AS date_txn,
+				            sd.grand_total_amount AS fee,
+				            0 AS payment
+				    FROM
+				        service_disconnection sd
+				    WHERE
+				        sd.connection_id = $connection_id
+				            AND sd.is_active = TRUE
+				            AND sd.is_deleted = FALSE
+				            AND sd.service_date BETWEEN '$startDate' AND '$endDate' UNION ALL SELECT 
 				        bp.receipt_no AS ref_no,
 				        'Payment' as transaction,
 				            DATE_FORMAT(bp.date_paid, '%m/%d/%Y') AS date_txn,
@@ -42,19 +54,7 @@ class Billing_model extends CORE_Model{
 				        bp.connection_id = $connection_id
 				            AND bp.is_active = TRUE
 				            AND bp.is_deleted = FALSE
-				            AND bp.date_paid BETWEEN '$startDate' AND '$endDate' UNION ALL SELECT 
-				        sd.disconnection_code AS ref_no,
-				        'Service Disconnection' as transaction,
-				            sd.service_date AS date_txn,
-				            sd.grand_total_amount AS fee,
-				            0 AS payment
-				    FROM
-				        service_disconnection sd
-				    WHERE
-				        sd.connection_id = $connection_id
-				            AND sd.is_active = TRUE
-				            AND sd.is_deleted = FALSE
-				            AND sd.service_date BETWEEN '$startDate' AND '$endDate') main
+				            AND bp.date_paid BETWEEN '$startDate' AND '$endDate' ) main
 				ORDER BY main.date_txn ASC";
 		return $this->db->query($sql)->result();
     }
