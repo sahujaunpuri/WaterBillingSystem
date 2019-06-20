@@ -527,7 +527,7 @@ $(document).ready(function(){
             });          
         });
 
-        _cboCustomer.on('change',function(){
+        _cboCustomer.on('select2:select',function(e){
             $('#tbl_account_list tbody').html('<tr><td colspan="5"><center><br/><br /><br /></center></td></tr>');
             dt_account.ajax.reload( null, false );
         });

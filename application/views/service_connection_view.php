@@ -1016,7 +1016,7 @@
                 $('#modal_meter_list').modal('show');
             });
 
-            _cboCustomer.on('change',function(){
+            _cboCustomer.on('select2:select',function(e){
                 var i=$(this).select2('val');
                 if(i==0){ //new customer
                     _cboCustomer.select2('val',null);
@@ -1039,7 +1039,7 @@
                 }
             });
 
-            _cboAttendant.on('change',function(){
+            _cboAttendant.on('select2:select',function(e){
                 var i=$(this).select2('val');
                 if(i==0){ //new attendant
 

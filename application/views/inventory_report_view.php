@@ -319,7 +319,7 @@
                 createToolBarButton();
             });
 
-            $('#cbo_department').on('change',function(){
+           _cboDepartment.on('select2:select',function(e){
                 dt.clear().draw();
                 dt.destroy();
                 reloadList();

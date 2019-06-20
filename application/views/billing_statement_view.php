@@ -409,7 +409,7 @@ $(document).ready(function(){
 
         });
 
-        _cboPeriod.on('change',function(){
+        _cboPeriod.on('select2:select',function(e){
             var i=$(this).select2('val');
             batches(i).done(function(response){
                 var rows = response.data;

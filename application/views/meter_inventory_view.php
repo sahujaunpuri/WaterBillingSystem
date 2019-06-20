@@ -337,7 +337,7 @@
         var bindEventHandlers=(function(){
             var detailRows = [];
 
-            _cboStatus.on('change',function(){
+            _cboStatus.on('select2:select',function(e){
                 $('#tbl_meter_inventory tbody').html('<tr><td colspan="6"><center><br/><br /><br /></center></td></tr>');
                 dt.ajax.reload( null, false );
             });
