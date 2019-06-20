@@ -314,6 +314,7 @@ $(document).ready(function(){
                 }).done(function(response){
                     showNotification(response);
                     if(response.stat == 'success'){
+                        $('#tbl_connection').DataTable().ajax.reload()
                     }
                 }).always(function(){
                     showSpinningProgress(btn);

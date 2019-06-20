@@ -29,7 +29,7 @@ class Connection_sending extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Billing to Accounting';    
 
-        (in_array('22-1',$this->session->user_rights)? 
+        (in_array('22-3',$this->session->user_rights)? 
         $this->load->view('connection_sending_view', $data)
         :redirect(base_url('dashboard')));
         

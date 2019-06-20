@@ -124,7 +124,7 @@ class Payment_sending extends CORE_Controller {
                 $m_trans->set('trans_date','NOW()');
                 $m_trans->trans_key_id=12; //CRUD
                 $m_trans->trans_type_id=83; // TRANS TYPE
-                $m_trans->trans_log='Transfered Billing Payments to Accounting: ('.$this->input->post('tsd').' to '.$this->input->post('ted').')';
+                $m_trans->trans_log='Transfered Billing Payments to Accounting: ('.$this->input->post('tsd').' to '.$this->input->post('ted').') ID('.$billing_payment_batch_id.')';
                 $m_trans->save();
 
                 echo json_encode($response);
