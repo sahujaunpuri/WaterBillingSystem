@@ -362,12 +362,14 @@ $(document).ready(function(){
 
         _cboMonth.on('select2:select',function(){
             now =$(this).val();
+            yearNow = _cboApplicableYear.val();
             $('#period_start').datepicker('setDate', new Date(yearNow, (now-2), 1));
             $('#period_end').datepicker('setDate', new Date(yearNow, (now-2)+1,0));
         });
 
         _cboApplicableYear.on('select2:select',function(){
             yearnow =$(this).val();
+            monthNow = _cboMonth.val();
             $('#period_start').datepicker('setDate', new Date(yearnow, (monthNow-2), 1));
             $('#period_end').datepicker('setDate', new Date(yearnow, (monthNow-2)+1,0));
         });
