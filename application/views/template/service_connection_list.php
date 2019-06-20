@@ -7,7 +7,10 @@
             font-family: 'Calibri',sans-serif;
             font-size: 12px;
         }
-
+        
+       @page {
+          size: A4 landscape;
+        }
         .align-right {
             text-align: right;
         }

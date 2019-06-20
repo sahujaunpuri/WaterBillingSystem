@@ -83,7 +83,7 @@ class Billing_model extends CORE_Model{
     	return $this->db->query($sql)->result();
     }
 
-    function get_customer_billing_subsidiary($connection_id,$startDate,$endDate){
+    function get_customer_billing_subsidiary($connection_id=null,$startDate,$endDate){
     	$this->db->query("SET @balance:=0.00;");
     	$sql="SELECT 
 				    main.*,
@@ -100,7 +100,7 @@ class Billing_model extends CORE_Model{
 				        LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = b.meter_reading_period_id
 				        LEFT JOIN months m ON m.month_id = mrp.month_id
 				    WHERE
-				        b.connection_id = $connection_id
+				        ".($connection_id==null?" b.connection_id=0":" b.connection_id=".$connection_id)."
 				            AND b.date_processed BETWEEN '$startDate' AND '$endDate' UNION ALL SELECT 
 				        sd.disconnection_code AS ref_no,
 				        'Service Disconnection' as transaction,
@@ -110,7 +110,7 @@ class Billing_model extends CORE_Model{
 				    FROM
 				        service_disconnection sd
 				    WHERE
-				        sd.connection_id = $connection_id
+				        ".($connection_id==null?" sd.connection_id=0":" sd.connection_id=".$connection_id)."
 				            AND sd.is_active = TRUE
 				            AND sd.is_deleted = FALSE
 				            AND sd.service_date BETWEEN '$startDate' AND '$endDate' UNION ALL SELECT 
@@ -122,7 +122,7 @@ class Billing_model extends CORE_Model{
 				    FROM
 				        billing_payments bp
 				    WHERE
-				        bp.connection_id = $connection_id
+				        ".($connection_id==null?" bp.connection_id=0":" bp.connection_id=".$connection_id)."
 				            AND bp.is_active = TRUE
 				            AND bp.is_deleted = FALSE
 				            AND bp.date_paid BETWEEN '$startDate' AND '$endDate' ) main

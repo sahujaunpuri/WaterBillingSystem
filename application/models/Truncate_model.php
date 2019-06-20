@@ -36,6 +36,8 @@ class Truncate_model extends CORE_Model{
                 (SELECT COUNT(*) FROM sales_order_items) as sales_order_items,
                 (SELECT COUNT(*) FROM sales_invoice) as sales_invoice,
                 (SELECT COUNT(*) FROM sales_invoice_items) as sales_invoice_items,
+                (SELECT COUNT(*) FROM dispatching_invoice) as dispatching_invoice,
+                (SELECT COUNT(*) FROM dispatching_invoice_items) as dispatching_invoice_items,
                 (SELECT COUNT(*) FROM service_invoice) as service_invoice,
                 (SELECT COUNT(*) FROM service_invoice_items) as service_invoice_items,
                 (SELECT COUNT(*) FROM adjustment_info) as adjustment_info,
@@ -71,13 +73,33 @@ class Truncate_model extends CORE_Model{
                 (SELECT COUNT(*) FROM user_accounts) as user_accounts,
                 (SELECT COUNT(*) FROM user_group_rights) as user_group_rights,
                 (SELECT COUNT(*) FROM user_groups) as user_groups,
-                (SELECT COUNT(*) FROM trans) as trans
-
-
-
-
-
-                ";
+                (SELECT COUNT(*) FROM trans) as trans,
+                (SELECT COUNT(*) FROM attendant) as attendant,
+                (SELECT COUNT(*) FROM billing_payments) as billing_payments,
+                (SELECT COUNT(*) FROM billing_payment_items) as billing_payment_items,
+                (SELECT COUNT(*) FROM billing_charges) as billing_charges,
+                (SELECT COUNT(*) FROM billing_payment_batch) as billing_payment_batch,
+                (SELECT COUNT(*) FROM billing) as billing,
+                (SELECT COUNT(*) FROM charges) as charges,
+                (SELECT COUNT(*) FROM charge_unit) as charge_unit,
+                (SELECT COUNT(*) FROM meter_reading_input) as meter_reading_input,
+                (SELECT COUNT(*) FROM meter_reading_input_items) as meter_reading_input_items,
+                (SELECT COUNT(*) FROM meter_reading_period) as meter_reading_period,
+                (SELECT COUNT(*) FROM other_charges) as other_charges,
+                (SELECT COUNT(*) FROM other_charges_items) as other_charges_items,
+                (SELECT COUNT(*) FROM service_reconnection) as service_reconnection,
+                (SELECT COUNT(*) FROM service_disconnection_charges) as service_disconnection_charges,
+                (SELECT COUNT(*) FROM service_disconnection) as service_disconnection,
+                (SELECT COUNT(*) FROM service_connection_batch) as service_connection_batch,
+                (SELECT COUNT(*) FROM service_connection) as service_connection,
+                (SELECT COUNT(*) FROM trans_services) as trans_services,
+                (SELECT COUNT(*) FROM meter_inventory) as meter_inventory,
+                (SELECT COUNT(*) FROM matrix_residential_items) as matrix_residential_items,
+                (SELECT COUNT(*) FROM matrix_residential) as matrix_residential,
+                (SELECT COUNT(*) FROM matrix_commercial_items) as matrix_commercial_items,
+                (SELECT COUNT(*) FROM matrix_commercial) as matrix_commercial,
+                (SELECT COUNT(*) FROM form_2307) as form_2307,
+                (SELECT COUNT(*) FROM form_2551m) as form_2551m";
         return $this->db->query($sql)->result();
     }
 

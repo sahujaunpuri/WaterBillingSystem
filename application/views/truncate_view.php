@@ -92,17 +92,54 @@
 
 <div class="tab-container tab-top tab-default">
 <ul class="nav nav-tabs">
-    <li class="active"><a href="#journals" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Journals</a></li>
+    <li class="active"><a href="#water_billing" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Water Billing</a></li>
+    <li class=""><a href="#journals" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Journals</a></li>
     <li class=""><a href="#invoices" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Invoices</a></li>
     <li class=""><a href="#payments" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Payments</a></li>
     <li class=""><a href="#references" data-toggle="tab"><i class="fa fa-folder-open-o"></i> References</a></li>
     <li class=""><a href="#masterfiles" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Masterfiles</a></li>    
     <li class=""><a href="#accounting" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Accounting</a></li>
     <li class=""><a href="#users" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Users</a></li>
+    <li class=""><a href="#bir" data-toggle="tab"><i class="fa fa-folder-open-o"></i> BIR</a></li>
     <li class=""><a href="#reset_defaults" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Reset Defaults</a></li>
 
 </ul>
 <div class="tab-content">
+
+    <div class="tab-pane active" id="water_billing" data-parent-id="" style="min-height: 300px;">
+        <form id="frm_waterbilling">
+        <input type="checkbox" id="selectall_waterbilling" class="css-checkbox"><label class="css-label " for="selectall_waterbilling">SELECT ALL WATER BILLING</label><br>
+            <input type="checkbox" name="waterbilling[]" value="meter_inventory" id="meter_inventory" class="css-checkbox"><label class="css-label " for="meter_inventory">Meter Inventory</label>(<?php echo $current_count->meter_inventory ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="matrix_residential" id="matrix_residential" class="css-checkbox"><label class="css-label " for="matrix_residential">Matrix Residential Info</label>(<?php echo $current_count->matrix_residential ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="matrix_residential_items" id="matrix_residential_items" class="css-checkbox"><label class="css-label " for="matrix_residential_items">Matrix Residential Items</label>(<?php echo $current_count->matrix_residential_items ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="matrix_commercial" id="matrix_commercial" class="css-checkbox"><label class="css-label " for="matrix_commercial">Matrix Commercial</label>(<?php echo $current_count->matrix_commercial ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="matrix_commercial_items" id="matrix_commercial_items" class="css-checkbox"><label class="css-label " for="matrix_commercial_items">Matrix Commercial Items</label>(<?php echo $current_count->matrix_commercial_items ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="meter_reading_period" id="meter_reading_period" class="css-checkbox"><label class="css-label " for="meter_reading_period">Meter Reading Period</label>(<?php echo $current_count->meter_reading_period ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="attendant" id="attendant" class="css-checkbox"><label class="css-label " for="attendant">Attendant Management</label>(<?php echo $current_count->attendant ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="service_connection" id="service_connection" class="css-checkbox"><label class="css-label " for="service_connection">Service Connection</label>(<?php echo $current_count->service_connection ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="service_connection_batch" id="service_connection_batch" class="css-checkbox"><label class="css-label " for="service_connection_batch">Service Connection Batch</label>(<?php echo $current_count->service_connection_batch ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="service_reconnection" id="service_reconnection" class="css-checkbox"><label class="css-label " for="service_reconnection">Service Reconnection</label>(<?php echo $current_count->service_reconnection ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="service_disconnection" id="service_disconnection" class="css-checkbox"><label class="css-label " for="service_disconnection">Service Disconnection</label>(<?php echo $current_count->service_disconnection ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="service_disconnection_charges" id="service_disconnection_charges" class="css-checkbox"><label class="css-label " for="service_disconnection_charges">Service Disconnection Charges</label>(<?php echo $current_count->service_disconnection_charges ?>)<br>
+
+            <input type="checkbox" name="waterbilling[]" value="charges" id="charges" class="css-checkbox"><label class="css-label " for="charges">Charges Management</label>(<?php echo $current_count->charges ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="charge_unit" id="charge_unit" class="css-checkbox"><label class="css-label " for="charge_unit">Charge Unit Management</label>(<?php echo $current_count->charge_unit ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="other_charges" id="other_charges" class="css-checkbox"><label class="css-label " for="other_charges">Other Charges Management</label>(<?php echo $current_count->other_charges ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="other_charges_items" id="other_charges_items" class="css-checkbox"><label class="css-label " for="other_charges_items">Other Charges Items</label>(<?php echo $current_count->other_charges_items ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="meter_reading_input" id="meter_reading_input" class="css-checkbox"><label class="css-label " for="meter_reading_input">Meter Reading Entry Info</label>(<?php echo $current_count->meter_reading_input ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="meter_reading_input_items" id="meter_reading_input_items" class="css-checkbox"><label class="css-label " for="meter_reading_input_items">Meter Reading Entry Items</label>(<?php echo $current_count->meter_reading_input_items ?>)<br>
+
+            <input type="checkbox" name="waterbilling[]" value="billing" id="billing" class="css-checkbox"><label class="css-label " for="billing">Billing</label>(<?php echo $current_count->billing ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="billing_charges" id="billing_charges" class="css-checkbox"><label class="css-label " for="billing_charges">Billing Charges</label>(<?php echo $current_count->billing_charges ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="billing_payments" id="billing_payments" class="css-checkbox"><label class="css-label " for="billing_payments">Billing Payments Info</label>(<?php echo $current_count->billing_payments ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="billing_payment_items" id="billing_payment_items" class="css-checkbox"><label class="css-label " for="billing_payment_items">Billing Payments Items</label>(<?php echo $current_count->billing_payment_items ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="billing_payment_batch" id="billing_payment_batch" class="css-checkbox"><label class="css-label " for="billing_payment_batch">Billing Payment Batch </label>(<?php echo $current_count->billing_payment_batch ?>)<br>
+            <input type="checkbox" name="waterbilling[]" value="trans_services" id="trans_services" class="css-checkbox"><label class="css-label " for="trans_services">Service Trail</label>(<?php echo $current_count->trans_services ?>)<br>
+        </form>
+        <button id="btn_waterbilling" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate Water Billing</button>
+    </div>
+
+
     <div class="tab-pane" id="accounting" data-parent-id="" style="min-height: 300px;">
         <form id="frm_accounting">
         <input type="checkbox" id="selectall_accounting" class="css-checkbox"><label class="css-label " for="selectall_accounting">SELECT ALL ACCOUNTING</label><br>
@@ -131,7 +168,7 @@
     </form>   
     <button id="btn_references" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate References</button>
     </div>
-    <div class="tab-pane active" id="journals" style="min-height: 300px;">
+    <div class="tab-pane" id="journals" style="min-height: 300px;">
     <input type="checkbox" id="selectall_journal" class="css-checkbox"><label class="css-label " for="selectall_journal">SELECT ALL JOURNALS</label><br>
         <form id="frm_journal">
 
@@ -166,6 +203,8 @@
         <input type="checkbox" name="invoice[]" value="sales_order_items" id="sales_order_items" class="css-checkbox"><label class="css-label " for="sales_order_items">Sales Order Items</label>(<?php echo $current_count->sales_order_items; ?>)<br>
         <input type="checkbox" name="invoice[]" value="sales_invoice" id="sales_invoice" class="css-checkbox"><label class="css-label " for="sales_invoice">Sales Invoice Info</label>(<?php echo $current_count->sales_invoice; ?>)<br>
         <input type="checkbox" name="invoice[]" value="sales_invoice_items" id="sales_invoice_items" class="css-checkbox"><label class="css-label " for="sales_invoice_items">Sales Invoice Items</label>(<?php echo $current_count->sales_invoice_items; ?>)<br>
+        <input type="checkbox" name="invoice[]" value="dispatching_invoice" id="dispatching_invoice" class="css-checkbox"><label class="css-label " for="dispatching_invoice">Dispatching Invoice Info</label>(<?php echo $current_count->dispatching_invoice; ?>)<br>
+        <input type="checkbox" name="invoice[]" value="dispatching_invoice_items" id="dispatching_invoice_items" class="css-checkbox"><label class="css-label " for="dispatching_invoice_items">Dispatching Invoice Items</label>(<?php echo $current_count->dispatching_invoice_items; ?>)<br>
         <input type="checkbox" name="invoice[]" value="service_invoice" id="service_invoice" class="css-checkbox"><label class="css-label " for="service_invoice">Service Invoice Info</label>(<?php echo $current_count->service_invoice; ?>)<br>
         <input type="checkbox" name="invoice[]" value="service_invoice_items" id="service_invoice_items" class="css-checkbox"><label class="css-label " for="service_invoice_items">Service Invoice Items</label>(<?php echo $current_count->service_invoice_items; ?>)<br>
         <input type="checkbox" name="invoice[]" value="adjustment_info" id="adjustment_info" class="css-checkbox"><label class="css-label " for="adjustment_info">Adjustments Info</label>(<?php echo $current_count->adjustment_info; ?>)<br>
@@ -209,6 +248,14 @@
         <input type="checkbox" name="users[]" value="user_group_rights" id="user_group_rights" class="css-checkbox"><label class="css-label " for="user_group_rights">User Group Rights</label>(<?php  echo $current_count->user_group_rights ?>)<br>
         </form>
          <button id="btn_users" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate Users</button>
+    </div>
+    <div class="tab-pane" id="bir" style="min-height: 300px;">
+    <input type="checkbox" id="selectall_bir" class="css-checkbox"><label class="css-label " for="selectall_bir">SELECT ALL BIR Form</label><br>
+        <form id="frm_bir">
+        <input type="checkbox" name="bir[]" value="form_2307" id="form_2307" class="css-checkbox"><label class="css-label " for="form_2307">BIR Form 2307</label>(<?php  echo $current_count->form_2307 ?>)<br>
+        <input type="checkbox" name="bir[]" value="form_2551m" id="form_2551m" class="css-checkbox"><label class="css-label " for="form_2551m">BIR FORM 2551M</label>(<?php  echo $current_count->form_2551m ?>)<br>
+        </form>
+         <button id="btn_bir" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Truncate BIR</button>
     </div>
     <div class="tab-pane" id="reset_defaults" style="min-height: 300px;">
          <button id="reset_default_coa" type="button" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Reset Chart of Accounts to Default</button> <br>

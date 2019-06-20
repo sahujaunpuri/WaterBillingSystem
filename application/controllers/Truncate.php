@@ -159,6 +159,26 @@ class Truncate extends CORE_Controller {
     function transaction($txn=null) {
         switch($txn) {
 
+            case 'truncate-bir':
+                $bir=$this->input->post('bir',TRUE);
+                for($i=0;$i<count($bir);$i++) { $this->db->truncate($bir[$i]); }    
+
+                $response['title']='Success!';
+                $response['stat']='success';
+                $response['msg']='BIR Forms Successfully Truncated.'; 
+                echo json_encode($response);
+            break;
+
+            case 'truncate-waterbilling':
+                $waterbilling=$this->input->post('waterbilling',TRUE);
+                for($i=0;$i<count($waterbilling);$i++) { $this->db->truncate($waterbilling[$i]); }    
+
+                $response['title']='Success!';
+                $response['stat']='success';
+                $response['msg']='Water Billing Successfully Truncated.'; 
+                echo json_encode($response);
+            break;
+
             case 'truncate-journal':
                 $journal=$this->input->post('journal',TRUE);
                 for($i=0;$i<count($journal);$i++) { $this->db->truncate($journal[$i]); }    
