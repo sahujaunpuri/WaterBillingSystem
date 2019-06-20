@@ -29,7 +29,7 @@
     table-td.right{
         border-left: 1px solid gray!important;
     }
-    #tbl_supplier thead tr th {
+    #tbl_masterfile thead tr th {
         border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;
     }
 </style>
@@ -47,13 +47,14 @@
         </tr>
     </table>
     <h2>Meter Inventory Masterfile</h2>
-        <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" id="tbl_supplier">
+        <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11pt;" id="tbl_masterfile">
             <thead>
             <tr>
                 <th>Meter Code</th>
                 <th>Serial No</th>
                 <th>Description</th>
                 <th>Current Assignee</th>
+                <th>Status</th>
             </tr>
             </thead>
             <tbody>
@@ -64,6 +65,7 @@
                 <td><?php echo $inventory->serial_no ?></td>
                 <td><?php echo $inventory->meter_description ?></td>
                 <td><?php echo $inventory->customer_name ?></td>
+                <td><?php echo $inventory->status_name; ?></td>
             </tr>
             <?php } ?>
 

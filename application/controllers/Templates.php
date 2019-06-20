@@ -5866,7 +5866,7 @@ class Templates extends CORE_Controller {
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('50');
                 //name the worksheet
-                $excel->getActiveSheet()->setTitle("ACCOUNT SUBSIDIARY REPORT");
+                $excel->getActiveSheet()->setTitle("CUSTOMER BILLING SUBSIDIARY");
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->mergeCells('A2:C2');
                 $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
@@ -5998,7 +5998,7 @@ class Templates extends CORE_Controller {
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('50');
                 //name the worksheet
-                $excel->getActiveSheet()->setTitle("ACCOUNT SUBSIDIARY REPORT");
+                $excel->getActiveSheet()->setTitle("CUSTOMER BILLING SUBSIDIARY");
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->mergeCells('A2:C2');
                 $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
@@ -6161,6 +6161,482 @@ class Templates extends CORE_Controller {
 
                 break;
 
+            case 'customer-billing-receivables' :
+                $type=$this->input->get('type',TRUE);
+                $type_id=$this->input->get('type_id',TRUE);
+
+                $m_company_info=$this->Company_model;
+                $m_billing=$this->Billing_model;
+
+                $receivables=$m_billing->get_customer_billing_receivables($type_id);
+                $company_info=$m_company_info->get_list();
+
+                $data['company_info']=$company_info[0];
+                $data['receivables']=$receivables;
+                $data['type_id']=$type_id;
+
+                if ($type == 'preview' || $type == null) {
+                    $pdf = $this->m_pdf->load("A4");
+                    $content=$this->load->view('template/customer_billing_receivables_report',$data,TRUE);
+                }
+
+                $pdf->setFooter('{PAGENO}');
+                $pdf->WriteHTML($content);
+                $pdf->Output();
+                break;
+
+            case 'customer-billing-receivables-export' :
+                $excel=$this->excel;
+                $type=$this->input->get('type',TRUE);
+                $type_id=$this->input->get('type_id',TRUE);
+
+                $m_company_info=$this->Company_model;
+                $m_billing=$this->Billing_model;
+
+                $receivables=$m_billing->get_customer_billing_receivables($type_id);
+                $company_info=$m_company_info->get_list();
+
+                $excel->setActiveSheetIndex(0);
+
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('50');
+                //name the worksheet
+                $excel->getActiveSheet()->setTitle("Customer Billing Receivable");
+                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->mergeCells('A2:C2');
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
+                                        ->setCellValue('A4',$company_info[0]->email_address);
+  
+
+                if ($type_id == 1){
+                    $excel->getActiveSheet()->mergeCells('A6:F6');
+                }else{
+                    $excel->getActiveSheet()->mergeCells('A6:E6'); 
+                }
+
+                $excel->getActiveSheet()->setCellValue('A6','CUSTOMER BILLING RECEIVABLE REPORT')
+                                        ->getStyle('A6')->getFont()->setBold(TRUE);
+
+                if ($type_id == 1){
+                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('30');
+                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('40');
+                    $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+
+                    $excel->getActiveSheet()
+                            ->getStyle('D')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('E')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('F')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()->setCellValue('A8','Account #')
+                                            ->getStyle('A8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('B8','Customer')
+                                            ->getStyle('B8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('C8','Address')
+                                            ->getStyle('C8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('D8','Fees')
+                                            ->getStyle('D8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('E8','Payments')
+                                            ->getStyle('E8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('F8','Balance')
+                                            ->getStyle('F8')->getFont()->setBold(TRUE);
+
+
+                }else{
+                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('30');
+                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('40');
+                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+
+                    $excel->getActiveSheet()
+                            ->getStyle('C')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('D')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('E')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()->setCellValue('A8','Customer')
+                                            ->getStyle('A8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('B8','Address')
+                                            ->getStyle('B8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('C8','Fees')
+                                            ->getStyle('C8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('D8','Payments')
+                                            ->getStyle('D8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('E8','Balance')
+                                            ->getStyle('E8')->getFont()->setBold(TRUE);
+                }
+
+
+                $total_receivable_amount = 0;
+                $i=9;
+
+                foreach ($receivables as $receivable){
+
+                    $total_receivable_amount += $receivable->balance;
+                    $excel->getActiveSheet()
+                            ->getStyle('D')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('E')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('F')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+
+                    if ($type_id == 1){
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$receivable->account_no);
+                        $excel->getActiveSheet()->setCellValue('B'.$i,$receivable->customer_name);
+                        $excel->getActiveSheet()->setCellValue('C'.$i,$receivable->address);
+                        $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('D'.$i,number_format($receivable->fee,2));
+                        $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('E'.$i,number_format($receivable->payment,2));
+                        $excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('F'.$i,number_format($receivable->balance,2))
+                                                ->getStyle('F'.$i)->getFont()->setBold(TRUE);
+                    }else{
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$receivable->customer_name);
+                        $excel->getActiveSheet()->setCellValue('B'.$i,$receivable->address);
+                        $excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('C'.$i,number_format($receivable->fee,2));
+                        $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('D'.$i,number_format($receivable->payment,2));
+                        $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('E'.$i,number_format($receivable->balance,2))
+                                                ->getStyle('E'.$i)->getFont()->setBold(TRUE);
+                    }
+    
+                    $i++;
+
+                }
+
+                $excel->getActiveSheet()
+                            ->getStyle('A'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                if($type_id == 1){
+                    $excel->getActiveSheet()->mergeCells('A'.$i.':E'.$i);
+                    $excel->getActiveSheet()->setCellValue('A'.$i,'Total:')
+                                            ->getStyle('A'.$i)->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                    $excel->getActiveSheet()->setCellValue('F'.$i,number_format($total_receivable_amount,2))
+                                            ->getStyle('F'.$i)->getFont()->setBold(TRUE);
+                }else{
+                    $excel->getActiveSheet()->mergeCells('A'.$i.':D'.$i);
+                    $excel->getActiveSheet()->setCellValue('A'.$i,'Total:')
+                                            ->getStyle('A'.$i)->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                    $excel->getActiveSheet()->setCellValue('E'.$i,number_format($total_receivable_amount,2))
+                                            ->getStyle('E'.$i)->getFont()->setBold(TRUE);
+                }
+
+                $filename = "CUSTOMER BILLING RECEIVABLE REPORT (".date('Y-m-d h:i:s').")";
+
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename='.$filename.".xlsx".'');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output'); 
+
+                break;
+
+            case 'customer-billing-receivables-email' :
+                $excel=$this->excel;
+                $m_email=$this->Email_settings_model;
+                $email=$m_email->get_list(2);
+
+                $type=$this->input->get('type',TRUE);
+                $type_id=$this->input->get('type_id',TRUE);
+
+                $m_company_info=$this->Company_model;
+                $m_billing=$this->Billing_model;
+
+                $receivables=$m_billing->get_customer_billing_receivables($type_id);
+                $company_info=$m_company_info->get_list();
+
+                ob_start();
+                $excel->setActiveSheetIndex(0);
+
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('50');
+                //name the worksheet
+                $excel->getActiveSheet()->setTitle("Customer Billing Receivable");
+                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->mergeCells('A2:C2');
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
+                                        ->setCellValue('A4',$company_info[0]->email_address);
+  
+
+                if ($type_id == 1){
+                    $excel->getActiveSheet()->mergeCells('A6:F6');
+                }else{
+                    $excel->getActiveSheet()->mergeCells('A6:E6'); 
+                }
+
+                $excel->getActiveSheet()->setCellValue('A6','CUSTOMER BILLING RECEIVABLE REPORT')
+                                        ->getStyle('A6')->getFont()->setBold(TRUE);
+
+                if ($type_id == 1){
+                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('30');
+                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('40');
+                    $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+
+                    $excel->getActiveSheet()
+                            ->getStyle('D')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('E')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('F')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()->setCellValue('A8','Account #')
+                                            ->getStyle('A8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('B8','Customer')
+                                            ->getStyle('B8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('C8','Address')
+                                            ->getStyle('C8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('D8','Fees')
+                                            ->getStyle('D8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('E8','Payments')
+                                            ->getStyle('E8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('F8','Balance')
+                                            ->getStyle('F8')->getFont()->setBold(TRUE);
+
+
+                }else{
+                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('30');
+                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('40');
+                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+
+                    $excel->getActiveSheet()
+                            ->getStyle('C')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('D')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('E')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()->setCellValue('A8','Customer')
+                                            ->getStyle('A8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('B8','Address')
+                                            ->getStyle('B8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('C8','Fees')
+                                            ->getStyle('C8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('D8','Payments')
+                                            ->getStyle('D8')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('E8','Balance')
+                                            ->getStyle('E8')->getFont()->setBold(TRUE);
+                }
+
+                $total_receivable_amount = 0;
+                $i=9;
+
+                foreach ($receivables as $receivable){
+
+                    $total_receivable_amount += $receivable->balance;
+                    $excel->getActiveSheet()
+                            ->getStyle('D')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('E')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                    $excel->getActiveSheet()
+                            ->getStyle('F')
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+
+                    if ($type_id == 1){
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$receivable->account_no);
+                        $excel->getActiveSheet()->setCellValue('B'.$i,$receivable->customer_name);
+                        $excel->getActiveSheet()->setCellValue('C'.$i,$receivable->address);
+                        $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('D'.$i,number_format($receivable->fee,2));
+                        $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('E'.$i,number_format($receivable->payment,2));
+                        $excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('F'.$i,number_format($receivable->balance,2))
+                                                ->getStyle('F'.$i)->getFont()->setBold(TRUE);
+                    }else{
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$receivable->customer_name);
+                        $excel->getActiveSheet()->setCellValue('B'.$i,$receivable->address);
+                        $excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('C'.$i,number_format($receivable->fee,2));
+                        $excel->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('D'.$i,number_format($receivable->payment,2));
+                        $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                        $excel->getActiveSheet()->setCellValue('E'.$i,number_format($receivable->balance,2))
+                                                ->getStyle('E'.$i)->getFont()->setBold(TRUE);
+                    }
+    
+                    $i++;
+
+                }
+
+                $excel->getActiveSheet()
+                            ->getStyle('A'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+                if($type_id == 1){
+                    $excel->getActiveSheet()->mergeCells('A'.$i.':E'.$i);
+                    $excel->getActiveSheet()->setCellValue('A'.$i,'Total:')
+                                            ->getStyle('A'.$i)->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->getStyle('F'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                    $excel->getActiveSheet()->setCellValue('F'.$i,number_format($total_receivable_amount,2))
+                                            ->getStyle('F'.$i)->getFont()->setBold(TRUE);
+                }else{
+                    $excel->getActiveSheet()->mergeCells('A'.$i.':D'.$i);
+                    $excel->getActiveSheet()->setCellValue('A'.$i,'Total:')
+                                            ->getStyle('A'.$i)->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                    $excel->getActiveSheet()->setCellValue('E'.$i,number_format($total_receivable_amount,2))
+                                            ->getStyle('E'.$i)->getFont()->setBold(TRUE);
+                }
+
+                $filename = "CUSTOMER BILLING RECEIVABLE REPORT (".date('Y-m-d h:i:s').")";
+
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename='.$filename.".xlsx".'');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
+
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output'); 
+                $data = ob_get_clean();
+
+                            $file_name='CUSTOMER SUBSIDIARY REPORT '.date('Y-m-d h:i:A', now());
+                            $excelFilePath = $file_name.".xlsx"; //generate filename base on id
+                            //download it.
+                            // Set SMTP Configuration
+                            $emailConfig = array(
+                                'protocol' => 'smtp', 
+                                'smtp_host' => 'ssl://smtp.googlemail.com', 
+                                'smtp_port' => 465, 
+                                'smtp_user' => $email[0]->email_address, 
+                                'smtp_pass' => $email[0]->password, 
+                                'mailtype' => 'html', 
+                                'charset' => 'iso-8859-1'
+                            );
+
+                            // Set your email information
+                            
+                            $from = array(
+                                'email' => $email[0]->email_address,
+                                'name' => $email[0]->name_from
+                            );
+
+                            $to = array($email[0]->email_to);
+                            $subject = 'CUSTOMER SUBSIDIARY REPORT';
+                          //  $message = 'Type your gmail message here';
+                            $message = '<p>To: ' .$email[0]->email_to. '</p></ br>' .$email[0]->default_message.'</ br><p>Sent By: '. '<b>'.$this->session->user_fullname.'</b>'. '</p></ br>' .date('Y-m-d h:i:A', now());
+
+                            // Load CodeIgniter Email library
+                            $this->load->library('email', $emailConfig);
+                            // Sometimes you have to set the new line character for better result
+                            $this->email->set_newline("\r\n");
+                            // Set email preferences
+                            $this->email->from($from['email'], $from['name']);
+                            $this->email->to($to);
+                            $this->email->subject($subject);
+                            $this->email->message($message);
+                            $this->email->attach($data, 'attachment', $excelFilePath , 'application/ms-excel');
+                            $this->email->set_mailtype("html");
+                            // Ready to send email and check whether the email was successfully sent
+                            if (!$this->email->send()) {
+                                // Raise error message
+                            $response['title']='Try Again!';
+                            $response['stat']='error';
+                            $response['msg']='Please check the Email Address of your Supplier or your Internet Connection.';
+
+                            echo json_encode($response);
+                            } else {
+                                // Show success notification or other things here
+                            $response['title']='Success!';
+                            $response['stat']='success';
+                            $response['msg']='Email Sent successfully.';
+
+                            echo json_encode($response);
+                            }
+
+                break;
         }
     }
 }

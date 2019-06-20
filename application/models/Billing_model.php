@@ -12,6 +12,77 @@ class Billing_model extends CORE_Model{
         parent::__construct();
     }
 
+    function get_customer_billing_receivables($type_id){
+    	$sql = "SELECT
+    				main.*
+    			FROM
+    		(SELECT 
+    			service_connection.customer_id,
+    			service_connection.connection_id,
+			    service_connection.account_no,
+			    service_connection.customer_name,
+			    service_connection.address,
+			    (COALESCE(billing.billing_fee, 0) + COALESCE(disconnection.disconnection_fee, 0)) as fee,
+			    COALESCE(payment.payment_fee, 0) AS payment,
+			    ((COALESCE(billing.billing_fee, 0) + COALESCE(disconnection.disconnection_fee, 0)) - COALESCE(payment.payment_fee, 0)) AS balance
+			FROM
+			    (SELECT 
+			        c.customer_id,
+			            sc.connection_id,
+			            sc.account_no,
+			            sc.address,
+			            c.customer_name
+			    FROM
+			        service_connection sc
+			    LEFT JOIN customers c ON c.customer_id = sc.customer_id) AS service_connection
+			        LEFT JOIN
+			    (SELECT 
+			        sc.customer_id,
+			            sc.connection_id,
+			            COALESCE(SUM(b.grand_total_amount), 0) AS billing_fee
+			    FROM
+			        billing b
+			    LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = b.meter_reading_period_id
+			    LEFT JOIN months m ON m.month_id = mrp.month_id
+			    LEFT JOIN service_connection sc ON sc.connection_id = b.connection_id
+			    LEFT JOIN customers c ON c.customer_id = sc.customer_id
+			    ".($type_id==1?" GROUP BY sc.connection_id ":" GROUP BY sc.customer_id ")." ) AS billing 
+			    ".($type_id==1?" ON service_connection.connection_id = billing.connection_id":" ON service_connection.customer_id = billing.customer_id")."
+
+			        LEFT JOIN
+			    (SELECT 
+			        sc.customer_id,
+			            sc.connection_id,
+			            COALESCE(SUM(sd.grand_total_amount), 0) AS disconnection_fee
+			    FROM
+			        service_disconnection sd
+			    LEFT JOIN service_connection sc ON sc.connection_id = sd.connection_id
+			    LEFT JOIN customers c ON c.customer_id = sc.customer_id
+			    WHERE
+			        sd.is_active = TRUE
+			            AND sd.is_deleted = FALSE
+			    ".($type_id==1?" GROUP BY sc.connection_id":" GROUP BY sc.customer_id").") AS disconnection 
+			    ".($type_id==1?" ON billing.connection_id = disconnection.connection_id":" ON billing.customer_id = disconnection.customer_id")."
+
+			        LEFT JOIN
+			    (SELECT 
+			        sc.customer_id,
+			            sc.connection_id,
+			            SUM(bp.total_paid_amount) AS payment_fee
+			    FROM
+			        billing_payments bp
+			    LEFT JOIN service_connection sc ON sc.connection_id = bp.connection_id
+			    LEFT JOIN customers c ON c.customer_id = sc.customer_id
+			    WHERE
+			        bp.is_active = TRUE
+			            AND bp.is_deleted = FALSE
+			    ".($type_id==1?" GROUP BY sc.connection_id":" GROUP BY sc.customer_id").") AS payment 
+			    ".($type_id==1?" ON billing.connection_id = payment.connection_id":" ON billing.customer_id = payment.customer_id")."
+				".($type_id==1?" GROUP BY service_connection.connection_id":" GROUP BY service_connection.customer_id").") main
+				WHERE main.balance > 0";
+    	return $this->db->query($sql)->result();
+    }
+
     function get_customer_billing_subsidiary($connection_id,$startDate,$endDate){
     	$this->db->query("SET @balance:=0.00;");
     	$sql="SELECT 

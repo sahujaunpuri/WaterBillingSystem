@@ -165,7 +165,8 @@ class Rights_link_model extends CORE_Model{
                                           (156,'36','36-3','Delete Attendant Management'),
                                           (157,'37','37-1','Send to Accounting Connection Deposits'),
                                           (158,'38','38-1','Send to Accounting Billing'),
-                                          (159,'39','39-1','Send to Accounting Payments')
+                                          (159,'39','39-1','Send to Accounting Payments'),
+                                          (160,'21','21-7','Customer Billing Receivables')
 
                                           ON DUPLICATE KEY UPDATE
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

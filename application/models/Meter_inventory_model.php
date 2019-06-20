@@ -33,7 +33,7 @@ class Meter_inventory_model extends CORE_Model{
 				        ".($meter_status_id==null?"":" AND inv.meter_status_id=".$meter_status_id)."
 				        ".($is_new==null?"":" AND inv.is_new=".$is_new)."
 				        ".($meter_inventory_id==null?"":" AND inv.meter_inventory_id=".$meter_inventory_id)."
-				     ORDER BY inv.meter_code ASC");
+				     ORDER BY inv.meter_inventory_id ASC");
         return $query->result();
     }
 

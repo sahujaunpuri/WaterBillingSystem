@@ -70,8 +70,7 @@
                                 <li class="<?php echo (in_array('21-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_billing_subsidiary">Customer Billing Subsidiary</a></li>
                                 <li class="<?php echo (in_array('21-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Batch_connection_deposit_report">Batch Connection Deposits Report</a></li>
                                 <li class="<?php echo (in_array('21-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Batch_payments_report">Batch Payments Report</a></li>
-
-
+                                <li class="<?php echo (in_array('21-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_billing_receivables">Customer Billing Receivables</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('22',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="fa fa-paper-plane "></i><span>Billing Transfer</span></a>
