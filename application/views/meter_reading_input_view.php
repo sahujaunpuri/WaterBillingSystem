@@ -199,14 +199,14 @@
                         <thead class="">    
                         <tr>
                             <th style="display: none;">Connection ID</th>
-                            <th>Account No</th>
-                            <th>Customer Name</th>
-                            <th>Meter Serial</th>
-                            <th>Previous Month</th>
-                            <th style="text-align: right;">Previous</th>
-                            <th style="text-align: right;">Current</th>
-                            <th style="text-align: right;">Consumption</th>
-                            <th><center>Action</center></th>
+                            <th style="width: 15%">Account No</th>
+                            <th style="">Customer Name</th>
+                            <th style="width: 10%;">Meter Serial</th>
+                            <th style="width:10%;">Previous Month</th>
+                            <th style="text-align: right;width: 7%;">Previous</th>
+                            <th style="text-align: right;width: 7%;">Current</th>
+                            <th style="text-align: right;width: 7%;">Consumption</th>
+                            <th style="width: 5%"><center>Action</center></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -380,7 +380,7 @@ $(document).ready(function(){
         });
 
         meterins = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('account_no','serial_no','customer_name'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('account_no','serial_no','receipt_name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local : meterins
         });
@@ -391,9 +391,9 @@ $(document).ready(function(){
         source: meterins,  // edit this , this must be the same as the var meterins declared in the new BLoodhound
         templates: {
             header: [
-                '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>Account No</b></td><td width="20%" align="left"><b>Meter Serial</b></td><td width="10%" align="left" style="padding-right: 2%;"><b>Customer Name</b></td></tr></table>'
+                '<table class="tt-head"><tr><td width=20%" style="padding-left: 1%;"><b>Account No</b></td><td width="20%" align="left"><b>Meter Serial</b></td><td width="60%" align="left" style="padding-right: 2%;"><b>Customer Name</b></td></tr></table>'
             ].join('\n'),
-            suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%;">{{account_no}}</td><td width="20%" align="left">{{serial_no}}</td><td width="10%" align="left" style="padding-right: 2%;">{{customer_name}}</td></tr></table>')
+            suggestion: Handlebars.compile('<table class="tt-items"><tr><td width="20%" style="padding-left: 1%;">{{account_no}}</td><td width="20%" align="left">{{serial_no}}</td><td width="60%" align="left" style="padding-right: 2%;">{{receipt_name}}</td></tr></table>')
         }
         }).on('keyup', this, function (event) {
             if (_objTypeHead.typeahead('val') == '') {
@@ -420,15 +420,15 @@ $(document).ready(function(){
             $('#tbl_items > tbody').append(newRowItem({
                 connection_id : suggestion.connection_id,
                 account_no : suggestion.account_no,
-                customer_name : suggestion.customer_name,
+                customer_name : suggestion.receipt_name,
                 serial_no : suggestion.serial_no,
                 previous_month : suggestion.previous_month,
                 previous_reading : suggestion.previous_reading,
-                current_reading : suggestion.current_reading,
+                current_reading : '',
                 total_consumption : 0
             }));
             reInitializeNumeric();
-            $('#tbl_items > tbody > tr:last').find('.current').val('').focus();
+            // $('#tbl_items > tbody > tr:last').find('.current').val('').focus();
             $('#custom-templates .typeahead').val('');
             checkTableLength();
         });
@@ -550,7 +550,7 @@ $(document).ready(function(){
                         $('#tbl_items > tbody').append(newRowItem({
                             connection_id : value.connection_id,
                             account_no : value.account_no,
-                            customer_name : value.customer_name,
+                            customer_name : value.receipt_name,
                             serial_no : value.serial_no,
                             previous_month : value.previous_month,
                             previous_reading : value.previous_reading,

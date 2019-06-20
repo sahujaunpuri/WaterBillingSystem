@@ -205,7 +205,7 @@
                                             <td style="text-align: right;"><?php echo number_format($binfo->total_payment_amount,2) ?></td>
                                             <td style="text-align: right;"><?php echo number_format($binfo->total_deposit_amount,2) ?></td>
                                             <td style="text-align: right;"><?php echo number_format($binfo->total_paid_amount,2) ?></td>
-                                            <td style="text-align: right;"><?php if($binfo->is_refund == TRUE){ echo number_format($binfo->remaining_deposit,2); $total_refund += $binfo->remaining_deposit; }else { echo '0.00'; } ; ?> </td>
+                                            <td style="text-align: right;"><?php echo number_format($binfo->refund_amount,2); $total_refund += $binfo->refund_amount;?></td>
                                         </tr>
                                     <?php $total_batch += $binfo->total_paid_amount; } ?>
                                     <tr>

@@ -312,7 +312,7 @@
                                                         <select id="cbo_accounts" style="width: 100%;" name="connection_id">
                                                             <optgroup label="Account # | Customer Name | Meter Serial">
                                                                 <?php foreach($accounts as $account){ ?>
-                                                                    <option value="<?php echo $account->connection_id; ?>"><?php echo $account->account_no; ?> | <?php echo $account->customer_name; ?> | <?php echo $account->serial_no; ?></option>
+                                                                    <option value="<?php echo $account->connection_id; ?>"><?php echo $account->account_no; ?> | <?php echo $account->receipt_name; ?> | <?php echo $account->serial_no; ?></option>
                                                                 <?php } ?>
                                                             </optgroup>
                                                         </select>
@@ -559,9 +559,9 @@
                     var r = data.text.split('|');
                         var $result = $(
                             '<div class="row">' +
-                                '<div class="col-md-3">' + r[0] + '</div>' +
-                                '<div class="col-md-6">' + r[1] + '</div>' +
-                                '<div class="col-md-3">' + r[2] + '</div>' +
+                                '<div class="col-md-2">' + r[0] + '</div>' +
+                                '<div class="col-md-8">' + r[1] + '</div>' +
+                                '<div class="col-md-2">' + r[2] + '</div>' +
                             '</div>'
                         );
                         return $result;

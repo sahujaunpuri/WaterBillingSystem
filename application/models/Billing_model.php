@@ -289,7 +289,7 @@ class Billing_model extends CORE_Model{
 											mrii.meter_reading_input_id,
 											b.billing_id,
 											mrii.connection_id,
-											DATE_FORMAT(meter_reading_period_start, '%b %Y') as current_month,
+											DATE_FORMAT(CONCAT(mrp.meter_reading_year,'-',mrp.month_id,'-01'), '%b %Y') as current_month,
 											mri.meter_reading_period_id
 											FROM meter_reading_input_items mrii
 
@@ -472,7 +472,7 @@ class Billing_model extends CORE_Model{
     function billing_receivables($connection_id=null){
     	$query = $this->db->query("SELECT main.* FROM(SELECT 
 				b.connection_id,
-				b.due_date,
+				DATE_FORMAT(b.due_date, '%m/%d/%Y') AS due_date,
 				b.control_no,
 				CONCAT(m.month_name, ' ', mrp.meter_reading_year) as description,
 				b.billing_id,

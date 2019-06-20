@@ -32,11 +32,12 @@ class Billing_payments extends CORE_Controller
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 
 
-        $data['accounts']=$this->Service_connection_model->get_list(array('service_connection.is_active'=> TRUE, 'service_connection.is_deleted'=> FALSE), 'connection_id,account_no,customer_name,serial_no',
+        $data['accounts']=$this->Service_connection_model->get_list(array('service_connection.is_active'=> TRUE, 'service_connection.is_deleted'=> FALSE), 'connection_id,account_no,customer_name,serial_no,receipt_name',
             array(
                 array('customers c', 'c.customer_id=service_connection.customer_id','left'),
                 array('meter_inventory','meter_inventory.meter_inventory_id = service_connection.meter_inventory_id','left')
-                )
+                ),
+            'receipt_name ASC'
             );
         $data['title'] = 'Billing Payments';
         $data['methods']=$this->Payment_method_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
@@ -90,7 +91,7 @@ class Billing_payments extends CORE_Controller
 
             case 'billing-payment-print-refund':
                 $info= $this->response_rows($filter_value)[0];
-                $data['num_words']=$this->convertDecimalToWords($info->remaining_deposit);
+                $data['num_words']=$this->convertDecimalToWords($info->refund_amount);
                 $data['info'] =$info;
                 $m_company_info=$this->Company_model;
                 $company_info=$m_company_info->get_list();
@@ -151,7 +152,14 @@ class Billing_payments extends CORE_Controller
                 $m_billing_payment->total_deposit_amount=$this->get_numeric_value($this->input->post('total_deposit_amount',TRUE)); // PAYMENT FROM DEPOSIT
                 $m_billing_payment->total_payment_amount=$this->get_numeric_value($this->input->post('total_payment_amount',TRUE)); // CASH CHECK OR CARD PAYMENT
                 $m_billing_payment->deposit_allowed=$this->get_numeric_value($this->input->post('deposit_allowed',TRUE)); // Deposit allowed to use
-                $m_billing_payment->remaining_deposit=$this->get_numeric_value($this->input->post('remaining_deposit',TRUE)); // Deposit remaining after use
+                // Deposit remaining after use
+                if($this->get_numeric_value($this->input->post('is_refund',TRUE)) == 1){
+                    $m_billing_payment->remaining_deposit=0;
+                    $m_billing_payment->refund_amount=$this->get_numeric_value($this->input->post('remaining_deposit',TRUE));
+                }else{
+                    $m_billing_payment->remaining_deposit=$this->get_numeric_value($this->input->post('remaining_deposit',TRUE));
+                    $m_billing_payment->refund_amount = 0;
+                }
 
                 $m_billing_payment->remarks=$this->input->post('remarks',TRUE);
                 $m_billing_payment->date_paid=date('Y-m-d',strtotime($this->input->post('date_paid',TRUE)));

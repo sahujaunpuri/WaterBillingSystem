@@ -100,14 +100,14 @@ class Service_disconnection_model extends CORE_Model {
         $query=$this->db->query("SELECT * FROM (SELECT 
                 mrii.meter_reading_input_id,
                 b.billing_id,
-                DATE_FORMAT(meter_reading_period_start, '%b %Y') as current_month,
+                DATE_FORMAT(CONCAT(mrp.meter_reading_year,'-',mrp.month_id,'-01'), '%b %Y') as current_month,
                 mri.meter_reading_period_id
                 FROM meter_reading_input_items mrii
 
                 LEFT JOIN meter_reading_input mri ON mri.meter_reading_input_id = mrii.meter_reading_input_id
                 LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = mri.meter_reading_period_id
                 LEFT JOIN billing b ON b.meter_reading_input_id = mrii.meter_reading_input_id AND b.connection_id= mrii.connection_id
-                WHERE mrii.connection_id = ".$connection_id.") as main
+                WHERE mrii.connection_id = ".$connection_id." AND mri.is_active= TRUE AND mri.is_deleted= FALSE) as main
                  WHERE main.current_month = '".$previous_month."'");
                         return $query->result();
     }

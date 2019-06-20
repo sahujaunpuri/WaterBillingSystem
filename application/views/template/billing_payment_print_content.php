@@ -1,6 +1,9 @@
 <head><title>Acknowledgement Receipt</title></head>
 <body>
 <style>
+    table {
+        font-size: 12px;
+    }
     .bottom-only{
         border:none!important;
     }
@@ -60,7 +63,7 @@
         </tr>
         <tr>
             <td>Amount in Words:</td>
-            <td colspan="3" style="text-transform: capitalize;"><?php echo $num_words; ?></td>
+            <td colspan="3" style="text-transform: capitalize;"><?php if($info->total_payment_amount == '0.00'){ echo 'Zero ';} ?><?php echo $num_words; ?></td>
         </tr>
         <?php if($info->total_deposit_amount != '0.00') { ?>
         <tr>

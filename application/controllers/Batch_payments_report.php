@@ -60,9 +60,7 @@ class Batch_payments_report extends CORE_Controller {
                 // $pdf->WriteHTML($content);
                 // //download it.
                 // $pdf->Output();
-
                 break;
-
         }
     }
 
@@ -71,8 +69,7 @@ class Batch_payments_report extends CORE_Controller {
     function response_rows($billing_payment_batch_id=null){ 
         return $this->Billing_payments_model->get_list(array('billing_payment_batch_id'=>$billing_payment_batch_id),
             'billing_payments.*,payment_methods.payment_method,customers.customer_name,service_connection.account_no,
-            CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by_user,
-            IF(billing_payments.is_refund = TRUE,billing_payments.remaining_deposit,0) as refund_amount
+            CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by_user
             ',
             array(array('payment_methods','payment_methods.payment_method_id = billing_payments.payment_method_id','left'),
                 array('user_accounts','user_accounts.user_id=billing_payments.created_by_user','left'),

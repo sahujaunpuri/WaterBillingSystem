@@ -81,11 +81,9 @@ class Payment_sending extends CORE_Controller {
                     if($payment->payment_method_id == 1){  $batch_total_paid_cash += $this->get_numeric_value($payment->total_payment_amount);
                     } else if($payment->payment_method_id == 2){  $batch_total_paid_check += $this->get_numeric_value($payment->total_payment_amount);
                     }else if($payment->payment_method_id == 3){ $batch_total_paid_card  += $this->get_numeric_value($payment->total_payment_amount); }
-                     $batch_total_paid_amount += $this->get_numeric_value($payment->total_paid_amount);
-                     $batch_total_paid_deposit += $this->get_numeric_value($payment->total_deposit_amount);
-                    if($payment->is_refund == TRUE){
-                       $batch_total_deposit_refund += $this->get_numeric_value($payment->remaining_deposit); 
-                    }
+                    $batch_total_paid_amount += $this->get_numeric_value($payment->total_paid_amount);
+                    $batch_total_paid_deposit += $this->get_numeric_value($payment->total_deposit_amount);
+                    $batch_total_deposit_refund += $this->get_numeric_value($payment->refund_amount); 
 
                 }
 
