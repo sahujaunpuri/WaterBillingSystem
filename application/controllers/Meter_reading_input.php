@@ -127,6 +127,7 @@ class Meter_reading_input extends CORE_Controller
                         'meter_reading_input_items.total_consumption',
                         'meter_reading_input_items.previous_month',
                         'service_connection.account_no',
+                        'service_connection.receipt_name',
                         'customers.customer_name',
                         'meter_inventory.serial_no'
                     ),

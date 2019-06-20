@@ -28,7 +28,7 @@ class Billing_payments_model extends CORE_Model{
 			WHERE is_active= TRUE AND is_deleted = FALSE
 			GROUP BY bp.connection_id ) as main
 			LEFT JOIN
-			(SELECT bp.connection_id, SUM(bp.remaining_deposit) as total_refund FROM billing_payments bp 
+			(SELECT bp.connection_id, SUM(bp.refund_amount) as total_refund FROM billing_payments bp 
 			WHERE is_active= TRUE AND is_deleted = FALSE AND is_refund = TRUE
 			GROUP BY bp.connection_id) as refund  On refund.connection_id = main.connection_id) as n ) as o ON o.connection_id = sc.connection_id
 

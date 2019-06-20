@@ -12,6 +12,7 @@ class Meter_reading_period_model extends CORE_Model {
         $sql='SELECT
 			main.connection_id,
 			sc.account_no,
+			sc.receipt_name,
 			c.customer_name,
 			mi.serial_no,
 			main.current_reading as previous_reading,

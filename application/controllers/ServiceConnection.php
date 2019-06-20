@@ -41,7 +41,8 @@ class ServiceConnection extends CORE_Controller {
             'customers.*, customer_account_type.customer_account_type_desc',
             array(
                 array('customer_account_type','customers.customer_account_type_id = customer_account_type.customer_account_type_id','left')
-            )
+            ),
+            'customers.customer_name ASC'
         );
         $data['customer_type']=$this->Customer_type_model->get_list(
             array('customer_type.is_deleted'=>FALSE)

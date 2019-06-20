@@ -54,7 +54,7 @@
         </tr>
         <tr>
             <td>Amount Refund:</td>
-            <td><?php echo number_format($info->remaining_deposit,2); ?> </td>
+            <td><?php echo number_format($info->refund_amount,2); ?> </td>
             <td></td>
             <td></td>
         </tr>

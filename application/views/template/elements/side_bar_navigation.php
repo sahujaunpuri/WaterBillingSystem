@@ -64,13 +64,13 @@
                         </li>
                         <li class="<?php echo (in_array('21',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="ti ti-file"></i><span>Billing Reports</span></a>
                             <ul class="acc-menu">
-                                <li class="<?php echo (in_array('21-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_trail">Service Trail</a></li>
-                                <li class="<?php echo (in_array('21-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_consumption_history">Consumption History</a></li>
                                 <li class="<?php echo (in_array('21-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Billing_statement">Billing Statement</a></li>
+                                <li class="<?php echo (in_array('21-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_consumption_history">Consumption History</a></li>
                                 <li class="<?php echo (in_array('21-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_billing_subsidiary">Customer Billing Subsidiary</a></li>
-                                <li class="<?php echo (in_array('21-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Batch_connection_deposit_report">Batch Connection Deposits Report</a></li>
-                                <li class="<?php echo (in_array('21-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Batch_payments_report">Batch Payments Report</a></li>
                                 <li class="<?php echo (in_array('21-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Customer_billing_receivables">Customer Billing Receivables</a></li>
+                                <li class="<?php echo (in_array('21-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Batch_connection_deposit_report">Batch Connection Deposits</a></li>
+                                <li class="<?php echo (in_array('21-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Batch_payments_report">Batch Payments Report</a></li>
+                                <li class="<?php echo (in_array('21-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Service_trail">Service Trail</a></li>
                             </ul>
                         </li>
                         <li class="<?php echo (in_array('22',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#/"><i class="fa fa-paper-plane "></i><span>Billing Transfer</span></a>
@@ -146,7 +146,6 @@
                                 <li class="<?php echo (in_array('5-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="suppliers">Supplier Management</a></li>
                                 <li class="<?php echo (in_array('5-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="customers">Customer Management</a></li>
                                 <li class="<?php echo (in_array('5-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Salesperson">Salesperson Management</a></li>
-                                <li class="<?php echo (in_array('5-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="MeterInventory">Meter Inventory Management</a></li>
 
                             </ul>
                         </li>
