@@ -286,7 +286,7 @@ $(document).ready(function(){
                 },
                 { targets:[3],data: "control_no" },
                 { targets:[4],data: "account_no" },
-                { targets:[5],data: "customer_name" },
+                { targets:[5],data: "receipt_name" },
                 {
                     className: "text-right",
                     targets:[6],data: "total_consumption",

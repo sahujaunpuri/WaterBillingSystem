@@ -136,6 +136,7 @@ class Billing_model extends CORE_Model{
     		billing.*,
 			    sc.account_no,
 			    sc.address,
+			    sc.receipt_name,
 			    ct.contract_type_name,
 			    c.customer_name,
 			    mi.serial_no,
@@ -169,7 +170,8 @@ class Billing_model extends CORE_Model{
 			        ".($period_id==null?" billing.meter_reading_period_id = 0":" billing.meter_reading_period_id=".$period_id)."
 			        ".($meter_reading_input_id==0?"":" AND billing.meter_reading_input_id=".$meter_reading_input_id)."
 			        ".($customer_id==0?"":" AND sc.customer_id=".$customer_id)."
-			        ".($billing_id==null?"":" AND billing.billing_id=".$billing_id).""); 
+			        ".($billing_id==null?"":" AND billing.billing_id=".$billing_id)."
+			ORDER BY sc.receipt_name ASC"); 
     	return $query->result();
     }
 

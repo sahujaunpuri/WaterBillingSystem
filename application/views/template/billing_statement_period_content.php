@@ -53,11 +53,11 @@
             $total = 0;
             if(count($billings) > 0){
             foreach($billings as $billing){
-                $total += $billing->grand_total_amount;
+                $total += $billing->grand_total_amount_label_for_report;
             ?>
             <tr>
                 <td><?php echo $billing->account_no; ?></td>
-                <td><?php echo $billing->customer_name; ?></td>
+                <td><?php echo $billing->receipt_name; ?></td>
                 <td align="right"><?php echo number_format($billing->total_consumption,0); ?></td>
                 <td align="right"><?php echo number_format($billing->amount_due,2); ?></td>
                 <td align="right"><?php echo number_format($billing->previous_balance,2);?></td>

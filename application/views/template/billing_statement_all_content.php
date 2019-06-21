@@ -55,7 +55,7 @@
                     <td>ACCOUNT NO : &nbsp;&nbsp; <?php echo $billing->account_no; ?></td>
                 </tr>
                 <tr>
-                    <td style="text-transform: uppercase;">Customer Name : &nbsp;&nbsp; <?php echo $billing->customer_name; ?></td>
+                    <td style="text-transform: uppercase;">Customer Name : &nbsp;&nbsp; <?php echo $billing->receipt_name; ?></td>
                 </tr>
                 <tr>
                     <td style="text-transform: uppercase;border-bottom: 1px solid lightgray;">Address: &nbsp;&nbsp; <?php echo $billing->address; ?>

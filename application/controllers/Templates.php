@@ -5743,6 +5743,7 @@ class Templates extends CORE_Controller {
                         $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                         $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                         $content=$this->load->view('template/billing_statement_period_content',$data,TRUE); //load the template
+                        $pdf->AddPage('L'); // Adds a new page in Landscape orientation
                         $pdf->WriteHTML($content);
                         //download it.
                         $pdf->Output();

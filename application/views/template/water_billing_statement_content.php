@@ -61,7 +61,7 @@
         </tr>
         <tr>
           <td>Particular: </td>
-          <td><?php echo $billing->customer_name; ?></td>
+          <td><?php echo $billing->receipt_name; ?></td>
           <td>Due Date: </td>
           <td><?php echo $billing->due_date; ?></td>
         </tr>
