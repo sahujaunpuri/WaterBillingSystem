@@ -16,13 +16,13 @@
     .report-header {
         font-weight: bolder;
     }
-    table{
+    .tablenoborder{
         border:none!important;
     }
 </style>
 <div>
     <center>
-        <table width="100%" cellpadding="5" style="font-family: tahoma;font-size: 11px!important;" border="0" class="table table-striped">
+        <table width="100%" cellpadding="5" style="font-family: tahoma;font-size: 11px!important;" border="0" class="table table-striped tablenoborder">
             <tr>
                 <td style="background: lightgray;" colspan="4"><b>ACCOUNT DETAILS</b></td>
             </tr>
