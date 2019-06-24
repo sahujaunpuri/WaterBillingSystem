@@ -117,6 +117,7 @@
                                                         <th>Customer</th>
                                                         <th>Date</th>
                                                         <th><center>Action</center></th>
+                                                        <th></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -410,6 +411,7 @@ $(document).ready(function(){
         dt=$('#tbl_disconnection').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
+            "order": [[ 7, "desc" ]],
             "ajax" : "Service_disconnection/transaction/list",
             "language" : {
                 "searchPlaceholder": "Search"
@@ -432,7 +434,8 @@ $(document).ready(function(){
                     render: function (data, type, full, meta){
                         return '<center>'+btn_edit_service_disconnection+'&nbsp;'+btn_trash_service_disconnection+'</center>';
                     }
-                }
+                },
+                { targets:[7],data: "disconnection_id" ,visible:false}
             ]
         });
 

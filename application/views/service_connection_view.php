@@ -1239,7 +1239,7 @@
 
                         $('#cbo_customer').append('<option value="'+ customer.customer_id +'" data-address="'+ customer.address +'"  data-account-type="'+customer.customer_account_type_desc+'">'+ customer.customer_name +'</option>');
                         _cboCustomer.select2('val',customer.customer_id);
-
+                        _cboCustomer.trigger('select2:select');
                         $('#modal_new_customer').modal('hide');
                         $('#modal_new_connection').modal('show');
                         clearFields($('#frm_customer'));

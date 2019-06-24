@@ -55,7 +55,7 @@ class Connection_sending extends CORE_Controller {
                 $ed = date('Y-m-d',strtotime($this->input->post('ed')));
                 $batch_total_amount = $this->get_numeric_value($this->input->post('batch_total_amount',TRUE));
 
-                $additional = "service_connection.is_active = TRUE AND service_connection.is_deleted = FALSE AND DATE(service_connection.service_date) BETWEEN '$sd' AND '$ed'";
+                $additional = "service_connection.is_active = TRUE AND service_connection.is_deleted = FALSE AND service_connection.service_connection_batch_id = 0 AND DATE(service_connection.service_date) BETWEEN '$sd' AND '$ed'";
                 $deposits = $this->Service_connection_model->get_list($additional,
                     'service_connection.*,customers.customer_name,DATE_FORMAT(service_connection.service_date,"%m/%d/%Y") as service_date',
                     array(array('customers','customers.customer_id = service_connection.customer_id','left'))
