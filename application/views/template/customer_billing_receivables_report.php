@@ -51,7 +51,10 @@
     <table width="100%" style="border-collapse: collapse;">
         <tr>
             <td><h3 class="report-header"><strong>CUSTOMER BILLING RECEIVABLES</strong></h3></td>
-            <td align="right">Date : <?php echo date('m/d/Y'); ?></td>
+            <td align="right">Date Printed: <?php echo date('m/d/Y h:i a'); ?></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="right">Printed by: <?php echo $user; ?></td>
         </tr>
     </table>
     <br>

@@ -5714,6 +5714,8 @@ class Templates extends CORE_Controller {
 
                     $m_billing=$this->Billing_model;
                     $m_billing_charges=$this->Billing_charges_model;
+                    $m_users=$this->Users_model;
+
                     $m_period=$this->Meter_reading_period_model;
                     $m_company=$this->Company_model;
                     $type=$this->input->get('type',TRUE);
@@ -5721,6 +5723,7 @@ class Templates extends CORE_Controller {
                     $billings=$m_billing->billing_statement($period_id,$meter_reading_input_id,$customer_id);
                     $charges=$m_billing_charges->billing_charges();
                     $company=$m_company->get_list();
+                    $users = $m_users->get_list($this->session->user_id);
 
                     $meter_period = $m_period->get_list(
                         $period_id,
@@ -5736,7 +5739,7 @@ class Templates extends CORE_Controller {
                     $data['billings']=$billings;
                     $data['meter_period']=$meter_period[0];
                     $data['company_info']=$company[0];
-
+                    $data['user'] = $users[0]->user_fname.' '.$users[0]->user_mname.' '.$users[0]->user_lname;
                     //preview on browser
                     if($type=='preview'){
                         $file_name= 'Billing Statement Report - '.$meter_period[0]->period;
@@ -5827,20 +5830,22 @@ class Templates extends CORE_Controller {
                 $m_accounts=$this->Service_connection_model;
                 $m_company_info=$this->Company_model;
                 $m_biling=$this->Billing_model;
+                $m_users=$this->Users_model;
 
                 $subsidiary=$m_biling->get_customer_billing_subsidiary($connection_id,$start_Date,$end_Date);
                 $company_info=$m_company_info->get_list();
+                $users = $m_users->get_list($this->session->user_id);
 
                 $data['company_info']=$company_info[0];
                 $data['subsidiary_info']=$subsidiary;
                 $data['account_subsidiary']=$m_accounts->getList($connection_id)[0];
+                $data['user'] = $users[0]->user_fname.' '.$users[0]->user_mname.' '.$users[0]->user_lname;
 
                 if ($type == 'preview' || $type == null) {
                     $pdf = $this->m_pdf->load("A4");
                     $content=$this->load->view('template/customer_billing_subsidiary_report',$data,TRUE);
                 }
 
-                $pdf->setFooter('{PAGENO}');
                 $pdf->WriteHTML($content);
                 $pdf->Output();
                 break;
@@ -5855,10 +5860,13 @@ class Templates extends CORE_Controller {
                 $m_accounts=$this->Service_connection_model;
                 $m_company_info=$this->Company_model;
                 $m_biling=$this->Billing_model;
+                $m_users=$this->Users_model;
 
                 $subsidiary=$m_biling->get_customer_billing_subsidiary($connection_id,$start_Date,$end_Date);
                 $company_info=$m_company_info->get_list();
-                $account=$m_accounts->getList($connection_id)[0];
+                $account=$m_accounts->getList($connection_id);
+                $get_user = $m_users->get_list($this->session->user_id);
+                $user = $get_user[0]->user_fname.' '.$get_user[0]->user_mname.' '.$get_user[0]->user_lname;
 
                 $excel->setActiveSheetIndex(0);
 
@@ -5867,7 +5875,7 @@ class Templates extends CORE_Controller {
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('50');
                 //name the worksheet
-                $excel->getActiveSheet()->setTitle("CUSTOMER BILLING SUBSIDIARY");
+                $excel->getActiveSheet()->setTitle("CUSTOMER BILLING");
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->mergeCells('A2:C2');
                 $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
@@ -5882,10 +5890,10 @@ class Templates extends CORE_Controller {
                 $excel->getActiveSheet()->setCellValue('A8','CUSTOMER BILLING SUBSIDIARY REPORT')
                                         ->getStyle('A8')->getFont()->setBold(TRUE);
 
-                $excel->getActiveSheet()->setCellValue('A10','ACCOUNT #: '.$account->account_no)
+                $excel->getActiveSheet()->setCellValue('A10','ACCOUNT #: '.$account[0]->account_no)
                                         ->mergeCells('A10:F10');  
 
-                $excel->getActiveSheet()->setCellValue('A11','CUSTOMER: '.$account->customer_name)
+                $excel->getActiveSheet()->setCellValue('A11','CUSTOMER: '.$account[0]->receipt_name)
                                         ->mergeCells('A11:F11');
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
@@ -5955,7 +5963,17 @@ class Templates extends CORE_Controller {
 
                 }
 
-                $filename = "CUSTOMER BILLING SUBSIDIARY REPORT (".$account->customer_account.")";
+                $a = $i + 1;
+
+                $excel->getActiveSheet()->setCellValue('A'.$a,'Printed Date : ');
+                $excel->getActiveSheet()->setCellValue('B'.$a,date('m/d/Y h:i a'));
+
+                $b = $a + 1;
+
+                $excel->getActiveSheet()->setCellValue('A'.$b,'Printed by : ');
+                $excel->getActiveSheet()->setCellValue('B'.$b,$user);
+
+                $filename = "CUSTOMER BILLING SUBSIDIARY REPORT (".$account[0]->receipt_name.")";
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename='.$filename.".xlsx".'');
@@ -6090,7 +6108,7 @@ class Templates extends CORE_Controller {
                 $filename = "CUSTOMER BILLING SUBSIDIARY REPORT (".$account->customer_account.")";
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename='.$filename.".xlsx".'');
+                header('Content-Disposition: attachment;filename="'.$filename.".xlsx".'');
                 header('Cache-Control: max-age=0');
                 // If you're serving to IE 9, then the following may be needed
                 header('Cache-Control: max-age=1');
@@ -6168,22 +6186,25 @@ class Templates extends CORE_Controller {
 
                 $m_company_info=$this->Company_model;
                 $m_billing=$this->Billing_model;
+                $m_users=$this->Users_model;
 
                 $receivables=$m_billing->get_customer_billing_receivables($type_id);
                 $company_info=$m_company_info->get_list();
+                $users = $m_users->get_list($this->session->user_id);
 
                 $data['company_info']=$company_info[0];
                 $data['receivables']=$receivables;
                 $data['type_id']=$type_id;
+                $data['user'] = $users[0]->user_fname.' '.$users[0]->user_mname.' '.$users[0]->user_lname;
 
                 if ($type == 'preview' || $type == null) {
                     $pdf = $this->m_pdf->load("A4");
                     $content=$this->load->view('template/customer_billing_receivables_report',$data,TRUE);
+                    $pdf->AddPage('L'); // Adds a new page in Landscape orientation
+                    $pdf->WriteHTML($content);
+                    $pdf->Output();
                 }
 
-                $pdf->setFooter('{PAGENO}');
-                $pdf->WriteHTML($content);
-                $pdf->Output();
                 break;
 
             case 'customer-billing-receivables-export' :

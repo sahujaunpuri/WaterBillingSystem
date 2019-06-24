@@ -1,4 +1,8 @@
-<head><title>Billing Statement</title></head>
+<head>
+    <title>Billing Statement</title>
+    <link rel="icon" href="<?php echo base_url('assets/img/companyico.ico'); ?>" type="image/ico" sizes="16x16">
+</head>
+    
 <body>
 <style>
     @page {

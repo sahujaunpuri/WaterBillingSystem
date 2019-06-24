@@ -145,9 +145,10 @@ class Billing_model extends CORE_Model{
 			    DATE_FORMAT(billing.reading_date,'%m/%d/%Y') as reading_date,
 			    CONCAT((DATE_FORMAT(mrp.meter_reading_period_start,'%m/%d/%Y')),' - ',(DATE_FORMAT(mrp.meter_reading_period_end,'%m/%d/%Y'))) AS period_covered,
 			    m.month_name,
+			    billing.arrears_penalty_amount,
 			    (billing.amount_due + billing.penalty_amount) as total_amount_due,
 			    (billing.grand_total_amount + billing.penalty_amount) as amount_after_due,
-			    (billing.arrears_amount + billing.arrears_penalty_amount) as previous_balance,
+			    (billing.arrears_amount) as previous_balance,
 			    (billing.amount_due + billing.arrears_amount + billing.arrears_penalty_amount ) as grand_total_amount_label_for_report # GRAND TOTAL AMOUNT WITH PREVIOUS BALANCE INCLUDED
 
 			FROM

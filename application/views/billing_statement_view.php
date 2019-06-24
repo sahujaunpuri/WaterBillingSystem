@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
 
@@ -166,6 +166,7 @@
                                                             <th>Consumption</th>
                                                             <th>Due Amount</th>
                                                             <th>Previous Balance</th>
+                                                            <th>Arrears Penalty</th>
                                                             <th>Charges</th>
                                                             <th>Grand Total</th>
                                                         </tr>
@@ -310,14 +311,21 @@ $(document).ready(function(){
                 },
                 {
                     className: "text-right",
-                    targets:[9],data: "charges_amount",
+                    targets:[9],data: "arrears_penalty_amount",
                     render: function(data){
                         return accounting.formatNumber(data,2);
                     }
                 },
                 {
                     className: "text-right",
-                    targets:[10],data: "grand_total_amount_label_for_report",
+                    targets:[10],data: "charges_amount",
+                    render: function(data){
+                        return accounting.formatNumber(data,2);
+                    }
+                },
+                {
+                    className: "text-right",
+                    targets:[11],data: "grand_total_amount_label_for_report",
                     render: function(data){
                         return accounting.formatNumber(data,2);
                     }

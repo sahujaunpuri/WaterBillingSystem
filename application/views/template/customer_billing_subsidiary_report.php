@@ -49,34 +49,42 @@
     <div class="">
         <h3 class="report-header"><strong>CUSTOMER BILLING SUBSIDIARY REPORT</strong></h3>
     </div>
-     <table width="100%" border="1" cellspacing="-1">
+     <table width="100%" cellspacing="-1">
         <tr>
         	<td style="padding: 4px;" width="50%"><strong>Account No: </strong><?php echo $account_subsidiary->account_no; ?></td>
-        	<td style="padding: 4px;" width="50%"><strong>Customer: </strong><?php echo $account_subsidiary->customer_name; ?></td>
+        </tr>
+        <tr>
+            <td style="padding: 4px;" width="50%"><strong>Customer: </strong><?php echo $account_subsidiary->customer_name; ?></td>
         </tr>
     </table><br>
-    <table width="100%" border="1" cellspacing="-1">
+    <table width="100%" cellspacing="-1">
     	<thead>
             <tr>
-                <th style="border: 1px solid black;text-align: center;height: 30px;padding: 6px;">Txn Date</th>
-                <th style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;">Reference #</th>
-                <th style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;">Transaction</th>
-                <th style="border: 1px solid black;text-align: right;height: 30px;padding: 6px;">Fee</th>
-                <th style="border: 1px solid black;text-align: right;height: 30px;padding: 6px;">Payment</th>
-                <th style="border: 1px solid black;text-align: right;height: 30px;padding: 6px;">Balance</th>
+                <th style="border: 1px solid gray;text-align: center;height: 30px;padding: 6px;">Txn Date</th>
+                <th style="border: 1px solid gray;text-align: left;height: 30px;padding: 6px;">Reference #</th>
+                <th style="border: 1px solid gray;text-align: left;height: 30px;padding: 6px;">Transaction</th>
+                <th style="border: 1px solid gray;text-align: right;height: 30px;padding: 6px;">Fee</th>
+                <th style="border: 1px solid gray;text-align: right;height: 30px;padding: 6px;">Payment</th>
+                <th style="border: 1px solid gray;text-align: right;height: 30px;padding: 6px;">Balance</th>
             </tr>
         </thead>
         <tbody>
         	<?php foreach($subsidiary_info as $items) { ?>
         	<tr>
-        		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->date_txn; ?></td>
-        		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->ref_no; ?></td>
-        		<td style="border: 1px solid black;text-align: left;height: 20px;padding: 6px;"><?php echo $items->transaction; ?></td>
-        		<td style="border: 1px solid black;text-align: right;height: 20px;padding: 6px;"><?php echo number_format($items->fee,2); ?></td>
-        		<td style="border: 1px solid black;text-align: right;height: 20px;padding: 6px;"><?php echo number_format($items->payment,2); ?></td>
-        		<td style="border: 1px solid black;text-align: right;height: 20px;padding: 6px;"><?php echo number_format($items->balance,2); ?></td>
+        		<td style="border: 1px solid gray;text-align: left;height: 20px;padding: 6px;"><?php echo $items->date_txn; ?></td>
+        		<td style="border: 1px solid gray;text-align: left;height: 20px;padding: 6px;"><?php echo $items->ref_no; ?></td>
+        		<td style="border: 1px solid gray;text-align: left;height: 20px;padding: 6px;"><?php echo $items->transaction; ?></td>
+        		<td style="border: 1px solid gray;text-align: right;height: 20px;padding: 6px;"><?php echo number_format($items->fee,2); ?></td>
+        		<td style="border: 1px solid gray;text-align: right;height: 20px;padding: 6px;"><?php echo number_format($items->payment,2); ?></td>
+        		<td style="border: 1px solid gray;text-align: right;height: 20px;padding: 6px;"><?php echo number_format($items->balance,2); ?></td>
     		</tr>
     		<?php } ?>
         </tbody>
     </table>
+
+    <br>
+    <span style="font-size: 8pt;">
+        Printed Date : <?php echo date('m/d/Y h:i a'); ?><br>
+        Prepared by : <?php echo $user; ?> <br>
+    </span>
 </html>
