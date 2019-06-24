@@ -20,7 +20,7 @@ class Billing_model extends CORE_Model{
     			service_connection.customer_id,
     			service_connection.connection_id,
 			    service_connection.account_no,
-			    service_connection.customer_name,
+			    ".($type_id==1?" service_connection.receipt_name ":" service_connection.customer_name ")." as customer_name,
 			    service_connection.address,
 			    (COALESCE(billing.billing_fee, 0) + COALESCE(disconnection.disconnection_fee, 0)) as fee,
 			    COALESCE(payment.payment_fee, 0) AS payment,
@@ -30,6 +30,7 @@ class Billing_model extends CORE_Model{
 			        c.customer_id,
 			            sc.connection_id,
 			            sc.account_no,
+ 						sc.receipt_name,
 			            sc.address,
 			            c.customer_name
 			    FROM
