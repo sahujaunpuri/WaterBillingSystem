@@ -932,7 +932,7 @@
                     },
                     { targets:[1],data: "service_no" },
                     { targets:[2],data: "account_no" },
-                    { targets:[3],data: "customer_name" },
+                    { targets:[3],data: "receipt_name" },
                     { targets:[4],data: "serial_no" },
                     { targets:[5],data: "service_date" },
                     {

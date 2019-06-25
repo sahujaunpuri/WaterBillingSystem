@@ -406,7 +406,7 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "other_charge_no" },
-                { targets:[2],data: "customer_name" },
+                { targets:[2],data: "receipt_name" },
                 { targets:[3],data: "account_no" },
                 { targets:[4],data: "date_invoice" },
                 { targets:[5],data: "remarks",render: $.fn.dataTable.render.ellipsis(60)},
@@ -431,7 +431,7 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "account_no" },
-                { targets:[2],data: "customer_name" },
+                { targets:[2],data: "receipt_name" },
                 { targets:[3],data: "service_no" },
                 { targets:[4],data: "serial_no" },
                 {
@@ -625,7 +625,7 @@ $(document).ready(function(){
         $('#tbl_account_list > tbody').on('click','button[name="accept_account"]',function(){
             _selectRowObjAccount=$(this).closest('tr');
             var data=dtAccounts.row(_selectRowObjAccount).data();
-            $('#customer_name').val(data.customer_name);
+            $('#customer_name').val(data.receipt_name);
             $('#account_no').val(data.customer_name);
             $('#connection_id').val(data.connection_id);
             $('#account_no_id').val(data.account_no);

@@ -234,7 +234,7 @@ $(document).ready(function(){
                         "defaultContent": ""
                     },
                     { targets:[1],data: "receipt_no" },
-                    { targets:[2],data: "customer_name" },
+                    { targets:[2],data: "receipt_name" },
                     { targets:[3],data: "payment_method" },
                     { targets:[4],data: "remarks" ,render: $.fn.dataTable.render.ellipsis(60)},
                     { targets:[5],data: "posted_by_user" },

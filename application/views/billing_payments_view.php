@@ -630,7 +630,7 @@
                         }
                     },
                     { targets:[2],data: "receipt_no" },
-                    { targets:[3],data: "customer_name" },
+                    { targets:[3],data: "receipt_name" },
                     { targets:[4],data: "account_no" },
                     { targets:[5],data: "payment_method" },
                     { targets:[6],data: "posted_by_user" },

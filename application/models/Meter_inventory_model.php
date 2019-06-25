@@ -18,7 +18,7 @@ class Meter_inventory_model extends CORE_Model{
 				    inv.*,
 				    stat.status_name,
 					COALESCE(
-				    (SELECT c.customer_name FROM service_connection sc 
+				    (SELECT sc.receipt_name FROM service_connection sc 
 						LEFT JOIN customers c ON c.customer_id = sc.customer_id
 				        WHERE sc.meter_inventory_id = inv.meter_inventory_id
 				        AND sc.is_deleted = 0

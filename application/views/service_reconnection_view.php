@@ -356,7 +356,7 @@ $(document).ready(function(){
                 { targets:[0],data: "reconnection_code" },
                 { targets:[1],data: "disconnection_code" },
                 { targets:[2],data: "account_no" },
-                { targets:[3],data: "customer_name" },
+                { targets:[3],data: "receipt_name" },
                 { targets:[4],data: "service_date" },
                 {
                     targets:[5],
@@ -388,7 +388,7 @@ $(document).ready(function(){
             }, 
             "columns": [
                 { targets:[0],data: "account_no" },
-                { targets:[1],data: "customer_name" },
+                { targets:[1],data: "receipt_name" },
                 { targets:[2],data: "disconnection_code" },
                 { targets:[3],data: "serial_no" },
                 {
@@ -475,7 +475,6 @@ $(document).ready(function(){
             $('input[name="service_no"]').val(data.disconnection_code);
             $('input[name="disconnection_id"]').val(data.disconnection_id);
             $('input[name="date_disconnection_date"]').val(data.date_disconnection_date);
-            $('input[name="customer_name"]').val(data.customer_name);
             $('input[name="contract_type_name"]').val(data.contract_type_name);
             $('input[name="rate_type_name"]').val(data.rate_type_name);
 
@@ -490,6 +489,8 @@ $(document).ready(function(){
                 });
             });
 
+            $('input[name="customer_name"]').val(data.receipt_name);
+
             $('#link_browse_disc').hide();
             $('#sn_icon').show();
             $('#modal_title').text('Edit Reconnection Service');
@@ -503,7 +504,7 @@ $(document).ready(function(){
             $('input[name="service_no"]').val(data.disconnection_code);
             $('input[name="disconnection_id"]').val(data.disconnection_id);
             $('input[name="date_disconnection_date"]').val(data.date_disconnection_date);
-            $('input[name="customer_name"]').val(data.customer_name);
+            $('input[name="customer_name"]').val(data.receipt_name);
             $('input[name="contract_type_name"]').val(data.contract_type_name);
             $('input[name="rate_type_name"]').val(data.rate_type_name);
             $('textarea[name="address"]').val(data.address);

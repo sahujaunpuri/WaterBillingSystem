@@ -45,7 +45,7 @@
         </tr>
         <tr>
             <td>Customer:</td>
-            <td><?php echo $info->customer_name; ?> </td>
+            <td><?php echo $info->receipt_name; ?> </td>
             <td>Meter No:</td>
             <td><?php echo $info->serial_no; ?></td>
         </tr>

@@ -427,7 +427,7 @@ $(document).ready(function(){
                 { targets:[1],data: "disconnection_code" },
                 { targets:[2],data: "service_no" },
                 { targets:[3],data: "account_no" },
-                { targets:[4],data: "customer_name" },
+                { targets:[4],data: "receipt_name" },
                 { targets:[5],data: "service_date" },
                 {
                     targets:[6],
@@ -458,7 +458,7 @@ $(document).ready(function(){
             }, 
             "columns": [
                 { targets:[0],data: "account_no" },
-                { targets:[1],data: "customer_name" },
+                { targets:[1],data: "receipt_name" },
                 { targets:[2],data: "service_no" },
                 { targets:[3],data: "serial_no" },
                 {
@@ -553,7 +553,7 @@ $(document).ready(function(){
             $('#tbl_other_items > tbody').html('');
             _cboDisconnectionReason.select2('val',data.disconnection_reason_id);
 
-
+            $('input[name=customer_name]').val(data.receipt_name);
 
             $.ajax({
                 url : 'Service_disconnection/transaction/items/'+data.disconnection_id,
@@ -598,7 +598,7 @@ $(document).ready(function(){
 
             $('input[name="service_no"]').val(data.service_no);
             $('input[name="connection_id"]').val(data.connection_id);
-            $('input[name="customer_name"]').val(data.customer_name);
+            $('input[name="customer_name"]').val(data.receipt_name);
             $('textarea[name="address"]').val(data.address);
             $('input[name="previous_id"]').val(data.previous_id);
             

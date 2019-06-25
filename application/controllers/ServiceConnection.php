@@ -282,6 +282,7 @@ class ServiceConnection extends CORE_Controller {
                 $m_connection=$this->Service_connection_model;
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
+                $data['user'] = $this->session->user_fullname;
 
                 $data['connection']=$m_connection->getList();
                 $this->load->view('template/service_connection_list',$data);
@@ -296,6 +297,7 @@ class ServiceConnection extends CORE_Controller {
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
                 $connection=$this->Service_connection_model->getList();
+
                 $excel->setActiveSheetIndex(0);
 
                 $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
@@ -407,6 +409,13 @@ class ServiceConnection extends CORE_Controller {
                 $a++;
 
                 }
+
+                $i++; $i++;
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Date Printed: '.date('Y-m-d h:i:s'));
+                $i++;
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Printed by: '.$this->session->user_fullname);
+
+
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header('Content-Disposition: attachment;filename="Service Connection Masterfile '.date('M-d-Y',NOW()).'.xlsx"');
                 header('Cache-Control: max-age=0');

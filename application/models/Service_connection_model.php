@@ -16,7 +16,7 @@ class Service_connection_model extends CORE_Model{
 		    sc.*,
 		    inv.serial_no,
 		    c.customer_name,
-            CONCAT(sc.account_no,' - ',c.customer_name) as customer_account,
+            CONCAT(sc.account_no,' - ',sc.receipt_name) as customer_account,
 		    ct.contract_type_name,
             cat.customer_account_type_desc,
 		    rt.rate_type_name,

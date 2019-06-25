@@ -89,7 +89,7 @@
                                                                 <select id="cbo_accounts" style="width: 100%;">
                                                                     <optgroup label="Account # | Customer Name | Meter Serial">
                                                                         <?php foreach($accounts as $account){ ?>
-                                                                            <option value="<?php echo $account->connection_id; ?>"><?php echo $account->account_no; ?> | <?php echo $account->customer_name; ?> | <?php echo $account->serial_no; ?></option>
+                                                                            <option value="<?php echo $account->connection_id; ?>"><?php echo $account->account_no; ?> | <?php echo $account->receipt_name; ?> | <?php echo $account->serial_no; ?></option>
                                                                         <?php } ?>
                                                                     </optgroup>
                                                                 </select>

@@ -275,7 +275,7 @@ $(document).ready(function(){
             "columns": [
                 { targets:[0],data: "control_no" },
                 { targets:[1],data: "account_no" },
-                { targets:[2],data: "customer_name" },
+                { targets:[2],data: "receipt_name" },
                 {
                     className: "text-right",
                     targets:[3],data: "total_consumption",

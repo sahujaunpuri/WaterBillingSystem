@@ -30,7 +30,7 @@
     }
 </style>
 
-<div style="page-break-after:always;">
+<div style="page-break-after:inherit;">
     <?php for($x = 1; $x <= 3; $x++){?>
     <!-- File Copy -->
     <div class="pb">

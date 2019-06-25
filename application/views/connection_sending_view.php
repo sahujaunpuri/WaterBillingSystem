@@ -234,7 +234,7 @@ $(document).ready(function(){
             "columns": [
                 { targets:[0],data: "service_no" },
                 { targets:[1],data: "account_no" },
-                { targets:[2],data: "customer_name" },
+                { targets:[2],data: "receipt_name" },
                 { targets:[3],data: "service_date" },
 
                 {

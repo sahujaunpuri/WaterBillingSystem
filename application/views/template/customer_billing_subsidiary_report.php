@@ -54,7 +54,7 @@
         	<td style="padding: 4px;" width="50%"><strong>Account No: </strong><?php echo $account_subsidiary->account_no; ?></td>
         </tr>
         <tr>
-            <td style="padding: 4px;" width="50%"><strong>Customer: </strong><?php echo $account_subsidiary->customer_name; ?></td>
+            <td style="padding: 4px;" width="50%"><strong>Customer: </strong><?php echo $account_subsidiary->receipt_name; ?></td>
         </tr>
     </table><br>
     <table width="100%" cellspacing="-1">
@@ -85,6 +85,6 @@
     <br>
     <span style="font-size: 8pt;">
         Printed Date : <?php echo date('m/d/Y h:i a'); ?><br>
-        Prepared by : <?php echo $user; ?> <br>
+        Printed by : <?php echo $user; ?> <br>
     </span>
 </html>

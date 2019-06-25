@@ -33,7 +33,7 @@ class Customer_consumption_history extends CORE_Controller {
 
         $data['title']='Consumption History';
         $data['meter_years']=$this->Meter_reading_period_model->get_list(array('is_active'=> TRUE, 'is_deleted'=> FALSE), 'DISTINCT(meter_reading_year)');
-        $data['accounts']=$this->Service_connection_model->get_list(array('service_connection.is_active'=> TRUE, 'service_connection.is_deleted'=> FALSE), 'connection_id,account_no,customer_name,serial_no',
+        $data['accounts']=$this->Service_connection_model->get_list(array('service_connection.is_active'=> TRUE, 'service_connection.is_deleted'=> FALSE), 'connection_id,account_no,customer_name,serial_no,receipt_name',
         	array(
 				array('customers c', 'c.customer_id=service_connection.customer_id','left'),
 				array('meter_inventory','meter_inventory.meter_inventory_id = service_connection.meter_inventory_id','left')
@@ -84,6 +84,7 @@ class Customer_consumption_history extends CORE_Controller {
 	            $data['years']=$this->Meter_reading_period_model->get_list(array('is_active'=> TRUE, 'is_deleted'=> FALSE), 'DISTINCT(meter_reading_year)');
 	            $data['months']=$this->Months_model->get_list();
 				$data['datas']=$this->Meter_reading_period_model->get_history($scid,$year);
+                $data['user']=$this->session->user_fullname; 
 
                 $file_name='Customer Consumption History';
                 $pdfFilePath = $file_name.".pdf"; //generate filename base on id

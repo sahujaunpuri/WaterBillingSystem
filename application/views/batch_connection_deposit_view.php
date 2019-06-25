@@ -254,7 +254,7 @@ $(document).ready(function(){
                     },
                     { targets:[1],data: "service_no" },
                     { targets:[2],data: "account_no" },
-                    { targets:[3],data: "customer_name" },
+                    { targets:[3],data: "receipt_name" },
                     { targets:[4],data: "service_date" },
                     {sClass: "right_align", targets:[5],data: "initial_meter_deposit", render: $.fn.dataTable.render.number( ',', '.', 2)},
                     { targets:[6],data: "service_connection_batch_id" , visible:false},

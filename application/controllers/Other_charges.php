@@ -248,6 +248,7 @@ function response_rows_invoice($filter_value){
             customers.customer_name,
             departments.department_name,
             service_connection.account_no,
+            service_connection.receipt_name,
             meter_inventory.serial_no,
             DATE_FORMAT(other_charges.date_invoice,"%m/%d/%Y") as date_invoice',
             array(

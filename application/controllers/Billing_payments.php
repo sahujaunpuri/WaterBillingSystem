@@ -281,6 +281,7 @@ class Billing_payments extends CORE_Controller
                 'payment_methods.payment_method',
                 'customers.customer_name',
                 'service_connection.account_no',
+                'service_connection.receipt_name',
                 'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by_user'
             ),
             //joins

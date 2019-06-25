@@ -43,7 +43,6 @@
 	<table width="100%">
 		<tr>
 			<td><h2 style="text-transform: uppercase;">Service Trail</h2></td>
-			<td align="right"><?php echo date('m/d/Y h:i a'); ?></td>
 		</tr>
 	</table>
 
@@ -51,14 +50,17 @@
 		<tr>
 			<td>Transaction Type: <?php echo $trans_type; ?></td>
 			<td>From Date: <?php echo $start_date; ?></td>
+			<td align="right">Date Printed: <?php echo date('m/d/Y h:i:s'); ?></td>
 		</tr>
 		<tr>
 			<td>Record Type : <?php echo $trans_key; ?></td>
 			<td>To Date: <?php echo $end_date; ?></td>
+			<td align="right">Printed by : <?php echo $user; ?></td>
 		</tr>
 		<tr>
 			<td>Service No : <?php echo $service_no; ?></td>
 			<td>User Account : <?php echo $user; ?></td>
+			<td></td>
 		</tr>
 	</table>
 </div>

@@ -125,6 +125,12 @@
 </tbody>
 </table>
     </center>
+<br>
+<div>
+    Date Printed: <?php echo date("m/d/Y h:i a") ?><br>
+    Printed by: <?php echo $user; ?>
+</div>
+
 </div>
 
 

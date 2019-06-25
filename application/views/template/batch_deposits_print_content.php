@@ -57,7 +57,7 @@
         <tr>
             <td><?php echo $binfo->service_no ?></td>
             <td><?php echo $binfo->account_no ?></td>
-            <td><?php echo $binfo->customer_name ?></td>
+            <td><?php echo $binfo->receipt_name ?></td>
             <td><?php echo $binfo->service_date ?></td>
             <td style="text-align: right;"><?php echo number_format($binfo->initial_meter_deposit,2) ?></td>
 

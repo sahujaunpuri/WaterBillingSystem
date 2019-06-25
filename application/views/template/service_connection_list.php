@@ -48,7 +48,18 @@
             </td>
         </tr>
     </table>
-    <h2>Service Connection Masterfile</h2>
+    <br>
+    <table width="100%" style="font-size: 10pt;border-collapse: collapse;border-spacing: 0;">
+        <tr>
+            <td style="font-size: 12pt;"><b>SERVICE CONNECTION MASTERFILE</b></td>
+            <td align="right">Date Printed : <?php echo date('m/d/Y h:i a'); ?></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td align="right">Printed by : <?php echo $user; ?></td>
+        </tr>
+    </table>
+
         <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" id="tbl_supplier">
             <thead>
             <tr>

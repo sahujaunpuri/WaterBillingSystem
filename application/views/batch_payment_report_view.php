@@ -254,7 +254,7 @@ $(document).ready(function(){
                         "defaultContent": ""
                     },
                     { targets:[1],data: "receipt_no" },
-                    { targets:[2],data: "customer_name" },
+                    { targets:[2],data: "receipt_name" },
                     { targets:[3],data: "account_no" },
                     { targets:[4],data: "payment_method" },
                     {sClass: "right_align", targets:[5],data: "total_payment_amount", render: $.fn.dataTable.render.number( ',', '.', 2)},

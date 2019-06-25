@@ -25,7 +25,7 @@
             <?php foreach($input_items as $inputs){ ?>
                 <tr>
                     <td width="12%"  class="left" style="text-align: center;height: 10PX;padding: 3px;"><?php echo $inputs->account_no; ?></td>
-                    <td width="50%" style="text-align: left;height: 10PX;padding: 3px;"><?php echo $inputs->customer_name; ?></td>
+                    <td width="50%" style="text-align: left;height: 10PX;padding: 3px;"><?php echo $inputs->receipt_name; ?></td>
                     <td width="12%" style="text-align: left;height: 10PX;padding: 3px;"><?php echo $inputs->serial_no; ?></td>
                     <td width="12%" style="text-align: left;height: 10PX;padding: 3px;"><?php echo $inputs->previous_month; ?></td>
                     <td width="12%" style="text-align: right;height: 10PX;padding: 3px;"><?php echo $inputs->previous_reading ?></td>

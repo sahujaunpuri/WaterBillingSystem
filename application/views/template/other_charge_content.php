@@ -50,7 +50,7 @@
 
         <tr>
             <td class=""><span>Customer Name:</span></td>
-            <td class=""><?php echo $charge->customer_name?></td>
+            <td class=""><?php echo $charge->receipt_name?></td>
                 <td class="">Date:</td>
                 <td class=""><?php echo  date_format(new DateTime($charge->date_invoice ),"m/d/Y"); ?></td>
         </tr>
