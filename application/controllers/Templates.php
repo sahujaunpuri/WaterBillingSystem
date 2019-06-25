@@ -6663,6 +6663,320 @@ class Templates extends CORE_Controller {
                             }
 
                 break;
+
+                case 'monthly_connection': //Monthly Connection
+                        $m_connection=$this->Service_connection_model;
+                        $m_months=$this->Months_model;
+                        $m_company=$this->Company_model;
+
+                        $type=$this->input->get('type',TRUE);
+                        $month_id=$this->input->get('month_id',TRUE);
+                        $year=$this->input->get('year',TRUE);
+
+                        $connections=$m_connection->getList(null,null,null,$month_id,$year);
+                        $company=$m_company->get_list();
+
+                        $month = $this->Months_model->get_list($month_id);
+                        $month_name = $month[0]->month_name;
+
+                        $data['connections']=$connections;
+                        $data['company_info']=$company[0];
+                        $data['user']=$this->session->user_fullname;
+                        $data['month']=$month_name.' '.$year;
+ 
+                        //preview on browser
+                        if($type=='preview'){
+                            $file_name=$month_name;
+                            $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                            $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                            $content=$this->load->view('template/monthly_connection_content',$data,TRUE); //load the template
+                            $pdf->AddPage('L'); // Adds a new page in Landscape orientation
+                            $pdf->WriteHTML($content);
+                            //download it.
+                            $pdf->Output();
+                        }
+
+                        break;
+
+            case 'monthly_connection_export' :
+                $excel=$this->excel;
+                $type=$this->input->get('type',TRUE);
+                $type_id=$this->input->get('type_id',TRUE);
+
+                $m_connection=$this->Service_connection_model;
+                $m_months=$this->Months_model;
+                $m_company=$this->Company_model;
+
+                $month_id=$this->input->get('month_id',TRUE);
+                $year=$this->input->get('year',TRUE);
+
+                $connections=$m_connection->getList(null,null,null,$month_id,$year);
+                $company_info=$m_company->get_list();
+
+                $month = $this->Months_model->get_list($month_id);
+                $month_name = $month[0]->month_name.' '.$year;
+
+                $excel->setActiveSheetIndex(0);
+
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('50');
+                //name the worksheet
+                $excel->getActiveSheet()->setTitle("Customer Billing Receivable");
+                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->mergeCells('A2:C2');
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
+                                        ->setCellValue('A4',$company_info[0]->email_address);
+                
+                $excel->getActiveSheet()->mergeCells('A6:G6');
+                $excel->getActiveSheet()->setCellValue('A6','MONTHLY CONNECTION REPORT')
+                                        ->getStyle('A6')->getFont()->setBold(TRUE);
+
+                $excel->getActiveSheet()->mergeCells('A7:G7');
+                $excel->getActiveSheet()->setCellValue('A7','Month : '.$month_name)
+                                        ->getStyle('A7')->getFont()->setBold(TRUE);
+
+                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('30');
+                    $excel->getActiveSheet()->getColumnDimension('D')->setWidth('40');
+                    $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
+
+                    $excel->getActiveSheet()->setCellValue('A9','Service #')
+                                            ->getStyle('A9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('B9','Account #')
+                                            ->getStyle('B9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('C9','Customer')
+                                            ->getStyle('C9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('D9','Address')
+                                            ->getStyle('D9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('E9','Meter Serial')
+                                            ->getStyle('E9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('F9','Service Date')
+                                            ->getStyle('F9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('G9','Installation Date')
+                                            ->getStyle('G9')->getFont()->setBold(TRUE);
+
+                $i=10;
+
+                foreach ($connections as $connection){
+
+                    $excel->getActiveSheet()
+                            ->getStyle('E'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$connection->service_no);
+                        $excel->getActiveSheet()->setCellValue('B'.$i,$connection->account_no);
+                        $excel->getActiveSheet()->setCellValue('C'.$i,$connection->receipt_name);
+                        $excel->getActiveSheet()->setCellValue('D'.$i,$connection->address);
+                        $excel->getActiveSheet()->setCellValue('E'.$i,$connection->serial_no);
+                        $excel->getActiveSheet()->setCellValue('F'.$i,$connection->service_date);
+                        $excel->getActiveSheet()->setCellValue('G'.$i,$connection->installation_date);
+            
+    
+                $i++;
+
+                }
+
+                $i++; $i++;
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Date Printed: '.date('Y-m-d h:i:s'));
+                $i++;
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Printed by: '.$this->session->user_fullname);
+
+                $filename = "MONTHLY CONNECTION REPORT (".$month_name.")";
+
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename='.$filename.".xlsx".'');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output'); 
+
+                break;
+
+            case 'monthly_connection_email' :
+                $excel=$this->excel;
+                $m_email=$this->Email_settings_model;
+                $email=$m_email->get_list(2);
+
+                $type=$this->input->get('type',TRUE);
+                $type_id=$this->input->get('type_id',TRUE);
+
+                $m_connection=$this->Service_connection_model;
+                $m_months=$this->Months_model;
+                $m_company=$this->Company_model;
+
+                $month_id=$this->input->get('month_id',TRUE);
+                $year=$this->input->get('year',TRUE);
+
+                $connections=$m_connection->getList(null,null,null,$month_id,$year);
+                $company_info=$m_company->get_list();
+
+                $month = $this->Months_model->get_list($month_id);
+                $month_name = $month[0]->month_name.' '.$year;
+
+                ob_start();
+                $excel->setActiveSheetIndex(0);
+
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('50');
+                //name the worksheet
+                $excel->getActiveSheet()->setTitle("Customer Billing Receivable");
+                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->mergeCells('A2:C2');
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
+                                        ->setCellValue('A4',$company_info[0]->email_address);
+                
+                $excel->getActiveSheet()->mergeCells('A6:G6');
+                $excel->getActiveSheet()->setCellValue('A6','MONTHLY CONNECTION REPORT')
+                                        ->getStyle('A6')->getFont()->setBold(TRUE);
+
+                $excel->getActiveSheet()->mergeCells('A7:G7');
+                $excel->getActiveSheet()->setCellValue('A7','Month : '.$month_name)
+                                        ->getStyle('A7')->getFont()->setBold(TRUE);
+
+                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('30');
+                    $excel->getActiveSheet()->getColumnDimension('D')->setWidth('40');
+                    $excel->getActiveSheet()->getColumnDimension('E')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('F')->setWidth('20');
+                    $excel->getActiveSheet()->getColumnDimension('G')->setWidth('20');
+
+                    $excel->getActiveSheet()->setCellValue('A9','Service #')
+                                            ->getStyle('A9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('B9','Account #')
+                                            ->getStyle('B9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('C9','Customer')
+                                            ->getStyle('C9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('D9','Address')
+                                            ->getStyle('D9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('E9','Meter Serial')
+                                            ->getStyle('E9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('F9','Service Date')
+                                            ->getStyle('F9')->getFont()->setBold(TRUE);
+                    $excel->getActiveSheet()->setCellValue('G9','Installation Date')
+                                            ->getStyle('G9')->getFont()->setBold(TRUE);
+
+                $i=10;
+                foreach ($connections as $connection){
+
+                    $excel->getActiveSheet()
+                            ->getStyle('E'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$connection->service_no);
+                        $excel->getActiveSheet()->setCellValue('B'.$i,$connection->account_no);
+                        $excel->getActiveSheet()->setCellValue('C'.$i,$connection->receipt_name);
+                        $excel->getActiveSheet()->setCellValue('D'.$i,$connection->address);
+                        $excel->getActiveSheet()->setCellValue('E'.$i,$connection->serial_no);
+                        $excel->getActiveSheet()->setCellValue('F'.$i,$connection->service_date);
+                        $excel->getActiveSheet()->setCellValue('G'.$i,$connection->installation_date);
+            
+    
+                $i++;
+
+                }
+
+                $i++; $i++;
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Date Printed: '.date('Y-m-d h:i:s'));
+                $i++;
+                $excel->getActiveSheet()->setCellValue('A'.$i,'Printed by: '.$this->session->user_fullname);
+
+                $filename = "MONTHLY CONNECTION REPORT (".$month_name.")";
+
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename='.$filename.".xlsx".'');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
+
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output'); 
+                $data = ob_get_clean();
+
+                            $file_name='MONTHLY CONNECTION REPORT ('.$month_name.')';
+                            $excelFilePath = $file_name.".xlsx"; //generate filename base on id
+                            //download it.
+                            // Set SMTP Configuration
+                            $emailConfig = array(
+                                'protocol' => 'smtp', 
+                                'smtp_host' => 'ssl://smtp.googlemail.com', 
+                                'smtp_port' => 465, 
+                                'smtp_user' => $email[0]->email_address, 
+                                'smtp_pass' => $email[0]->password, 
+                                'mailtype' => 'html', 
+                                'charset' => 'iso-8859-1'
+                            );
+
+                            // Set your email information
+                            
+                            $from = array(
+                                'email' => $email[0]->email_address,
+                                'name' => $email[0]->name_from
+                            );
+
+                            $to = array($email[0]->email_to);
+                            $subject = 'MONTHLY CONNECTION REPORT';
+                          //  $message = 'Type your gmail message here';
+                            $message = '<p>To: ' .$email[0]->email_to. '</p></ br>' .$email[0]->default_message.'</ br><p>Sent By: '. '<b>'.$this->session->user_fullname.'</b>'. '</p></ br>' .date('Y-m-d h:i:A', now());
+
+                            // Load CodeIgniter Email library
+                            $this->load->library('email', $emailConfig);
+                            // Sometimes you have to set the new line character for better result
+                            $this->email->set_newline("\r\n");
+                            // Set email preferences
+                            $this->email->from($from['email'], $from['name']);
+                            $this->email->to($to);
+                            $this->email->subject($subject);
+                            $this->email->message($message);
+                            $this->email->attach($data, 'attachment', $excelFilePath , 'application/ms-excel');
+                            $this->email->set_mailtype("html");
+                            // Ready to send email and check whether the email was successfully sent
+                            if (!$this->email->send()) {
+                                // Raise error message
+                            $response['title']='Try Again!';
+                            $response['stat']='error';
+                            $response['msg']='Please check the Email Address of your Supplier or your Internet Connection.';
+
+                            echo json_encode($response);
+                            } else {
+                                // Show success notification or other things here
+                            $response['title']='Success!';
+                            $response['stat']='success';
+                            $response['msg']='Email Sent successfully.';
+
+                            echo json_encode($response);
+                            }
+
+                break;
+
         }
     }
 }

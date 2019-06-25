@@ -11,7 +11,7 @@ class Service_connection_model extends CORE_Model{
         parent::__construct();
     }
 
-    function getList($connection_id=null,$status_id=null,$current_id=null){
+    function getList($connection_id=null,$status_id=null,$current_id=null,$month_id=null,$year=null){
 	$query = $this->db->query("SELECT 
 		    sc.*,
 		    inv.serial_no,
@@ -22,7 +22,8 @@ class Service_connection_model extends CORE_Model{
 		    rt.rate_type_name,
             CONCAT_WS(' ',a.first_name,a.middle_name,a.last_name) as attendant,
 		    DATE_FORMAT(sc.service_date, '%m/%d/%Y') AS service_date,
-		    DATE_FORMAT(sc.target_date, '%m/%d/%Y') AS target_date
+		    DATE_FORMAT(sc.target_date, '%m/%d/%Y') AS target_date,
+            CONCAT(DATE_FORMAT(sc.target_date, '%m/%d/%Y'),' ',sc.target_time) as installation_date
 
 		FROM
 		    service_connection sc
@@ -43,7 +44,9 @@ class Service_connection_model extends CORE_Model{
 		        AND sc.is_active = TRUE
 		        ".($connection_id==null?"":" AND sc.connection_id=".$connection_id)."
                 ".($status_id==null?"":" AND sc.status_id=".$status_id)."
-                ".($current_id==null?"":" AND sc.current_id=".$current_id)."");
+                ".($current_id==null?"":" AND sc.current_id=".$current_id)."
+                ".($month_id==null?"":" AND month(sc.service_date)=".$month_id)."
+                ".($year==null?"":" AND year(sc.service_date)=".$year)."");
     	return $query->result();
     }
 
