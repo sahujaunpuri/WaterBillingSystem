@@ -199,7 +199,7 @@
                                     foreach ($billing_payments_info as $binfo) { ?>
                                         <tr>
                                             <td><?php echo $binfo->receipt_no ?></td>
-                                            <td><?php echo $binfo->customer_name ?></td>
+                                            <td><?php echo $binfo->receipt_name ?></td>
                                             <td><?php echo $binfo->account_no ?></td>
                                             <td><?php echo $binfo->payment_method ?></td>
                                             <td style="text-align: right;"><?php echo number_format($binfo->total_payment_amount,2) ?></td>

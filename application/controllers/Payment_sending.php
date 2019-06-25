@@ -64,7 +64,8 @@ class Payment_sending extends CORE_Controller {
                 break;
 
             case 'list-for-review':
-                $response['data']=$this->Billing_payment_batch_model->get_list(array('is_journal_posted'=>FALSE));
+                $response['data']=$this->Billing_payment_batch_model->get_list(array('is_journal_posted'=>FALSE),
+                    '*,DATE_FORMAT(start_date,"%m/%d/%Y") as start_date,DATE_FORMAT(end_date,"%m/%d/%Y") as end_date');
                 echo json_encode($response);
                 break;
 
@@ -159,7 +160,7 @@ class Payment_sending extends CORE_Controller {
                 );
                 $data['entries']=$this->Billing_payment_batch_model->get_journal_entries($billing_payment_batch_id);
                 $data['billing_payments_info']=$this->Billing_payments_model->get_list(array('billing_payment_batch_id'=>$billing_payment_batch_id),
-                    'billing_payments.*,payment_methods.payment_method,customers.customer_name,service_connection.account_no',
+                    'billing_payments.*,payment_methods.payment_method,customers.customer_name,service_connection.account_no,service_connection.receipt_name',
                     array(array('payment_methods','payment_methods.payment_method_id = billing_payments.payment_method_id','left'),
                         array('service_connection','service_connection.connection_id = billing_payments.connection_id','left'),
                         array('customers', 'customers.customer_id= service_connection.customer_id','left')

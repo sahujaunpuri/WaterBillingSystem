@@ -153,7 +153,7 @@
                                             <tr>
                                                 <td><?php echo $item->service_no; ?></td>
                                                 <td><?php echo $item->account_no; ?></td>
-                                                <td><?php echo $item->customer_name; ?></td>
+                                                <td><?php echo $item->receipt_name; ?></td>
                                                 <td><?php echo $item->service_date; ?></td>
                                                 <td class="right_align"><?php echo number_format($item->initial_meter_deposit,2); ?></td>
                                             </tr>

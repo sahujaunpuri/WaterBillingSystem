@@ -155,7 +155,7 @@
         <tr>
             <td><?php echo $b_item->control_no ?></td>
             <td><?php echo $b_item->account_no ?></td>
-            <td><?php echo $b_item->customer_name ?></td>
+            <td><?php echo $b_item->receipt_name ?></td>
             <td><?php echo $b_item->total_consumption ?></td>
             <td class="right_align"><?php echo number_format($b_item->amount_due,2); ?></td>
             <td class="right_align"><?php echo number_format($b_item->arrears_penalty_amount,2); ?></td>

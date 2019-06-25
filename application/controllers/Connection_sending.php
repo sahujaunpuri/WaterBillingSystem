@@ -151,7 +151,7 @@ class Connection_sending extends CORE_Controller {
 
 
                 $data['items'] = $this->Service_connection_model->get_list(array('service_connection_batch_id'=>$service_connection_batch_id),
-                    'service_connection.*,customers.customer_name,DATE_FORMAT(service_connection.service_date,"%m/%d/%Y") as service_date',
+                    'service_connection.*,customers.customer_name,DATE_FORMAT(service_connection.service_date,"%m/%d/%Y") as service_date,service_connection.receipt_name',
                     array(array('customers','customers.customer_id = service_connection.customer_id','left'))
                     );
 

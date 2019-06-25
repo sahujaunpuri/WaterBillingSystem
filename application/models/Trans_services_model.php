@@ -13,7 +13,7 @@ class Trans_services_model extends CORE_Model {
 
 			SELECT 
                 t.*,tk.trans_key_desc,tt.trans_type_desc,ua.user_fname,ua.user_lname,
-                sc.service_no, sc.account_no, c.customer_name, mi.serial_no
+                sc.service_no, sc.account_no, sc.receipt_name as customer_name, mi.serial_no
                 FROM trans_services t 
 			LEFT JOIN trans_key_services tk ON tk.trans_key_id = t.trans_key_id
 			LEFT JOIN trans_type_services tt ON tt.trans_type_id = t.trans_type_id
