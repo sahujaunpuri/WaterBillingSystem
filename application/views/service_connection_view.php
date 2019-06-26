@@ -437,14 +437,14 @@
                                          <input type="text" id="searchbox_meter" class="form-control">
                                 </div>
                             </div><br>
-                            <table id="tbl_meter_list" class="table table-striped" cellspacing="0" width="100%">
-                                <thead class="">
-                                <tr>
-                                    <th>Meter Code</th>
-                                    <th>Serial No</th>
-                                    <th>Description</th>
-                                    <th><center>Action</center></th>
-                                </tr>
+                            <table id="tbl_meter_list" class="table table-striped" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Meter Code</th>
+                                        <th>Serial No</th>
+                                        <th>Description</th>
+                                        <th><center>Action</center></th>
+                                    </tr>
                                 </thead>
                                 <tbody></tbody>
                             </table>
@@ -946,11 +946,11 @@
             });
 
             dt_meter=$('#tbl_meter_list').DataTable({
+                "scrollY":        "300px",
+                "scrollCollapse": true,
                 "bLengthChange":false,
                 "order": [[ 4, "desc" ]],
                 "pageLength": 15,
-                "scrollY":        "300px",
-                "scrollCollapse": true,
                 "ajax" : "MeterInventory/transaction/open",
                 "columns": [
                     { targets:[0],data: "meter_code" },
@@ -1009,11 +1009,14 @@
 
             $('#link_browse_cu').click(function(){
 
-                $('#tbl_meter_list tbody').html('<tr><td colspan="4"><center><br/><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
-            
-                dt_meter.ajax.reload();
                 $('#modal_new_connection').modal('hide');
                 $('#modal_meter_list').modal('show');
+
+                setTimeout(function(){
+                    $('#tbl_meter_list tbody').html('<tr><td colspan="4"><center><br/><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+                    dt_meter.ajax.reload(); 
+                },100);
+
             });
 
             _cboCustomer.on('select2:select',function(e){

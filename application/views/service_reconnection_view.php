@@ -561,11 +561,13 @@ $(document).ready(function(){
         });
 
         $('#link_browse_disc').click(function(){
-            $('#tbl_account_list tbody').html('<tr><td colspan="5"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
-            dt_account.ajax.reload( null, false );
-
             $('#modal_new_reconnection').modal('hide');
             $('#modal_account_list').modal('show');
+
+            setTimeout(function(){
+                $('#tbl_account_list tbody').html('<tr><td colspan="5"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+                dt_account.ajax.reload( null, false );
+            },100);
         });
 
         $('input[name="file_upload[]"]').change(function(event){
