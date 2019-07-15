@@ -1,6 +1,9 @@
 <head><title>Refund Acknowledgement Receipt</title></head>
 <body>
 <style>
+    table {
+        font-size: 12px;
+    }
     .bottom-only{
         border:none!important;
     }
@@ -26,6 +29,9 @@
 </style>
 <div>
 </div>
+
+<div style="page-break-after:inherit;">
+    <?php for($x = 1; $x <= 3; $x++){?>
 <div class="center" style="text-transform: uppercase;">
     <b style="font-size: 15px;"><?php echo $company_info->company_name; ?></b><br/>
     <?php echo $company_info->company_address; ?><br><br>
@@ -73,7 +79,22 @@
         </tr>
     </tbody>
 </table>
-<br>
+<table width="100%" style="margin-bottom: 10px;">
+    <tr>
+        <td width="85%" style="font-size: 10pt!important;"></b></td>  
+        <td width="15%" style="text-align: right;font-size: ">  
+            <?php if($x == 1){ echo 'File Copy'; }else if ($x == 2){ echo 'Customer Copy'; }else{ echo 'Accounting Copy'; }?>
+        </td>    
+    </tr>
+</table>
+
+    <center>
+        <div style="border-top: 1px dashed black;height: 1px;width: 100%;text-align: center!important;margin-left: auto;margin-right: auto;display: block;margin-top: 5px;margin-bottom: 5px;"></div>
+    </center>
+    <br/>
+
+</div>
+<?php }?>
 <script>
     window.print();
 </script>

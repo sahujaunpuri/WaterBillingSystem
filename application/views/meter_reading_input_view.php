@@ -601,6 +601,8 @@ $(document).ready(function(){
             var row=$(this).closest('tr');
             var previous_reading=parseFloat(accounting.unformat(row.find(oTableItems.previous_reading).find('input.number').val()));
             var current_reading=parseFloat(accounting.unformat(row.find(oTableItems.current_reading).find('input.number').val()));
+
+            
             if(current_reading < previous_reading){
                  $(oTableItems.total_consumption,row).find('input.number').val(accounting.formatNumber(total_consumption,0));
             }else{

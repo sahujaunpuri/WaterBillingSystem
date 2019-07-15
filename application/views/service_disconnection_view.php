@@ -783,9 +783,12 @@ $(document).ready(function(){
             var row=$(this).closest('tr');
             var last_meter_reading=parseFloat(accounting.unformat($('input[name="last_meter_reading"]').val()));
             var previous_reading=parseFloat(accounting.unformat($('input[name="previous_reading"]').val()));
-            if(previous_reading == '' || previous_reading == null){
+            var prev_reading = $('input[name="previous_reading"]').val();
+
+            if(prev_reading == '' || prev_reading == null){
                 return false;
             }
+
             if(last_meter_reading < previous_reading){
                 $('input[name="total_consumption"]').val('');
                 $('input[name="meter_amount_due"]').val('');

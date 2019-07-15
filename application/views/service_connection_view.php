@@ -263,7 +263,7 @@
                                                             <label class="col-xs-12 col-md-4 control-label"><strong> Account Type:</strong></label>
                                                             <div class="col-xs-12 col-md-8">
                                                                 <div class="input-group">
-                                                                    <input type="text" id="customer_account_type" class="form-control" readonly placeholder="Account Type">
+                                                                    <input type="text"  name="customer_account_type_desc" id="customer_account_type" class="form-control" readonly placeholder="Account Type">
                                                                     <span class="input-group-addon">
                                                                         <i class="fa fa-code"></i>
                                                                     </span>
@@ -1177,6 +1177,10 @@
                 _cboContractType.select2('val',1);
                 _cboRateType.select2('val',1);
                 _cboCustomer.select2("enable",true);
+
+                $('input[name="initial_meter_reading"]').val("0");
+                $('input[name="initial_meter_deposit"]').val("0.00");
+
             });
 
             $('#tbl_connection tbody').on('click','button[name="edit_info"]',function(){
@@ -1331,7 +1335,7 @@
                         return false;
                     }
                 }else{
-                if($(this).val()=="" || $(this).val()== '0'){
+                if($(this).val()==""){
                     showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
                     $(this).closest('div.form-group').addClass('has-error');
                     $(this).focus();

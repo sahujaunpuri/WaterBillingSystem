@@ -24,7 +24,6 @@ class Service_connection_model extends CORE_Model{
 		    DATE_FORMAT(sc.service_date, '%m/%d/%Y') AS service_date,
 		    DATE_FORMAT(sc.target_date, '%m/%d/%Y') AS target_date,
             CONCAT(DATE_FORMAT(sc.target_date, '%m/%d/%Y'),' ',sc.target_time) as installation_date
-
 		FROM
 		    service_connection sc
 		        LEFT JOIN

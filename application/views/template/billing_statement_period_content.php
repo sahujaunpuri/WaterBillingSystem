@@ -48,7 +48,7 @@
         <tr>
             <th align="left" width="10%"><b>Account No</b></th>
             <th align="left" width="20%"><b>Customer Name</b> </th>
-            <th align="right" width="10%"><b>Total Reading</b></th>
+            <th align="right" width="10%"><b>Total Consumption</b></th>
             <th align="right" width="10%"><b>Amount Due</b></th>
             <th align="right" width="10%"><b>Previous Balance</b></th>
             <th align="right" width="10%"><b>Arrears Penalty</b></th>
