@@ -49,8 +49,8 @@
 	                $filter_accounts =  implode(",", $acc); 
 
 					$customer_id = $this->input->get('cusid',TRUE);
-					$response['previous_balances_soa'] = $m_sales->get_customer_soa_final('< MONTH(NOW())',$customer_id,null,null,$filter_accounts);
-					$response['current_balances_soa'] = $m_sales->get_customer_soa_final('= MONTH(NOW())',$customer_id,null,null,$filter_accounts);
+					$response['previous_balances_soa'] = $m_sales->get_customer_soa_final(false,$customer_id,null,null,$filter_accounts);
+					$response['current_balances_soa'] = $m_sales->get_customer_soa_final(true,$customer_id,null,null,$filter_accounts);
 					
 					// $response['current_balances'] = $m_sales->get_customer_soa('= MONTH(NOW())',$customer_id,null,null);
 
@@ -80,8 +80,8 @@
 	                foreach ($accounts as $account) { $acc[]=$account->soa_account_id; } 
 	                $filter_accounts =  implode(",", $acc); 
 
-					$data['previous_balances'] = $m_sales->get_customer_soa_final('< MONTH(NOW())',$customer_id,null,null,$filter_accounts);
-					$data['current_balances'] = $m_sales->get_customer_soa_final('= MONTH(NOW())',$customer_id,null,null,$filter_accounts);
+					$data['previous_balances'] = $m_sales->get_customer_soa_final(false,$customer_id,null,null,$filter_accounts);
+					$data['current_balances'] = $m_sales->get_customer_soa_final(true,$customer_id,null,null,$filter_accounts);
 					$data['payments'] = $m_sales->get_customer_soa_payment($customer_id,$filter_accounts);
 
 
@@ -118,8 +118,8 @@
 	                $filter_accounts =  implode(",", $acc); 
 
 
-					$previous_balances = $m_sales->get_customer_soa_final('< MONTH(NOW())',$customer_id,null,null,$filter_accounts);
-					$current_balances = $m_sales->get_customer_soa_final('= MONTH(NOW())',$customer_id,null,null,$filter_accounts);
+					$previous_balances = $m_sales->get_customer_soa_final(false,$customer_id,null,null,$filter_accounts);
+					$current_balances = $m_sales->get_customer_soa_final(true,$customer_id,null,null,$filter_accounts);
 					$payments = $m_sales->get_customer_soa_payment($customer_id,$filter_accounts);
 
 	                $excel->setActiveSheetIndex(0);
@@ -509,8 +509,8 @@
 
 					$customer_info = $customer_info[0];
 
-					$previous_balances = $m_sales->get_customer_soa_final('< MONTH(NOW())',$customer_id,null,null,$filter_accounts);
-					$current_balances = $m_sales->get_customer_soa_final('= MONTH(NOW())',$customer_id,null,null,$filter_accounts);
+					$previous_balances = $m_sales->get_customer_soa_final(false,$customer_id,null,null,$filter_accounts);
+					$current_balances = $m_sales->get_customer_soa_final(true,$customer_id,null,null,$filter_accounts);
 					$payments = $m_sales->get_customer_soa_payment($customer_id,$filter_accounts);
 
 					ob_start();

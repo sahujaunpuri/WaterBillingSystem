@@ -233,7 +233,7 @@ class Account_integration extends CORE_Controller
                 // inventory
                 $m_integration->sales_invoice_inventory=$this->get_numeric_value($this->input->post('sales_invoice_inventory',TRUE));
                 $m_integration->cash_invoice_inventory=$this->get_numeric_value($this->input->post('cash_invoice_inventory',TRUE));
-        
+                $m_integration->dispatching_invoice_inventory=$this->get_numeric_value($this->input->post('dispatching_invoice_inventory',TRUE));
                 $m_integration->modify(1);
 
                 $response['stat']="success";
