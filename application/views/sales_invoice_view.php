@@ -1623,8 +1623,9 @@ $(document).ready(function(){
         }
         $(oTableItems.unit_price,row).find('input').val(accounting.formatNumber(price,2));  
         $(oTableItems.unit_identifier,row).find('input').val(accounting.formatNumber(unit_value,2)); 
-        }   
         $('.trigger-keyup').keyup();
+        }   
+        
         });
 
         $('#tbl_items tbody').on('keyup','input.numeric',function(){

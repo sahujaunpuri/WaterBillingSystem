@@ -1050,9 +1050,10 @@ $(document).ready(function(){
             }
             $(oTableItems.unit_price,row).find('input').val(accounting.formatNumber(price,2));   
             $(oTableItems.unit_identifier,row).find('input').val(unit_value); 
+            $('.trigger-change').keyup();
         }
 
-        $('.trigger-change').keyup();
+        
         });
 
 
