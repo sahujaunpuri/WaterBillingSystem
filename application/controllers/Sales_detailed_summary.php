@@ -62,6 +62,18 @@ class Sales_detailed_summary extends CORE_Controller {
                 );
             break;
 
+            case 'per-sales-summary-salesperson':
+                $m_sales_invoice=$this->Sales_invoice_model;
+                $start=date("Y-m-d",strtotime($this->input->get('startDate',TRUE)));
+                $end=date("Y-m-d",strtotime($this->input->get('endDate',TRUE)));
+
+                $response['data']=$m_sales_invoice->get_sales_summary_list_salesperson($start,$end);
+
+                echo(
+                json_encode($response)
+                );
+            break;
+
             case 'product-sales-summary':   
                 $m_sales_invoice=$this->Sales_invoice_model;
                 $start=date("Y-m-d",strtotime($this->input->get('startDate',TRUE)));
@@ -86,7 +98,7 @@ class Sales_detailed_summary extends CORE_Controller {
                 $type=$this->input->get('type',TRUE);
 
                 $data['sales_summaries']=$m_sales_invoice->get_sales_summary_list($startDate,$endDate);
-
+                $data['sp_summaries']=$m_sales_invoice->get_sales_summary_list_salesperson($startDate,$endDate);
                 $data['product_summaries']=$m_sales_invoice->get_sales_product_summary_list($startDate,$endDate);
 
                 if ($type == 'c') {
@@ -133,8 +145,8 @@ class Sales_detailed_summary extends CORE_Controller {
                     $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
                     $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (SUMMARY)');
 
-                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('15');
-                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('40');
+                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
+                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
                     $excel->getActiveSheet()->getColumnDimension('C')->setWidth('25');
 
                     $excel->getActiveSheet()
@@ -146,12 +158,12 @@ class Sales_detailed_summary extends CORE_Controller {
                     $excel->getActiveSheet()->getStyle('B7')->getFont()->setBold(TRUE);
                     $excel->getActiveSheet()->getStyle('C7')->getFont()->setBold(TRUE);
 
-                    $excel->getActiveSheet()->setCellValue('A7','Customer Code');
-                    $excel->getActiveSheet()->setCellValue('B7','Customer');
-                    $excel->getActiveSheet()->setCellValue('C7','Total Sales');
+                    $excel->getActiveSheet()->setCellValue('A7','Customer');
+                    $excel->getActiveSheet()->setCellValue('B7','Total Sales');
                     $i = 8;
                     $sum = 0;
                 foreach ($sales_summaries as $sales_summary){
+
 
                     $excel->getActiveSheet()
                             ->getStyle('A'.$i)
@@ -161,36 +173,30 @@ class Sales_detailed_summary extends CORE_Controller {
                     $excel->getActiveSheet()
                             ->getStyle('B'.$i)
                             ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-
-                    $excel->getActiveSheet()
-                            ->getStyle('C'.$i)
-                            ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                     $excel->getActiveSheet()->setCellValue('A'.$i,$sales_summary->customer_code);
-                     $excel->getActiveSheet()->setCellValue('B'.$i,$sales_summary->customer_name);
-                     $excel->getActiveSheet()->getStyle('B'.$i)->getFont()->setBold(FALSE);
-                     $excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                     $excel->getActiveSheet()->setCellValue('C'.$i,number_format($sales_summary->total_amount,2));
+                     $excel->getActiveSheet()->setCellValue('A'.$i,$sales_summary->customer_name);
+                     $excel->getActiveSheet()->getStyle('A'.$i)->getFont()->setBold(FALSE);
+                     $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                     $excel->getActiveSheet()->setCellValue('B'.$i,number_format($sales_summary->total_amount,2));
 
                      $i++;
                      $sum+=$sales_summary->total_amount;
-
-                     $excel->getActiveSheet()
-                            ->getStyle('C'.$i)
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                      $excel->getActiveSheet()
                             ->getStyle('B'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+                     $excel->getActiveSheet()
+                            ->getStyle('A'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                     $excel->getActiveSheet()->setCellValue('B'.$i,'Total:');
-                     $excel->getActiveSheet()->getStyle('B')->getFont()->setBold(TRUE);
-                     $excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                     $excel->getActiveSheet()->setCellValue('C'.$i,number_format($sum,2));
+
+                     $excel->getActiveSheet()->setCellValue('A'.$i,'Total:');
+                     $excel->getActiveSheet()->getStyle('A')->getFont()->setBold(TRUE);
+                     $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                     $excel->getActiveSheet()->setCellValue('B'.$i,number_format($sum,2));
 
                  }
 
@@ -562,7 +568,10 @@ class Sales_detailed_summary extends CORE_Controller {
 
                 $excel->setActiveSheetIndex(0);
 
+                $excel->setActiveSheetIndex(0);
+
                 if ($type == 'c') {
+                    ob_start();
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A1')->setWidth('50');
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A2:B2')->setWidth('50');
                     $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('50');
@@ -575,9 +584,8 @@ class Sales_detailed_summary extends CORE_Controller {
                     $excel->getActiveSheet()->getStyle('A5')->getFont()->setBold(TRUE);
                     $excel->getActiveSheet()->setCellValue('A5','SALES REPORT PER CUSTOMER (SUMMARY)');
 
-                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('15');
-                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('40');
-                    $excel->getActiveSheet()->getColumnDimension('C')->setWidth('25');
+                    $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
+                    $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
 
                     $excel->getActiveSheet()
                             ->getStyle('C')
@@ -588,12 +596,12 @@ class Sales_detailed_summary extends CORE_Controller {
                     $excel->getActiveSheet()->getStyle('B7')->getFont()->setBold(TRUE);
                     $excel->getActiveSheet()->getStyle('C7')->getFont()->setBold(TRUE);
 
-                    $excel->getActiveSheet()->setCellValue('A7','Customer Code');
-                    $excel->getActiveSheet()->setCellValue('B7','Customer');
-                    $excel->getActiveSheet()->setCellValue('C7','Total Sales');
+                    $excel->getActiveSheet()->setCellValue('A7','Customer');
+                    $excel->getActiveSheet()->setCellValue('B7','Total Sales');
                     $i = 8;
                     $sum = 0;
                 foreach ($sales_summaries as $sales_summary){
+
 
                     $excel->getActiveSheet()
                             ->getStyle('A'.$i)
@@ -603,39 +611,32 @@ class Sales_detailed_summary extends CORE_Controller {
                     $excel->getActiveSheet()
                             ->getStyle('B'.$i)
                             ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-
-                    $excel->getActiveSheet()
-                            ->getStyle('C'.$i)
-                            ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                     $excel->getActiveSheet()->setCellValue('A'.$i,$sales_summary->customer_code);
-                     $excel->getActiveSheet()->setCellValue('B'.$i,$sales_summary->customer_name);
-                     $excel->getActiveSheet()->getStyle('B'.$i)->getFont()->setBold(FALSE);
-                     $excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                     $excel->getActiveSheet()->setCellValue('C'.$i,number_format($sales_summary->total_amount,2));
+                     $excel->getActiveSheet()->setCellValue('A'.$i,$sales_summary->customer_name);
+                     $excel->getActiveSheet()->getStyle('A'.$i)->getFont()->setBold(FALSE);
+                     $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                     $excel->getActiveSheet()->setCellValue('B'.$i,number_format($sales_summary->total_amount,2));
 
                      $i++;
                      $sum+=$sales_summary->total_amount;
-
-                     $excel->getActiveSheet()
-                            ->getStyle('C'.$i)
-                            ->getAlignment()
-                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                      $excel->getActiveSheet()
                             ->getStyle('B'.$i)
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
+                     $excel->getActiveSheet()
+                            ->getStyle('A'.$i)
+                            ->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                     $excel->getActiveSheet()->setCellValue('B'.$i,'Total:');
-                     $excel->getActiveSheet()->getStyle('B')->getFont()->setBold(TRUE);
-                     $excel->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
-                     $excel->getActiveSheet()->setCellValue('C'.$i,number_format($sum,2));
+
+                     $excel->getActiveSheet()->setCellValue('A'.$i,'Total:');
+                     $excel->getActiveSheet()->getStyle('A')->getFont()->setBold(TRUE);
+                     $excel->getActiveSheet()->getStyle('B'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                     $excel->getActiveSheet()->setCellValue('B'.$i,number_format($sum,2));
 
                  }
-
 
                 ob_end_clean();
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

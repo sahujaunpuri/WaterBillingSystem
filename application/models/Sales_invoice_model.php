@@ -581,96 +581,214 @@ GROUP BY n.customer_id HAVING total_balance > 0";
 
 
     function get_per_customer_sales_detailed($start=null,$end=null,$customer_id=null){
-      $from = date('Y-m-d',strtotime($start));
-      $to = date('Y-m-d',strtotime($end));
-      $this->db->select('c.customer_id, c.customer_name');
-      $this->db->from('sales_invoice as si');
-      $this->db->join('customers as c', 'c.customer_id = si.customer_id', 'left');
-      $this->db->where('si.date_invoice BETWEEN "'. date('Y-m-d', strtotime($from)). '" and "'. date('Y-m-d', strtotime($to)).'" and si.is_deleted=FALSE' );
-      $this->db->group_by('c.customer_id');
-      return $this->db->get()->result();
+        $sql = "SELECT 
+                DISTINCT main.customer_id,
+                c.customer_name 
+                FROM(
+                SELECT DISTINCT si.customer_id
+                FROM sales_invoice si WHERE si.is_active= TRUE AND si.is_deleted = FALSE
+                AND si.date_invoice BETWEEN '$start' AND '$end'
+
+                UNION ALL
+                SELECT DISTINCT ci.customer_id
+                FROM cash_invoice ci WHERE ci.is_active= TRUE AND ci.is_deleted = FALSE
+                AND ci.date_invoice BETWEEN '$start' AND '$end'
+                ) as main
+
+                LEFT JOIN customers c ON c.customer_id = main.customer_id";
+
+            return $this->db->query($sql)->result();
 
     }
 
     function get_per_salesperson_sales_detailed($start=null,$end=null){
-      $from = date('Y-m-d',strtotime($start));
-      $to = date('Y-m-d',strtotime($end));
-      $this->db->select('sp.salesperson_id, sp.salesperson_code, CONCAT(sp.firstname," ",sp.lastname)AS salesperson_name');
-      $this->db->from('sales_invoice as si');
-      $this->db->join('salesperson as sp', 'sp.salesperson_id = si.salesperson_id', 'left');
-      $this->db->where('si.date_invoice BETWEEN "'. date('Y-m-d', strtotime($from)). '" and "'. date('Y-m-d', strtotime($to)).'" and si.is_deleted=FALSE' );
-      $this->db->group_by('sp.salesperson_id');
-      return $this->db->get()->result();
+        $sql = "SELECT 
+                DISTINCT IFNULL(main.salesperson_id,0) as salesperson_id,
+                IFNULL(CONCAT(s.firstname,' ',s.lastname),'None') as salesperson_name
+                FROM(
+                SELECT DISTINCT IFNULL(si.salesperson_id,0) as salesperson_id
+                FROM sales_invoice si WHERE si.is_active= TRUE AND si.is_deleted = FALSE
+                AND si.date_invoice BETWEEN '$start' AND '$end'
 
+                UNION ALL
+                SELECT DISTINCT IFNULL(ci.salesperson_id,0) as salesperson_id
+                FROM cash_invoice ci WHERE ci.is_active= TRUE AND ci.is_deleted = FALSE
+                AND ci.date_invoice BETWEEN '$start' AND '$end'
+                ) as main
+
+                LEFT JOIN salesperson s ON s.salesperson_id = main.salesperson_id";
+
+            return $this->db->query($sql)->result();
     }
 
 
     function get_sales_detailed_list($start=null,$end=null){
-        $sql="SELECT
-                si.sales_invoice_id,
-                si.sales_inv_no,
+        $sql="SELECT 
+            main.customer_id,
+            IFNULL(main.salesperson_id,0) as salesperson_id,
+            c.customer_name,
+            IFNULL(CONCAT(s.firstname,' ',s.lastname),'None') as salesperson_name,
+            main.inv_no as sales_inv_no,
+            main.date_invoice,
+            main.product_id,
+            p.product_code,
+            p.product_desc,
+
+            main.inv_qty,
+            main.inv_price,
+            main.inv_line_total_after_global as total_amount
+
+             FROM (SELECT
+                si.sales_inv_no as inv_no,
                 si.date_invoice,
                 si.customer_id,
-                sii.inv_price,
-                c.customer_name,
-                p.product_id,
-                p.product_code,
-                p.product_desc,
-                p.sale_price,
+                IFNULL(si.salesperson_id,0)  as salesperson_id,
+                sii.product_id,
                 sii.inv_qty,
                 sii.inv_price,
-                s.salesperson_id,
-                s.salesperson_code,
-                CONCAT(s.firstname,' ',s.lastname) AS salesperson_name,
-                ((sii.inv_price) * (sii.inv_qty)) as total_amount
+                sii.inv_line_total_after_global
             FROM
-                (sales_invoice AS si
-                LEFT JOIN customers AS c ON c.customer_id = si.customer_id)
+                sales_invoice AS si
                 INNER JOIN sales_invoice_items AS sii ON si.sales_invoice_id = sii.sales_invoice_id
-                LEFT JOIN products AS p ON p.product_id=sii.product_id
-                LEFT JOIN salesperson AS s ON s.salesperson_id=si.salesperson_id
             WHERE
                 si.is_active = TRUE AND si.is_deleted = FALSE
                 AND si.date_invoice BETWEEN '$start' AND '$end'
-            ORDER BY si.sales_inv_no ASC";
+                
+                
+            UNION ALL
+
+            SELECT
+                ci.cash_inv_no as inv_no,
+                ci.date_invoice,
+                ci.customer_id,
+                ci.salesperson_id,
+                cii.product_id,
+                cii.inv_qty,
+                cii.inv_price,
+                cii.inv_line_total_after_global
+            FROM
+                cash_invoice AS ci
+                INNER JOIN cash_invoice_items AS cii ON ci.cash_invoice_id = cii.cash_invoice_id
+            WHERE
+                ci.is_active = TRUE AND ci.is_deleted = FALSE
+                AND ci.date_invoice BETWEEN '$start' AND '$end') as main
+            LEFT JOIN customers AS c ON c.customer_id = main.customer_id
+            LEFT JOIN products AS p ON p.product_id=main.product_id
+            LEFT JOIN salesperson AS s ON s.salesperson_id=main.salesperson_id
+
+            ORDER BY main.date_invoice DESC
+            ";
         return $this->db->query($sql)->result();
     }
 
     function get_sales_summary_list($start=null,$end=null){
-        $sql="SELECT
-                  si.customer_id,
-                  c.customer_code,
-                  c.customer_name,
-                  s.salesperson_code,
-                  CONCAT(s.firstname,' ',s.lastname) AS salesperson_name,
-                  SUM((sii.inv_price) * (sii.inv_qty)) as total_amount
-              FROM
-                  (sales_invoice AS si
-                  LEFT JOIN customers AS c ON c.customer_id = si.customer_id)
-                  INNER JOIN sales_invoice_items AS sii ON si.sales_invoice_id = sii.sales_invoice_id
-                  LEFT JOIN products AS p ON p.product_id=sii.product_id
-                  LEFT JOIN salesperson AS s ON s.salesperson_id=si.salesperson_id
-              WHERE
-                  si.is_active = TRUE AND si.is_deleted = FALSE
-                  AND si.date_invoice BETWEEN '$start' AND '$end'
-              GROUP BY si.customer_id";
+        $sql="SELECT main.customer_id,
+            c.customer_name,
+            SUM(main.inv_line_total_after_global) as total_amount
+
+            FROM
+
+            (SELECT si.customer_id,
+            si.salesperson_id,
+            sii.inv_line_total_after_global
+
+            FROM sales_invoice_items sii 
+            LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+
+            WHERE si.is_active = TRUE AND si.is_deleted = FALSE
+            AND si.date_invoice BETWEEN '$start' AND '$end'
+             
+             UNION ALL
+             
+             SELECT ci.customer_id,
+            ci.salesperson_id,
+            cii.inv_line_total_after_global
+
+            FROM cash_invoice_items cii 
+            LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
+
+            WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
+            AND ci.date_invoice BETWEEN '$start' AND '$end'
+            ) as main
+            LEFT JOIN customers c ON c.customer_id = main.customer_id
+
+            GROUP BY main.customer_id";
+        return $this->db->query($sql)->result();
+    }
+
+    function get_sales_summary_list_salesperson($start=null,$end=null){
+        $sql="SELECT 
+            main.salesperson_id,
+            IFNULL(CONCAT(s.firstname,' ',s.lastname),'None') as salesperson_name,
+            SUM(main.inv_line_total_after_global) as total_amount
+
+            FROM
+
+            (SELECT 
+            si.salesperson_id,
+            sii.inv_line_total_after_global
+
+            FROM sales_invoice_items sii 
+            LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+
+            WHERE si.is_active = TRUE AND si.is_deleted = FALSE
+            AND si.date_invoice BETWEEN '$start' AND '$end'
+             
+             UNION ALL
+             
+             SELECT
+            ci.salesperson_id,
+            cii.inv_line_total_after_global
+
+            FROM cash_invoice_items cii 
+            LEFT JOIN cash_invoice ci ON ci.cash_invoice_id = cii.cash_invoice_id
+
+            WHERE ci.is_active = TRUE AND ci.is_deleted = FALSE
+            AND ci.date_invoice BETWEEN '$start' AND '$end'
+            ) as main
+            LEFT JOIN salesperson s ON s.salesperson_id = main.salesperson_id
+
+            GROUP BY main.salesperson_id";
         return $this->db->query($sql)->result();
     }
 
     function get_sales_product_summary_list($start=null,$end=null){
-        $sql="SELECT 
-                  si.customer_id,
-                  p.product_code,
-                  p.product_desc,
-                  SUM((sii.inv_price) * (sii.inv_qty)) as total_amount
+        $sql="
+        SELECT main.product_id,
+        p.product_code,
+        p.product_desc,
+        SUM(main.inv_line_total_after_global) as total_amount
+
+
+        FROM 
+
+
+            (SELECT 
+                  sii.product_id,
+                  sii.inv_line_total_after_global
               FROM
                   (sales_invoice AS si)
                   INNER JOIN sales_invoice_items AS sii ON si.sales_invoice_id = sii.sales_invoice_id
-                  LEFT JOIN products AS p ON p.product_id=sii.product_id
               WHERE
                   si.is_active = TRUE AND si.is_deleted = FALSE
                   AND si.date_invoice BETWEEN '$start' AND '$end'
-              GROUP BY sii.product_id";
+
+                UNION ALL
+
+            SELECT 
+                cii.product_id,
+                cii.inv_line_total_after_global
+              FROM
+                  (cash_invoice AS ci)
+                  INNER JOIN cash_invoice_items AS cii ON ci.cash_invoice_id = cii.cash_invoice_id
+                  
+              WHERE
+                  ci.is_active = TRUE AND ci.is_deleted = FALSE
+                  AND ci.date_invoice BETWEEN '$start' AND '$end') as main
+
+                  LEFT JOIN products AS p ON p.product_id=main.product_id
+
+              GROUP BY main.product_id";
          return $this->db->query($sql)->result();
     }
 

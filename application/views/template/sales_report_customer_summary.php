@@ -40,21 +40,19 @@
     </div>
     <table width="100%" border="1" cellspacing="0" cellpadding="2">
     	<thead>
-    		<th align="left">Customer Code</th>
     		<th align="left">Customer</th>
     		<th align="right">Total Sales</th>
     	</thead>
         <?php $sum=0; ?>
     	<?php foreach ($sales_summaries as $sales_summary) { ?>
     		<tr>
-    			<td width="10%"><?php echo $sales_summary->customer_code; ?></td>
     			<td width="50%"><?php echo $sales_summary->customer_name; ?></td>
-    			<td width="40%" align="right"><?php echo number_format($sales_summary->total_amount,2); ?></td>
+    			<td width="50%" align="right"><?php echo number_format($sales_summary->total_amount,2); ?></td>
     		</tr>
             <?php $sum+=$sales_summary->total_amount; ?>
     	<?php } ?>
         <tr>
-            <td colspan="2" align="right"><strong>Total :</strong></td>
+            <td colspan="1" align="right"><strong>Total :</strong></td>
             <td align="right"><strong><?php echo number_format($sum,2); ?></strong></td>
         </tr>
     </table>
