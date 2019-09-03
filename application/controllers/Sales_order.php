@@ -252,9 +252,9 @@ class Sales_order extends CORE_Controller
 
                         $m_sales_order_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
-                            $m_sales_order_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                            $m_sales_order_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }else{
-                             $m_sales_order_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                             $m_sales_order_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         } 
                     $m_sales_order_items->save();
                 }
@@ -359,9 +359,9 @@ class Sales_order extends CORE_Controller
                     $m_sales_order_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
                         $m_sales_order_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         if($is_parent[$i] == '1'){
-                            $m_sales_order_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                            $m_sales_order_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }else{
-                             $m_sales_order_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                             $m_sales_order_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         } 
                     $m_sales_order_items->save();
                 }
