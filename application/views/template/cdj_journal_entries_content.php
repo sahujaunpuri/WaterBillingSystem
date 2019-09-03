@@ -77,7 +77,15 @@
         </tr>
     </table><hr>
     <div class="">
-        <h3 class="report-header"><strong>CASH DISBURSEMENT</strong></h3>
+    <table width="100%">
+        <tr>
+            <td width="50%"><h3 class="report-header" style="float: right;"><strong >CASH DISBURSEMENT</strong></h3></td>
+            <td style="text-align: right;"><h3 class="report-header" style="float: right;">
+                <strong ><?php if ($journal_info->payment_method_id == 2) { echo 'CHECK VOUCHER'; } else {echo 'CASH VOUCHER'; } ?></strong></h3>
+            </td>
+        </tr>
+    </table>
+        
     </div>
     <table width="100%" border="0" cellspacing="-1">
         <tr>
