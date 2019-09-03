@@ -82,9 +82,9 @@
 									<td style="text-align: left;"><?php echo $detail->product_desc; ?></td>
 									<td><?php echo number_format($detail->dr_price,2); ?></td>
 									<td><?php echo number_format($detail->dr_qty,2); ?></td>
-									<td><?php echo number_format(($detail->dr_price*$detail->dr_qty),2); ?></td>
+									<td><?php echo number_format(($detail->dr_line_total_after_global),2); ?></td>
 								</tr>
-                                <?php $inv_total+=$detail->dr_price*$detail->dr_qty; ?>
+                                <?php $inv_total+=$detail->dr_line_total_after_global; ?>
 							<?php } ?>
 						<?php } ?>
 						</tbody>
