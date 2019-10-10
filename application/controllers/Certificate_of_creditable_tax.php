@@ -8,6 +8,8 @@ class Certificate_of_creditable_tax extends CORE_Controller {
         $this->load->model('Users_model');
         $this->load->model('Months_model');
         $this->load->model('Bir_2307_model');
+        $this->load->model('Company_model');
+        $this->load->library('M_pdf');
     }
 
     public function index() {
@@ -31,8 +33,29 @@ class Certificate_of_creditable_tax extends CORE_Controller {
                 $m_form_2307 = $this->Bir_2307_model;
                 $month = $this->input->get('month', TRUE);
                 $year = $this->input->get('year', TRUE);
+                if($month == 0){$month = null;}
                 $response['data'] = $m_form_2307->get_2307_list($month,$year);
                 echo json_encode($response);
+                break;
+
+
+            case 'print-list':
+                $m_form_2307 = $this->Bir_2307_model;
+                $month = $this->input->get('month', TRUE);
+                $year = $this->input->get('year', TRUE);
+                if($month == 0){$month = null;}
+                $data['items'] = $m_form_2307->get_2307_list($month,$year);
+                $data['company_info']=$this->Company_model->get_list()[0];
+
+                $file_name='Certificate of Creditable Tax Report';
+                $pdfFilePath = $file_name.".pdf";
+                $pdf = $this->m_pdf->load(); 
+                $pdf->AddPage('L');
+                $content =  $this->load->view('template/2307_content',$data,TRUE);
+                $pdf->SetTitle('Certificate of Creditable Tax Report');
+                $pdf->WriteHTML($content);
+                $pdf->Output();
+                
                 break;
 
             case 'create':
