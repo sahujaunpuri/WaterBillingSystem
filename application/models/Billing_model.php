@@ -214,34 +214,60 @@ class Billing_model extends CORE_Model{
 	                $this->db->where('other_charge_id', $other_charge_id);
 	                $this->db->delete('billing_charges');
     			}
+
     		}
 
     		$meter_reading_input = $this->db->query("SELECT 
 					    z.*,
-					    (CASE
-					        WHEN z.is_fixed_amount = 1 THEN z.rate
-					        ELSE (z.total_consumption * z.rate)
-					    END) AS amount_due,
-					    (CASE
-					        WHEN z.is_fixed_amount = 1 
-					        	THEN ((10 / 100) * (z.rate))
-					        ELSE ((10 / 100) * (z.total_consumption * z.rate))
-					    END) as penalty_amount
+					    ((10 / 100) * z.amount_due) as penalty_amount
 					FROM
 					    (SELECT 
 					        x.*,
-					            (CASE
-					                WHEN
-					                    x.contract_type_id = 1
-					                THEN COALESCE((SELECT mtrx_ri.matrix_residential_amount FROM matrix_residential mtrx_r
-				                        LEFT JOIN matrix_residential_items mtrx_ri ON mtrx_ri.matrix_residential_id = mtrx_r.matrix_residential_id
-				                        WHERE mtrx_r.matrix_residential_id = default_matrix_id
-				                            AND x.total_consumption BETWEEN matrix_residential_from AND matrix_residential_to), 0)
-					                ELSE COALESCE((SELECT mtrx_ci.matrix_commercial_amount FROM matrix_commercial mtrx_c
-					                    LEFT JOIN matrix_commercial_items mtrx_ci ON mtrx_ci.matrix_commercial_id = mtrx_c.matrix_commercial_id
-					                    WHERE mtrx_c.matrix_commercial_id = default_matrix_id
-					                        AND x.total_consumption BETWEEN matrix_commercial_from AND matrix_commercial_to), 0)
-					            END) AS rate,
+							    (CASE
+							    	WHEN x.contract_type_id = 1 
+							    	THEN
+										(SELECT
+											SUM((CASE 
+											WHEN is_fixed_amount = TRUE 
+												THEN matrix_residential_amount
+											WHEN (x.total_consumption+1) > matrix_residential_to 
+												THEN (
+											    IF( matrix_residential_from = 0,
+											    (matrix_residential_to - matrix_residential_from),
+											    ((matrix_residential_to+1) - matrix_residential_from))
+													*matrix_residential_amount) 
+											WHEN (x.total_consumption+1) < matrix_residential_to
+											THEN (((x.total_consumption+1) - matrix_residential_from)*matrix_residential_amount)
+											END))
+										 FROM matrix_residential_items WHERE matrix_residential_from <= (x.total_consumption+1))
+									ELSE
+										(SELECT
+											SUM((CASE 
+											WHEN is_fixed_amount = TRUE 
+												THEN matrix_commercial_amount
+											WHEN (x.total_consumption+1) > matrix_commercial_to 
+												THEN (
+											    IF( matrix_commercial_from = 0,
+											    (matrix_commercial_to - matrix_commercial_from),
+											    ((matrix_commercial_to+1) - matrix_commercial_from))
+													*matrix_commercial_amount) 
+											WHEN (x.total_consumption+1) < matrix_commercial_to
+											THEN (((x.total_consumption+1) - matrix_commercial_from)*matrix_commercial_amount)
+											END))
+										 FROM matrix_commercial_items WHERE matrix_commercial_from <= (x.total_consumption+1))
+								END) as amount_due,
+					            -- (CASE
+					            --     WHEN
+					            --         x.contract_type_id = 1
+					            --     THEN COALESCE((SELECT mtrx_ri.matrix_residential_amount FROM matrix_residential mtrx_r
+				             --            LEFT JOIN matrix_residential_items mtrx_ri ON mtrx_ri.matrix_residential_id = mtrx_r.matrix_residential_id
+				             --            WHERE mtrx_r.matrix_residential_id = default_matrix_id
+				             --                AND x.total_consumption BETWEEN matrix_residential_from AND matrix_residential_to), 0)
+					            --     ELSE COALESCE((SELECT mtrx_ci.matrix_commercial_amount FROM matrix_commercial mtrx_c
+					            --         LEFT JOIN matrix_commercial_items mtrx_ci ON mtrx_ci.matrix_commercial_id = mtrx_c.matrix_commercial_id
+					            --         WHERE mtrx_c.matrix_commercial_id = default_matrix_id
+					            --             AND x.total_consumption BETWEEN matrix_commercial_from AND matrix_commercial_to), 0)
+					            -- END) AS rate,
 					            (CASE
 					                WHEN
 					                    x.contract_type_id = 1
@@ -253,7 +279,7 @@ class Billing_model extends CORE_Model{
 					                    LEFT JOIN matrix_commercial_items mtrx_ci ON mtrx_ci.matrix_commercial_id = mtrx_c.matrix_commercial_id
 					                    WHERE mtrx_c.matrix_commercial_id = default_matrix_id
 					                        AND x.total_consumption BETWEEN matrix_commercial_from AND matrix_commercial_to), 0)
-					            END) AS is_fixed_amount
+					            END) AS is_fixed_amount								
 					    FROM
 					        (SELECT 
 					        mrii.connection_id,
@@ -400,7 +426,7 @@ class Billing_model extends CORE_Model{
                     'amount_due' => $row->amount_due,
                     'arrears_amount' => $arrears_amount,
                     'arrears_month_id' => $row->arrears_month_id,
-                    'rate_amount' => $row->rate,
+                    #'rate_amount' => $row->rate,
                     'penalty_amount' => $row->penalty_amount,
                     'arrears_penalty_amount' => $arrears_penalty_amount,
                     'is_fixed' => $row->is_fixed_amount,

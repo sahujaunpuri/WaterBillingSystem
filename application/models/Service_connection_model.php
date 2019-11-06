@@ -44,8 +44,8 @@ class Service_connection_model extends CORE_Model{
 		        ".($connection_id==null?"":" AND sc.connection_id=".$connection_id)."
                 ".($status_id==null?"":" AND sc.status_id=".$status_id)."
                 ".($current_id==null?"":" AND sc.current_id=".$current_id)."
-                ".($month_id==null?"":" AND month(sc.service_date)=".$month_id)."
-                ".($year==null?"":" AND year(sc.service_date)=".$year)."");
+                ".($month_id==null?"":" AND month(sc.target_date)=".$month_id)."
+                ".($year==null?"":" AND year(sc.target_date)=".$year)."");
     	return $query->result();
     }
 
