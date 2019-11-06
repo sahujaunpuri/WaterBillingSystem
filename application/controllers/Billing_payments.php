@@ -48,7 +48,7 @@ class Billing_payments extends CORE_Controller
     }
 
 
-    function transaction($txn=null,$filter_value=null){
+    function transaction($txn=null,$filter_value=null,$filter_date=null){
         switch($txn){
             case 'list':
                 // $response['data']=$this->response_rows($filter_value);
@@ -72,7 +72,8 @@ class Billing_payments extends CORE_Controller
             //***********************************************************************************************
         
             case 'billing-receivables':
-                $response['receivables'] = $this->Billing_model->billing_receivables($filter_value);
+
+                $response['receivables'] = $this->Billing_model->billing_receivables($filter_value,$filter_date);
                 $response['deposit_info'] = $this->Billing_payments_model->get_account_with_allowable_deposit($filter_value);
                 echo json_encode($response);
             break;
