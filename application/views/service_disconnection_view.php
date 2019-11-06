@@ -808,7 +808,7 @@ $(document).ready(function(){
                         $('input[name="arrears_penalty_amount"]').val(accounting.formatNumber(total_penalty_amount,2));
                         $('input[name="meter_amount_due"]').val(accounting.formatNumber(rate.amount_due,2));
                         $('input[name="default_matrix_id"]').val(rate.default_matrix_id);
-                        $('input[name="rate_amount"]').val(rate.rate);
+                        // $('input[name="rate_amount"]').val(rate.rate);
                         $('input[name="is_fixed"]').val(rate.is_fixed_amount);
                     });
             }

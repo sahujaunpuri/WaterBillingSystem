@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
+	'hostname' => 'RafaelManalo',
+	'username' => 'jdev',
 	'password' => 'jdev',
-	'database' => 'waterbilling2019',
+	'database' => 'waterbilling20190715latest',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

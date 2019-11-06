@@ -3,14 +3,11 @@
     <link rel="icon" href="<?php echo base_url('assets/img/companyico.ico'); ?>" type="image/ico" sizes="16x16">
 </head>
 <body> <style type="text/css">
-           body {
+        body {
             font-family: 'Calibri',sans-serif;
             font-size: 12px;
         }
         
-       @page {
-          size: A4 landscape;
-        }
         .align-right {
             text-align: right;
         }

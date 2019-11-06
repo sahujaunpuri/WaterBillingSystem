@@ -187,29 +187,55 @@ class Service_disconnection_model extends CORE_Model {
     function  get_disconnection_rate($id,$consumption){
                     $query = $this->db->query("SELECT 
                         z.*,
-                        (CASE
-                            WHEN z.is_fixed_amount = 1 THEN z.rate
-                            ELSE ($consumption * z.rate)
-                        END) AS amount_due,
-                        (CASE
-                            WHEN z.is_fixed_amount = 1 THEN ((10 / 100) * z.rate)
-                            ELSE ((10 / 100) * ($consumption * z.rate))
-                        END) as penalty_amount
+                        ((10 / 100) * z.amount_due) as penalty_amount
                     FROM
                         (SELECT 
                             x.*,
                                 (CASE
-                                    WHEN
-                                        x.contract_type_id = 1
-                                    THEN COALESCE((SELECT mtrx_ri.matrix_residential_amount FROM matrix_residential mtrx_r
-                                        LEFT JOIN matrix_residential_items mtrx_ri ON mtrx_ri.matrix_residential_id = mtrx_r.matrix_residential_id
-                                        WHERE mtrx_r.matrix_residential_id = default_matrix_id
-                                            AND $consumption BETWEEN matrix_residential_from AND matrix_residential_to), 0)
-                                    ELSE COALESCE((SELECT mtrx_ci.matrix_commercial_amount FROM matrix_commercial mtrx_c
-                                        LEFT JOIN matrix_commercial_items mtrx_ci ON mtrx_ci.matrix_commercial_id = mtrx_c.matrix_commercial_id
-                                        WHERE mtrx_c.matrix_commercial_id = default_matrix_id
-                                            AND $consumption BETWEEN matrix_commercial_from AND matrix_commercial_to), 0)
-                                END) AS rate,
+                                    WHEN x.contract_type_id = 1 
+                                    THEN
+                                        (SELECT
+                                            SUM((CASE 
+                                            WHEN is_fixed_amount = TRUE 
+                                                THEN matrix_residential_amount
+                                            WHEN ($consumption+1) > matrix_residential_to 
+                                                THEN (
+                                                IF( matrix_residential_from = 0,
+                                                (matrix_residential_to - matrix_residential_from),
+                                                ((matrix_residential_to+1) - matrix_residential_from))
+                                                    *matrix_residential_amount) 
+                                            WHEN ($consumption+1) < matrix_residential_to
+                                            THEN ((($consumption+1) - matrix_residential_from)*matrix_residential_amount)
+                                            END))
+                                         FROM matrix_residential_items WHERE matrix_residential_from <= ($consumption+1))
+                                    ELSE
+                                        (SELECT
+                                            SUM((CASE 
+                                            WHEN is_fixed_amount = TRUE 
+                                                THEN matrix_commercial_amount
+                                            WHEN ($consumption+1) > matrix_commercial_to 
+                                                THEN (
+                                                IF( matrix_commercial_from = 0,
+                                                (matrix_commercial_to - matrix_commercial_from),
+                                                ((matrix_commercial_to+1) - matrix_commercial_from))
+                                                    *matrix_commercial_amount) 
+                                            WHEN ($consumption+1) < matrix_commercial_to
+                                            THEN ((($consumption+1) - matrix_commercial_from)*matrix_commercial_amount)
+                                            END))
+                                         FROM matrix_commercial_items WHERE matrix_commercial_from <= ($consumption+1))
+                                END) as amount_due,
+                                -- (CASE
+                                --     WHEN
+                                --         x.contract_type_id = 1
+                                --     THEN COALESCE((SELECT mtrx_ri.matrix_residential_amount FROM matrix_residential mtrx_r
+                             --            LEFT JOIN matrix_residential_items mtrx_ri ON mtrx_ri.matrix_residential_id = mtrx_r.matrix_residential_id
+                             --            WHERE mtrx_r.matrix_residential_id = default_matrix_id
+                             --                AND $consumption BETWEEN matrix_residential_from AND matrix_residential_to), 0)
+                                --     ELSE COALESCE((SELECT mtrx_ci.matrix_commercial_amount FROM matrix_commercial mtrx_c
+                                --         LEFT JOIN matrix_commercial_items mtrx_ci ON mtrx_ci.matrix_commercial_id = mtrx_c.matrix_commercial_id
+                                --         WHERE mtrx_c.matrix_commercial_id = default_matrix_id
+                                --             AND $consumption BETWEEN matrix_commercial_from AND matrix_commercial_to), 0)
+                                -- END) AS rate,
                                 (CASE
                                     WHEN
                                         x.contract_type_id = 1
@@ -221,7 +247,7 @@ class Service_disconnection_model extends CORE_Model {
                                         LEFT JOIN matrix_commercial_items mtrx_ci ON mtrx_ci.matrix_commercial_id = mtrx_c.matrix_commercial_id
                                         WHERE mtrx_c.matrix_commercial_id = default_matrix_id
                                             AND $consumption BETWEEN matrix_commercial_from AND matrix_commercial_to), 0)
-                                END) AS is_fixed_amount
+                                END) AS is_fixed_amount     
                         FROM
                             (SELECT 
                             sc.connection_id,

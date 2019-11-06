@@ -74,8 +74,9 @@
         <tr>
           <td>Meter Serial: </td>
           <td><?php echo $billing->serial_no; ?></td>
-          <td>Rate Amount: </td>
-          <td><?php echo $billing->rate_amount; ?></td>
+<!--           <td>Rate Amount: </td>
+          <td><?php echo $billing->rate_amount; ?></td> -->
+          <td colspan="2"></td>
         </tr>
     </table>
     <table width="100%" style="font-family: tahoma;font-size: 11;border: 0px!important;" class="table table-bordered statment" border="0">
