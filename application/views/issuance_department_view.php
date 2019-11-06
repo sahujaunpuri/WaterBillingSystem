@@ -935,8 +935,9 @@ dt_si = $('#tbl_si_list').DataTable({
             }
             $(oTableItems.unit_price,row).find('input').val(accounting.formatNumber(price,2));
             $(oTableItems.unit_identifier,row).find('input').val(unit_value); 
+            $('.trigger-number').keyup();
         }
-        $('.trigger-number').keyup();
+        
         });
  
         $('#tbl_items tbody').on('keyup','input.numeric',function(){

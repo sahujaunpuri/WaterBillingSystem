@@ -12,15 +12,16 @@ class Purchase_items_model extends CORE_Model {
     function get_products_with_balance_qty2($purchase_order_id)
     {
         $sql = "SELECT 
-                o.*, (o.po_line_total - o.non_tax_amount) AS tax_amount
+                o.*, 
+                (po_line_total - (po_line_total * global_percentage)) po_line_total_after_global,
+                ((po_line_total - (po_line_total * global_percentage)) / (1 + tax_rate_decimal)) as non_tax_amount,
+                ((po_line_total - (po_line_total * global_percentage)) - ((po_line_total - (po_line_total * global_percentage)) / (1 + tax_rate_decimal))) as tax_amount
             FROM
                 (SELECT 
                     n.*,
-                    ((n.po_price * n.po_qty) - (n.po_discount * n.po_qty)) AS po_line_total2,
                     ((n.po_price * n.po_qty) - ((n.po_price * n.po_qty) * (n.po_discount / 100))) AS po_line_total,
-                    ((n.po_price * n.po_qty) / (1 + tax_rate_decimal)) AS non_tax_amount,
-                   /* (n.po_discount * n.po_qty) AS po_line_total_discount   ------ this query is for computation for amount of discount ,not percentage */
-                    ((n.po_price * n.po_qty)*(n.po_discount/100)) AS po_line_total_discount
+                    ((n.po_price * n.po_qty)*(n.po_discount/100)) AS po_line_total_discount, /* after line discount*/
+                    (n.total_overall_discount / 100) as global_percentage /* we still need to compute global discount*/
                 FROM
                     (SELECT 
                     main.*,
@@ -38,8 +39,9 @@ class Purchase_items_model extends CORE_Model {
                     (SELECT 
                         m.purchase_order_id,
                         m.po_no,
-                        m.total_after_discount,
+                        MAX(m.total_overall_discount) as total_overall_discount,
                         m.product_id,
+                       
                         MAX(m.po_price) AS po_price,
                         MAX(m.po_discount) AS po_discount,
                         MAX(m.po_tax_rate) AS po_tax_rate,
@@ -50,7 +52,7 @@ class Purchase_items_model extends CORE_Model {
                     (SELECT 
                     po.purchase_order_id,
                         po.po_no,
-                        po.total_after_discount,
+                        po.total_overall_discount,
                         poi.product_id,
                         SUM(poi.po_qty) AS PoQty,
                         0 AS DrQty,
@@ -75,7 +77,7 @@ class Purchase_items_model extends CORE_Model {
                     SELECT 
                     po.purchase_order_id,
                         po.po_no,
-                        po.total_after_discount,
+                        0 as total_overall_discount,
                         dii.product_id,
                         0 AS PoQty,
                         SUM(dii.dr_qty) AS DrQty,

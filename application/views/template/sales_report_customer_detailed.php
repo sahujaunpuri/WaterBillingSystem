@@ -47,25 +47,25 @@
 				</td>
 			</tr>
 			<tr>
-				<td width="10%"><strong>Invoice #</strong></td>
-				<td width="5%"><strong>Date</strong></td>
-				<td width="5%"><strong>Product Code</strong></td>
-				<td width="10%"><strong>Description</strong></td>
-				<td width="5%" align="right"><strong>Unit Amount</strong></td>
-				<td width="5%" align="center"><strong>Qty</strong></td>
-				<td width="5%" align="right"><strong>Total Amount</strong></td>
+				<td width="15%"><strong>Invoice #</strong></td>
+				<td width="10%"><strong>Date</strong></td>
+				<td width="10%"><strong>Product Code</strong></td>
+				<td width="35%"><strong>Description</strong></td>
+				<td width="10%" align="right"><strong>Unit Amount</strong></td>
+				<td width="7%" align="right"><strong>Qty</strong></td>
+				<td width="10%" align="right"><strong>Total Amount</strong></td>
 			</tr>
 			<?php $sum=0; ?>
 			<?php foreach($sales_details as $sales_detail) { ?>
 				<?php if ($customer->customer_id == $sales_detail->customer_id) { ?>
 					<tr>
-						<td width="10%"><?php echo $sales_detail->sales_inv_no; ?></td>
-						<td width="5%"><?php echo date('Y-m-d', strtotime($sales_detail->date_invoice)); ?></td>
-						<td width="5%"><?php echo $sales_detail->product_code; ?></td>
-						<td width="10%"><?php echo $sales_detail->product_desc; ?></td>
-						<td width="5%" align="right"><?php echo number_format($sales_detail->inv_price,2); ?></td>
-						<td width="5%" align="center"><?php echo $sales_detail->inv_qty; ?></td>
-						<td width="5%" align="right"><?php echo number_format($sales_detail->total_amount,2); ?></td>
+						<td><?php echo $sales_detail->sales_inv_no; ?></td>
+						<td><?php echo date('Y-m-d', strtotime($sales_detail->date_invoice)); ?></td>
+						<td><?php echo $sales_detail->product_code; ?></td>
+						<td><?php echo $sales_detail->product_desc; ?></td>
+						<td align="right"><?php echo number_format($sales_detail->inv_price,2); ?></td>
+						<td align="right"><?php echo $sales_detail->inv_qty; ?></td>
+						<td align="right"><?php echo number_format($sales_detail->total_amount,2); ?></td>
 					</tr>
 					<?php $sum += $sales_detail->total_amount;  ?>
 				<?php } ?>
@@ -75,6 +75,7 @@
 				<td align="right"><?php echo number_format($sum,2); ?></td>
 			</tr>
 		</table>
+		<br>
 	<?php } ?>
 </body>
 </html>

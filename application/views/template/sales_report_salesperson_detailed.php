@@ -69,7 +69,7 @@
 				<td align="right" colspan="4"><strong>Total :</strong></td>
 				<td align="right"><strong><?php echo number_format($sum,2) ?></strong></td>
 			</tr>
-		</table>
+		</table><br>
 	<?php } ?>
 </body>
 </html>

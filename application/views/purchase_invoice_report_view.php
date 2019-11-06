@@ -385,7 +385,7 @@
                             { targets:[4],data: "dr_qty" },
                             {
                                 sClass: "numericCol", 
-                                targets:[3],data: "total_amount",
+                                targets:[3],data: "dr_line_total_after_global",
                                 render: function(data,type,full,meta){
                                     return accounting.formatNumber(data,2);
                                 }

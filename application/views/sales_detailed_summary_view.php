@@ -111,11 +111,11 @@
                                                             </div>
                                                         </div>
                                                         <br />
-                                                        <div class="tab-container tab-left tab-warning">
+                                                        <div class="tab-container tab-top tab-success">
                                                             <ul class="nav nav-tabs">
-                                                                <li class="active" style="background: #1f1f1f!important;"><a data-toggle="tab" href="#customers" id="btn_customer">Customers</a></li>
-                                                                <li style="background: #1f1f1f!important;"><a data-toggle="tab" href="#salesman" id="btn_salesman">Salesperson</a></li>
-                                                                <li style="background: #1f1f1f!important;"><a data-toggle="tab" href="#products" id="btn_products">Products</a></li>
+                                                                <li class="active" style=""><a data-toggle="tab" href="#customers" id="btn_customer">Customers</a></li>
+                                                                <li style=""><a data-toggle="tab" href="#salesman" id="btn_salesman">Salesperson</a></li>
+                                                                <li style=""><a data-toggle="tab" href="#products" id="btn_products">Products</a></li>
                                                             </ul>
                                                             <div class="tab-content">
                                                                 <div id="customers" class="tab-pane fade in active">
@@ -139,7 +139,7 @@
                                                                                 <table id="tbl_detailed_customer" style="margin-top: 10px;" class="table table-striped" cellspacing="0" width="100%">
                                                                                     <thead class="">
                                                                                     <tr>
-                                                                                        <th>Invoice #</th> 
+                                                                                        <th width="15%">Invoice #</th> 
                                                                                         <th>Date</th> 
                                                                                         <th>Customer</th>
                                                                                         <th>Product Code</th> 
@@ -154,11 +154,11 @@
 
                                                                                     <tfoot>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="7">Current Page Total : </td> 
+                                                                                            <td colspan="7" style="text-align: right!important;"><b>Current Page Total : </b></td> 
                                                                                             <td id="td_page_total_cs_detailed" align="right"></td>
                                                                                         </tr>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="7">Grand Total : </td> 
+                                                                                            <td colspan="7" style="text-align: right!important;"><b>Grand Total : </b></td> 
                                                                                             <td id="td_grand_total_cs_detailed" align="right"></td>
                                                                                         </tr>
 
@@ -175,7 +175,6 @@
                                                                                 <table id="tbl_summary_customer" style="margin-top: 10px;" class="table table-striped" cellspacing="0" width="100%">
                                                                                     <thead class="">
                                                                                     <tr>
-                                                                                        <th>Customer Code</th>
                                                                                         <th>Customer</th>
                                                                                         <th>Total Sales</th> 
                                                                                     </tr>
@@ -185,11 +184,11 @@
 
                                                                                     <tfoot>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="2">Current Page Total : </td> 
+                                                                                            <td align="right" colspan="1" width="85%"><b>Current Page Total : </b></td> 
                                                                                             <td id="td_page_total_cs_summary" align="right"></td>
                                                                                         </tr>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="2">Grand Total : </td> 
+                                                                                            <td align="right" colspan="1"><b>Grand Total : </b></td> 
                                                                                             <td id="td_grand_total_cs_summary" align="right"></td>
                                                                                         </tr>
 
@@ -235,11 +234,11 @@
 
                                                                                     <tfoot>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="7">Current Page Total : </td> 
+                                                                                            <td style="text-align: right!important;" colspan="7"><b>Current Page Total : </b></td> 
                                                                                             <td id="td_page_total_sm_detailed" align="right"><b>0.00</b></td>
                                                                                         </tr>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="7">Grand Total : </td> 
+                                                                                            <td style="text-align: right!important;" colspan="7"><b>Grand Total :</b> </td> 
                                                                                             <td id="td_grand_total_sm_detailed" align="right"><b>0.00</b></td>
                                                                                         </tr>
 
@@ -256,7 +255,6 @@
                                                                                 <table id="tbl_summary_salesman" style="margin-top: 10px;" class="table table-striped" cellspacing="0" width="100%">
                                                                                     <thead class="">
                                                                                     <tr>
-                                                                                        <th>Salesperson Code</th>
                                                                                         <th>Salesperson</th>
                                                                                         <th>Total Invoice Sale</th>
                                                                                     </tr>
@@ -266,11 +264,11 @@
 
                                                                                     <tfoot>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="2">Current Page Total : </td> 
+                                                                                            <td align="right" colspan="1" width="85%"><b>Current Page Total :</b> </td> 
                                                                                             <td id="td_page_total_sm_summary" align="right"><b>0.00</b></td>
                                                                                         </tr>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="2">Grand Total : </td> 
+                                                                                            <td align="right" colspan="1"><b>Grand Total : </b></td> 
                                                                                             <td id="td_grand_total_sm_summary" align="right"><b>0.00</b></td>
                                                                                         </tr>
 
@@ -315,11 +313,11 @@
 
                                                                                     <tfoot>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="6">Current Page Total : </td> 
+                                                                                            <td align="right" colspan="6" style="text-align: right!important;"><b>Current Page Total : </b></td> 
                                                                                             <td id="td_page_total_p_detailed" align="right"><b>0.00</b></td>
                                                                                         </tr>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="6">Grand Total : </td> 
+                                                                                            <td align="right" colspan="6" style="text-align: right!important;"><b>Grand Total : </b></td> 
                                                                                             <td id="td_grand_total_p_detailed" align="right"><b>0.00</b></td>
                                                                                         </tr>
 
@@ -346,11 +344,11 @@
 
                                                                                     <tfoot>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="2">Current Page Total : </td> 
-                                                                                            <td id="td_page_total_p_summary" align="right"><b>0.00</b></td>
+                                                                                            <td align="right" colspan="2" style="text-align: right!important;"><b>Current Page Total : </b></td> 
+                                                                                            <td id="td_page_total_p_summary" align="right" width="15%"><b>0.00</b></td>
                                                                                         </tr>
                                                                                         <tr>
-                                                                                            <td align="left" colspan="2">Grand Total : </td> 
+                                                                                            <td align="right" colspan="2" style="text-align: right!important;"><b>Grand Total : </b></td> 
                                                                                             <td id="td_grand_total_p_summary" align="right"><b>0.00</b></td>
                                                                                         </tr>
 
@@ -410,6 +408,7 @@
 <script src="assets/plugins/fullcalendar/moment.min.js"></script>
 <!-- Data picker -->
 <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 
 <!-- numeric formatter -->
 <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
@@ -658,6 +657,7 @@
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "bPaginate":true, 
+                "aaSorting": [],
                 language: {     
                     "searchPlaceholder": "Search Product" 
                 }, 
@@ -802,6 +802,7 @@
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "bPaginate":true, 
+                "aaSorting": [],
                 language: { 
                     "searchPlaceholder": "Search Salesperson" 
                 }, 
@@ -885,7 +886,7 @@
                     "searchPlaceholder": "Search Salesperson" 
                 }, 
                 "ajax": {
-                    "url": "Sales_detailed_summary/transaction/per-sales-summary",
+                    "url": "Sales_detailed_summary/transaction/per-sales-summary-salesperson",
                     "type": "GET",
                     "bDestroy": true,
                     "data": function ( d ) {
@@ -896,16 +897,13 @@
                     }
                 },
                 "columns": [
-                    {   "searchable": false,
-                        targets:[0],data: "salesperson_code" 
-                    },
                     {
-                        targets:[1],data: "salesperson_name" 
+                        targets:[0],data: "salesperson_name" 
                     },
                     {  
                         className: "text-right", 
                         "searchable": false,
-                        targets:[2],data: "total_amount", 
+                        targets:[1],data: "total_amount", 
                         render: function(data){ 
                             return accounting.formatNumber(data,2); 
                         }  
@@ -924,7 +922,7 @@
 
                     // Total over all pages
                     total = api
-                        .column( 2 )
+                        .column( 1 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
@@ -932,7 +930,7 @@
 
                     // Total over this page
                     pageTotal = api
-                        .column( 2, { page: 'current'} )
+                        .column( 1, { page: 'current'} )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
@@ -950,6 +948,7 @@
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "bPaginate":true, 
+                "aaSorting": [],
                 language: { 
                     "searchPlaceholder": "Search Customer" 
                 }, 
@@ -969,12 +968,14 @@
                     { "searchable": false,targets:[1],data: "date_invoice" }, 
                     {
                         targets:[2],data: "customer_name"  
+                        ,render: $.fn.dataTable.render.ellipsis(50)
                     }, 
                     { "searchable": false,targets:[3],data: "product_code" }, 
                     {  
                         className: "text-left", 
                         "searchable": false,
                         targets:[4],data: "product_desc"  
+                        ,render: $.fn.dataTable.render.ellipsis(50)
                     }, 
                     {  
                         className: "text-right", 
@@ -1045,16 +1046,13 @@
                     }
                 },
                 "columns": [
-                    {   "searchable": false,
-                        targets:[0],data: "customer_code" 
-                    },
                     {
-                        targets:[1],data: "customer_name" 
+                        targets:[0],data: "customer_name" 
                     },
                     {  
                         className: "text-right", 
                         "searchable": false,
-                        targets:[2],data: "total_amount", 
+                        targets:[1],data: "total_amount", 
                         render: function(data){ 
                             return accounting.formatNumber(data,2); 
                         }  
@@ -1073,7 +1071,7 @@
 
                     // Total over all pages
                     total = api
-                        .column( 2 )
+                        .column( 1 )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
@@ -1081,7 +1079,7 @@
 
                     // Total over this page
                     pageTotal = api
-                        .column( 2, { page: 'current'} )
+                        .column( 1, { page: 'current'} )
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);

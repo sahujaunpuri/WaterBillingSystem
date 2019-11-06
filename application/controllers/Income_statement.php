@@ -31,8 +31,8 @@ class Income_statement extends CORE_Controller
         $data['title'] = 'Income Statement';
 
         $data['departments']=$this->Departments_model->get_list('is_deleted=FALSE');
-        $data['income_accounts']=$this->Journal_info_model->get_account_balance(4);
-        $data['expense_accounts']=$this->Journal_info_model->get_account_balance(5);
+        // $data['income_accounts']=$this->Journal_info_model->get_account_balance(4);
+        // $data['expense_accounts']=$this->Journal_info_model->get_account_balance(5);
         (in_array('9-2',$this->session->user_rights)? 
         $this->load->view('income_statement_view', $data)
         :redirect(base_url('dashboard')));
@@ -54,6 +54,7 @@ class Income_statement extends CORE_Controller
 
                 $departments = $this->Departments_model->get_list($dep_id);
                 $department_name = $departments[0]->department_name;
+                if($dep_id == 1){$dep_id=null;}
                 $income_accounts = $m_journal->get_account_balance(4,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
                 $expense_accounts = $m_journal->get_account_balance(5,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
 
@@ -240,9 +241,9 @@ class Income_statement extends CORE_Controller
                 $company_info=$m_company->get_list();
                 $start=$this->input->get('start',TRUE);
                 $end=$this->input->get('end',TRUE);
-
-                $income_accounts = $m_journal->get_account_balance(4,null,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
-                $expense_accounts = $m_journal->get_account_balance(5,null,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
+                if($dep_id == 1){$dep_id=null;}
+                $income_accounts = $m_journal->get_account_balance(4,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
+                $expense_accounts = $m_journal->get_account_balance(5,$dep_id,date("Y-m-d",strtotime($start)),date("Y-m-d",strtotime($end)));
 
                 $excel=$this->excel;
 

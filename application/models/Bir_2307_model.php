@@ -13,7 +13,7 @@
 				    FORMAT(form_2307.gross_amount, 2) as gross_amount,
 				    FORMAT(form_2307.deducted_amount, 2) as deducted_amount,
 				    ji.date_txn,
-				    m.quarterly
+				    m.month_name
 				FROM
 				    form_2307 
 				    LEFT JOIN journal_info ji ON ji.journal_id = form_2307.journal_id
@@ -23,7 +23,8 @@
 				        AND form_2307.is_deleted = FALSE
 				        ".($month==null?"":" AND MONTH(ji.date_txn) = $month")."
 				        ".($year==null?"":" AND YEAR(ji.date_txn) = $year")."
-				        ".($journal_id==null?"":" AND form_2307.journal_id = $journal_id")."";
+				        ".($journal_id==null?"":" AND form_2307.journal_id = $journal_id")."
+				        ";
 	    	return $this->db->query($sql)->result();
 	    }
 

@@ -302,9 +302,9 @@ class Purchases extends CORE_Controller
                         $m_po_items->po_line_total_after_global=$this->get_numeric_value($po_line_total_after_global[$i]);
 
                         if($is_parent[$i] == '1'){
-                            $m_po_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                            $m_po_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }else{
-                             $m_po_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                             $m_po_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }                        
                         $m_po_items->save();
                     }
@@ -394,9 +394,9 @@ class Purchases extends CORE_Controller
                         $m_po_items->is_parent=$this->get_numeric_value($is_parent[$i]);
                         $m_po_items->po_line_total_after_global=$this->get_numeric_value($po_line_total_after_global[$i]);
                         if($is_parent[$i] == '1'){
-                            $m_po_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                            $m_po_items->set('unit_id','(SELECT parent_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }else{
-                             $m_po_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
+                             $m_po_items->set('unit_id','(SELECT child_unit_id FROM products WHERE product_id='.(int)$this->get_numeric_value($prod_id[$i]).')');
                         }                        
                         $m_po_items->save();
                     }

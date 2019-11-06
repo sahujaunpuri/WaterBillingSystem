@@ -359,6 +359,19 @@ background: #616161 !important;color: white !important;border-top: 0.5px solid w
                             <span class="help-block m-b-none">Please select if Cash Invoices will be included in the Inventory computation.</span>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"> * Warehouse Dispatching Invoice Integration :</label>
+                        <div class="col-md-7">
+                            <select name="dispatching_invoice_inventory" class="cbo_accounts"   id="cbo_inventory" data-error-msg="Inventory is required." required>
+                           
+
+                            <option value="1" <?php echo ($current_accounts->dispatching_invoice_inventory == 1 ? 'selected' :'')   ?> >Enable</option>
+                            <option value="0" <?php echo ($current_accounts->dispatching_invoice_inventory == 0 ? 'selected' :'')   ?>> Disable</option>
+                            </select>
+
+                            <span class="help-block m-b-none">Please select if Dispatching Invoices will be included in the Inventory computation.</span>
+                        </div>
+                    </div>
                 </form>
                     <div class="col-sm-offset-3">
                         <button id="btn_save_inventory_accounts" type="button" class="btn btn-primary" style="font-family: tahoma;text-transform: none;"><span class=""></span> Save Inventory Configuration Changes</button>
