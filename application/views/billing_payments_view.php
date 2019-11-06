@@ -807,8 +807,10 @@
             _cboAccounts.on('select2:select', function(){
             var i= $(this).val();
             _cboIsRefund.select2('val',0);
+            date = $('input[name="date_paid"]').val();
+            passdate = $.datepicker.formatDate('yy-mm-dd', new Date(date));
            $.ajax({
-                url : 'Billing_payments/transaction/billing-receivables/'+i,
+                url : 'Billing_payments/transaction/billing-receivables/'+i+'/'+passdate,
                 type : "GET",
                 cache : false,
                 dataType : 'json',

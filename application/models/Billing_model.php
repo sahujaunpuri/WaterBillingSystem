@@ -499,7 +499,7 @@ class Billing_model extends CORE_Model{
 
 
 
-    function billing_receivables($connection_id=null){
+    function billing_receivables($connection_id=null,$filter_date =null){
     	$query = $this->db->query("SELECT main.* FROM(SELECT 
 				b.connection_id,
 				DATE_FORMAT(b.due_date, '%m/%d/%Y') AS due_date,
@@ -507,9 +507,9 @@ class Billing_model extends CORE_Model{
 				CONCAT(m.month_name, ' ', mrp.meter_reading_year) as description,
 				b.billing_id,
 				0 as disconnection_id,
-				b.grand_total_amount as receivable_amount,
+                IF('$filter_date' > b.due_date, (b.amount_due + b.penalty_amount + charges_amount),(b.amount_due + charges_amount)) receivable_amount,
 				IFNULL(payment.paid_amount,0) as paid_amount,
-				(IFNULL(b.grand_total_amount,0) - IFNULL(payment.paid_amount,0)) as amount_due,
+                IF('$filter_date' > b.due_date, ((b.amount_due + b.penalty_amount + charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
 				0 as payment_amount
 
 				FROM billing b
