@@ -204,7 +204,7 @@ class Service_disconnection_model extends CORE_Model {
                                                 (matrix_residential_to - matrix_residential_from),
                                                 ((matrix_residential_to+1) - matrix_residential_from))
                                                     *matrix_residential_amount) 
-                                            WHEN ($consumption+1) < matrix_residential_to
+                                            WHEN ($consumption+1) <= matrix_residential_to
                                             THEN ((($consumption+1) - matrix_residential_from)*matrix_residential_amount)
                                             END))
                                          FROM matrix_residential_items WHERE matrix_residential_from <= ($consumption+1))
@@ -219,7 +219,7 @@ class Service_disconnection_model extends CORE_Model {
                                                 (matrix_commercial_to - matrix_commercial_from),
                                                 ((matrix_commercial_to+1) - matrix_commercial_from))
                                                     *matrix_commercial_amount) 
-                                            WHEN ($consumption+1) < matrix_commercial_to
+                                            WHEN ($consumption+1) <= matrix_commercial_to
                                             THEN ((($consumption+1) - matrix_commercial_from)*matrix_commercial_amount)
                                             END))
                                          FROM matrix_commercial_items WHERE matrix_commercial_from <= ($consumption+1))
