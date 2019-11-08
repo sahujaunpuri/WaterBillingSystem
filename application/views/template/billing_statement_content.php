@@ -134,8 +134,8 @@
                     <td colspan="8">&nbsp;&nbsp;</td>
                 </tr>
                 <tr>
-                    <td colspan="4">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount) ,2);?></b></td>
-                    <td colspan="4">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->amount_after_due+$billing->arrears_amount),2);?></b></td>
+                    <td colspan="4">TOTAL AMOUNT BEFORE DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->total_amount_due +$billing->arrears_amount + $billing->arrears_penalty_amount) ,2);?></b></td>
+                    <td colspan="4">TOTAL AMOUNT AFTER DUE DATE:&nbsp;&nbsp;<b><?php echo number_format(($billing->amount_after_due+$billing->arrears_amount) + $billing->arrears_penalty_amount,2);?></b></td>
                 </tr>
             </tbody>
         </table>   

@@ -335,16 +335,22 @@
                                 </div>
                                 
                                 <div class="row">
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-2">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class="">Arrears as of Date:</label>
                                             <input type="text" name="arrears_amount" class="form-control numeric" placeholder="" readonly>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-lg-offset-1">
+                                    <div class="col-lg-2 col-lg-offset-1">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class="">Arrears Penalty:</label>
                                             <input type="text" name="arrears_penalty_amount" class="form-control numeric" placeholder="" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-lg-offset-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class="">Penalty After Due:</label>
+                                            <input type="text" name="penalty_amount" class="form-control numeric" placeholder="" readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-lg-offset-1">
@@ -803,9 +809,7 @@ $(document).ready(function(){
                         var rate=response.data[0];
                         var penalty_amount=parseFloat(response.penalty);
                         var arrears_penalty = parseFloat(_arrears_penalty);
-                        var total_penalty_amount = penalty_amount + arrears_penalty
-
-                        $('input[name="arrears_penalty_amount"]').val(accounting.formatNumber(total_penalty_amount,2));
+                        $('input[name="penalty_amount"]').val(accounting.formatNumber(rate.penalty_amount,2));
                         $('input[name="meter_amount_due"]').val(accounting.formatNumber(rate.amount_due,2));
                         $('input[name="default_matrix_id"]').val(rate.default_matrix_id);
                         // $('input[name="rate_amount"]').val(rate.rate);

@@ -154,7 +154,7 @@
            </tr>
            <tr>
                 <td colspan="6" class="tablehead"><b>TOTAL AMOUNT DUE <i>(Before Due Date)</i></b></td>
-                <td class="tablehead right-align"><b><?php echo number_format(($billing->grand_total_amount + $billing->arrears_amount),2); ?></b></td>
+                <td class="tablehead right-align"><b><?php echo number_format(($billing->total_amount_due + $billing->charges_amount + $billing->arrears_amount + $billing->arrears_penalty_amount),2); ?></b></td>
            </tr>
            <tr>
                 <td></td>
@@ -163,7 +163,7 @@
            </tr>
            <tr>
                 <td colspan="6" class="tablehead"><b>TOTAL AMOUNT DUE <i>(After Due Date)</i></b></td>
-                <td class="tablehead right-align"><b><?php echo number_format(($billing->grand_total_amount+$billing->arrears_amount+$billing->penalty_amount),2); ?></b></td>
+                <td class="tablehead right-align"><b><?php echo number_format(($billing->total_amount_due + $billing->charges_amount + $billing->arrears_amount + $billing->arrears_penalty_amount+$billing->penalty_amount),2); ?></b></td>
            </tr>
    </table>
 

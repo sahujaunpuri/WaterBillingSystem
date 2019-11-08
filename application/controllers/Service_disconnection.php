@@ -100,24 +100,40 @@ class Service_disconnection extends CORE_Controller {
                 $arrears_penalty_amount=0;
                 $arrears_amount = 0;
                 if(count($previous_billing_info) > 0){
-                    if($previous_billing_info[0]->billing_id == '' || $previous_billing_info[0]->billing_id == null){
-                        $response['stat']='error';
-                        $response['title']='<b>Cannot Fetch Data!</b>';
-                        $response['msg']='Latest Meter Reading is still unprocessed.<br />';
-                        die(json_encode($response));
-                    }else{
-                        $check_previous_billing_if_paid = $this->Service_disconnection_model->check_previous_billing_if_paid($previous_billing_info[0]->billing_id);
-                        $check_billing_date = $check_previous_billing_if_paid[0]->meter_reading_year.'-'.str_pad($check_previous_billing_if_paid[0]->month_id, 2, 0,STR_PAD_LEFT);
-                        $check_before_date = date('Y-m',strtotime($before_date));
-                        // if($check_billing_date != $check_before_date){ // CHECK IF IT ALREADY HAS A BILLING FOR THE SAME MONTH
-                            if($check_previous_billing_if_paid[0]->amount_due > 0){
-                                $get_penalty_for_last_billing = $this->Billing_model->get_list($check_previous_billing_if_paid[0]->billing_id,'penalty_amount')[0];
-                                $arrears_penalty_amount = $get_penalty_for_last_billing->penalty_amount;
-                            }
-                        // }
-                        $arrears_amount_info = $this->Service_disconnection_model->arrears_amount_info($connection_id);
-                        $arrears_amount= $arrears_amount_info[0]->arrears_amount;
+                     if($previous_billing_info[0]->disconnection_id == 0) {  // IF LATEST IS BILLING
+                        if($previous_billing_info[0]->billing_id == '0' || $previous_billing_info[0]->billing_id == null){
+                            $response['stat']='error';
+                            $response['title']='<b>Cannot Fetch Data!</b>';
+                            $response['msg']='Latest Meter Reading is still unprocessed.<br />';
+                            die(json_encode($response));
+                        }else{
+                        // IF LATEST IS BILLING
+                            $check_previous_billing_if_paid = $this->Service_disconnection_model->check_previous_billing_if_paid($previous_billing_info[0]->billing_id,$before_date);
+                                if($check_previous_billing_if_paid[0]->amount_due > 0 &&  $before_date > $check_previous_billing_if_paid[0]->due_date ){
+                                    $get_penalty_for_last_billing = $this->Billing_model->get_list($check_previous_billing_if_paid[0]->billing_id,'penalty_amount')[0];
+                                    $arrears_penalty_amount = $get_penalty_for_last_billing->penalty_amount;
+                                }
+                            $arrears_amount_info = $this->Service_disconnection_model->arrears_amount_info($connection_id,$before_date);
+                            $arrears_amount= $arrears_amount_info[0]->arrears_amount -$arrears_penalty_amount;
+                        }
                     }
+
+                    if($previous_billing_info[0]->disconnection_id != 0) {  // IF LATEST IS DISCONNECTION
+                        $check_previous_disconnection_if_paid = $this->Service_disconnection_model->check_previous_disconnection_if_paid($previous_billing_info[0]->disconnection_id,$before_date);
+                                if($check_previous_disconnection_if_paid[0]->amount_due > 0 &&  $before_date > $check_previous_disconnection_if_paid[0]->due_date ){
+                                    $get_penalty_for_last_disconnection = $this->Service_disconnection_model->get_list($check_previous_disconnection_if_paid[0]->disconnection_id,'penalty_amount')[0];
+                                    $arrears_penalty_amount = $get_penalty_for_last_disconnection->penalty_amount;
+                                }
+                            $arrears_amount_info = $this->Service_disconnection_model->arrears_amount_info($connection_id,$before_date);
+                            $arrears_amount= $arrears_amount_info[0]->arrears_amount -$arrears_penalty_amount;
+
+
+
+                        // print_r($check_previous_disconnection_if_paid);
+                    
+                    }
+
+
                 }
 
                 $response['arrears_penalty_amount']= $arrears_penalty_amount;
@@ -181,10 +197,14 @@ class Service_disconnection extends CORE_Controller {
                 $date_disconnection_date = date("Y-m-d",strtotime($this->input->post('date_disconnection_date',TRUE)));
                 $arrears_penalty_amount = $this->get_numeric_value($this->input->post('arrears_penalty_amount',TRUE));
                 $meter_amount_due =  $this->get_numeric_value($this->input->post('meter_amount_due',TRUE));
+                $penalty_amount =  $this->get_numeric_value($this->input->post('penalty_amount',TRUE));
 
                 $m_disconnection->set('date_created','NOW()');
                 $m_disconnection->connection_id=$connection_id;
                 $m_disconnection->service_date=$service_date;
+
+                $current = date('Y-m',strtotime($this->input->post('service_date',TRUE)));
+                $m_disconnection->due_date =  date('Y-m-d',strtotime($current.'-15'));
                 $m_disconnection->date_disconnection_date=$date_disconnection_date;
                 $m_disconnection->service_no=$service_no;
                 $m_disconnection->disconnection_reason_id=$this->input->post('disconnection_reason_id',TRUE);
@@ -205,6 +225,7 @@ class Service_disconnection extends CORE_Controller {
                 $m_disconnection->remaining_deposit=$this->get_numeric_value($this->input->post('remaining_deposit',TRUE));
             
                 $m_disconnection->meter_amount_due=$meter_amount_due;
+                $m_disconnection->penalty_amount=$penalty_amount;
                 $m_disconnection->arrears_penalty_amount= $arrears_penalty_amount;
                 $m_disconnection->save();
                 $disconnection_id=$m_disconnection->last_insert_id();
@@ -252,7 +273,7 @@ class Service_disconnection extends CORE_Controller {
                     $total_charges += $this->get_numeric_value($charge_line_total[$i]);
                 }
 
-                $m_disconnection->grand_total_amount =   $this->get_numeric_value($total_charges) + $this->get_numeric_value($meter_amount_due) + $this->get_numeric_value($arrears_penalty_amount);
+                $m_disconnection->grand_total_amount =   $this->get_numeric_value($total_charges) + $this->get_numeric_value($meter_amount_due);
                 $m_disconnection->charges_amount =   $this->get_numeric_value($total_charges);
                 $m_disconnection->modify($disconnection_id);
                 $response['title']='Success!';

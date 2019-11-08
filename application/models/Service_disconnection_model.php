@@ -98,21 +98,40 @@ class Service_disconnection_model extends CORE_Model {
 
     function previous_billing_info($connection_id,$previous_month){
         $query=$this->db->query("SELECT * FROM (SELECT 
-                mrii.meter_reading_input_id,
-                b.billing_id,
-                DATE_FORMAT(CONCAT(mrp.meter_reading_year,'-',mrp.month_id,'-01'), '%b %Y') as current_month,
-                mri.meter_reading_period_id
-                FROM meter_reading_input_items mrii
+                        mri.date_input,
+                        mrii.meter_reading_input_id,
+                        b.billing_id,
+                        mrii.connection_id,
+                        0 as disconnection_id,
+                        DATE_FORMAT(CONCAT(mrp.meter_reading_year,'-',mrp.month_id,'-01'), '%b %Y') as current_month,
+                        mri.meter_reading_period_id
+                        FROM meter_reading_input_items mrii
 
-                LEFT JOIN meter_reading_input mri ON mri.meter_reading_input_id = mrii.meter_reading_input_id
-                LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = mri.meter_reading_period_id
-                LEFT JOIN billing b ON b.meter_reading_input_id = mrii.meter_reading_input_id AND b.connection_id= mrii.connection_id
-                WHERE mrii.connection_id = ".$connection_id." AND mri.is_active= TRUE AND mri.is_deleted= FALSE) as main
-                 WHERE main.current_month = '".$previous_month."'");
+                        LEFT JOIN meter_reading_input mri ON mri.meter_reading_input_id = mrii.meter_reading_input_id
+                        LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = mri.meter_reading_period_id
+                        LEFT JOIN billing b ON b.meter_reading_input_id = mrii.meter_reading_input_id AND b.connection_id= mrii.connection_id
+                        WHERE mrii.connection_id = ".$connection_id." AND mri.is_active= TRUE AND mri.is_deleted= FALSE
+
+                        UNION ALL
+
+                        SELECT 
+                        sd.service_date,
+                        0 as meter_reading_input_id,
+                        0 as billing_id,
+                        sd.connection_id,
+                        sd.disconnection_id,
+                        sd.previous_month as current_month,
+                        0 as meter_reading_period_id
+                        FROM service_disconnection sd
+
+                        WHERE sd.connection_id = ".$connection_id." AND sd.is_active = TRUE AND sd.is_deleted = FALSE) as main
+
+                         WHERE main.current_month = '".$previous_month."'
+                        ORDER BY main.date_input desc  LIMIT 1");
                         return $query->result();
     }
 
-    function check_previous_billing_if_paid($billing_id){
+    function check_previous_billing_if_paid($billing_id,$before_date){
         $query=$this->db->query("SELECT 
             b.connection_id,
             b.due_date,
@@ -122,9 +141,9 @@ class Service_disconnection_model extends CORE_Model {
             mrp.meter_reading_year,
             b.billing_id,
             0 as disconnection_id,
-            b.grand_total_amount as receivable_amount,
+            IF('$before_date' > b.due_date, (b.amount_due + b.penalty_amount + charges_amount),(b.amount_due + charges_amount)) receivable_amount,
             IFNULL(payment.paid_amount,0) as paid_amount,
-            (IFNULL(b.grand_total_amount,0) - IFNULL(payment.paid_amount,0)) as amount_due,
+            IF('$before_date' > b.due_date, ((b.amount_due + b.penalty_amount + charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
             0 as payment_amount
 
             FROM billing b
@@ -148,8 +167,37 @@ class Service_disconnection_model extends CORE_Model {
         return $query->result();
     }
 
+    function check_previous_disconnection_if_paid($disconnection_id,$before_date){
+        $query=$this->db->query("SELECT 
+            sd.connection_id,
+            DATE_FORMAT(sd.due_date, '%m/%d/%Y') AS due_date,
+            sd.service_no as control_no,
+            'Service Disconnection' as description,
+            0 as billing_id,
+            sd.disconnection_id,
+            IF('$before_date' > sd.due_date, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
+            IFNULL(payment.paid_amount,0) as paid_amount,
+            IF('$before_date' > sd.due_date, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
 
-    function arrears_amount_info($connection_id){
+            0 as payment_amount
+            FROM service_disconnection sd
+            LEFT JOIN
+            
+            (SELECT 
+            bpi.disconnection_id,
+            (SUM(bpi.payment_amount) + SUM(bpi.deposit_payment)) as paid_amount
+            FROM billing_payment_items bpi
+            LEFT JOIN billing_payments bp on bp.billing_payment_id = bpi.billing_payment_id
+            WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE AND bpi.billing_id = 0
+            GROUP BY bpi.disconnection_id) as payment ON payment.disconnection_id= sd.disconnection_id
+            
+            WHERE sd.is_active = TRUE AND sd.is_deleted= FALSE
+            AND sd.disconnection_id = ".$disconnection_id."");
+        return $query->result();
+    }
+
+
+    function arrears_amount_info($connection_id,$before_date){
         $query=$this->db->query("SELECT SUM(IFNULL(main.amount_due,0)) as arrears_amount FROM(SELECT 
             b.connection_id,
             b.due_date,
@@ -157,9 +205,9 @@ class Service_disconnection_model extends CORE_Model {
             CONCAT(m.month_name, ' ', mrp.meter_reading_year) as description,
             b.billing_id,
             0 as disconnection_id,
-            b.grand_total_amount as receivable_amount,
+            IF('$before_date' > b.due_date, (b.amount_due + b.penalty_amount + charges_amount),(b.amount_due + charges_amount)) receivable_amount,
             IFNULL(payment.paid_amount,0) as paid_amount,
-            (IFNULL(b.grand_total_amount,0) - IFNULL(payment.paid_amount,0)) as amount_due,
+            IF('$before_date' > b.due_date, ((b.amount_due + b.penalty_amount + charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
             0 as payment_amount
 
             FROM billing b
@@ -178,7 +226,40 @@ class Service_disconnection_model extends CORE_Model {
 
             GROUP BY bpi.billing_id) as payment ON payment.billing_id = b.billing_id
 
-             ".($connection_id==0?"":" WHERE b.connection_id=".$connection_id)." ) as main
+             ".($connection_id==0?"":" WHERE b.connection_id=".$connection_id)."
+
+
+             UNION ALL
+
+            SELECT 
+            sd.connection_id,
+            DATE_FORMAT(sd.due_date, '%m/%d/%Y') AS due_date,
+            sd.service_no as control_no,
+            'Service Disconnection' as description,
+            0 as billing_id,
+            sd.disconnection_id,
+            IF('$before_date' > sd.due_date, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
+            IFNULL(payment.paid_amount,0) as paid_amount,
+            IF('$before_date' > sd.due_date, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
+
+            0 as payment_amount
+            FROM service_disconnection sd
+            LEFT JOIN
+            
+            (SELECT 
+            bpi.disconnection_id,
+            (SUM(bpi.payment_amount) + SUM(bpi.deposit_payment)) as paid_amount
+            FROM billing_payment_items bpi
+            LEFT JOIN billing_payments bp on bp.billing_payment_id = bpi.billing_payment_id
+            WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE AND bpi.billing_id = 0
+            GROUP BY bpi.disconnection_id) as payment ON payment.disconnection_id= sd.disconnection_id
+            
+            WHERE sd.is_active = TRUE AND sd.is_deleted= FALSE
+            ".($connection_id==0?"":" AND sd.connection_id=".$connection_id)." 
+
+
+
+              ) as main
             "); 
         return $query->result();
     }

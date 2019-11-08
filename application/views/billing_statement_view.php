@@ -154,6 +154,7 @@
                                                         </button>
                                                     </div>
                                                 </div><br>
+                                                Note: The <b>Grand Total Column </b> does not include the penalty after due date of the current period.
                                                 <table id="tbl_billing" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
