@@ -380,7 +380,8 @@ $(document).ready(function(){
             checkPeriodStatus(_currentMeterPeriod).done(function(response){
                 var rows = response.data[0];
                 if (rows.is_closed == 1){
-                    $('#btn_process').prop("disabled",true);
+                    $('#btn_process').prop("disabled",true); 
+                    showNotification({title:"Billing Period Closed !",stat:"info",msg:"You cannot Process/Reprocess this Period."}); 
                 }else{
                     $('#btn_process').prop("disabled",false);
                 }
