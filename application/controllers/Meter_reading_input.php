@@ -152,6 +152,7 @@ class Meter_reading_input extends CORE_Controller
                 $m_invoice->meter_reading_period_id = $meter_reading_period_id;
                 $m_invoice->date_input=date('Y-m-d',strtotime($this->input->post('date_input',TRUE)));
                 $m_invoice->posted_by_user=$this->session->user_id;
+                $m_invoice->remarks = $this->input->post('remarks');
 
                 $batch_info = $this->Meter_reading_period_model->get_list($meter_reading_period_id)[0];
                 $batch_id = (count($m_invoice->get_list(array('meter_reading_period_id'=>$meter_reading_period_id))) + 1);
@@ -214,7 +215,7 @@ class Meter_reading_input extends CORE_Controller
                 }
 
                 $m_invoice->date_input=date('Y-m-d',strtotime($this->input->post('date_input',TRUE)));
-
+                $m_invoice->remarks = $this->input->post('remarks');
                 $m_invoice->modify($meter_reading_input_id);
 
                 $m_invoice_items=$this->Meter_reading_input_items_model;

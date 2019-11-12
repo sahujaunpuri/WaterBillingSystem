@@ -1,0 +1,5 @@
+ALTER TABLE `waterbilling20190715_online`.`service_disconnection` 
+ADD COLUMN `penalty_amount` DECIMAL(20,2) NULL DEFAULT '0.00' AFTER `meter_amount_due`;
+
+ALTER TABLE `waterbilling20190715_online`.`service_disconnection` 
+ADD COLUMN `due_date` DATE NULL DEFAULT '0000-00-00' AFTER `service_date`;

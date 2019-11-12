@@ -156,7 +156,7 @@
                 <hr>
                     <div class="row">
                         <div class="col-sm-4">
-                            <b class="required">*</b><label> Period :</label> <br />
+                            <b class="required">*</b><label>Billing Period :</label> <br />
                             <select name="meter_reading_period_id" id="cbo_period" data-error-msg="Meter Reading Period is required." required>
                                 <?php foreach($periods as $period){ ?>
                                     <option value="<?php echo $period->meter_reading_period_id; ?>" data-start="<?php echo $period->meter_reading_period_start; ?>" data-end="<?php echo $period->meter_reading_period_end; ?>"
@@ -358,7 +358,7 @@ $(document).ready(function(){
         });
 
         _cboPeriod=$("#cbo_period").select2({
-            placeholder: "Please Select Period.",
+            placeholder: "Please Select Billing Period.",
             allowClear: false
         });
 
@@ -528,7 +528,8 @@ $(document).ready(function(){
                 });
             });
             _cboPeriod.select2('val',data.meter_reading_period_id);
-            if(data.is_sent == '1'){ $('#btn_save').attr('disabled', true); }else{ $('#btn_save').attr('disabled', false);}
+            if(data.is_closed == 1){  showNotification({title:"Billing Period Closed !",stat:"info",msg:"You cannot modify this batch of inputs."}); }
+            if(data.is_sent == '1' || data.is_closed == '1'){ $('#btn_save').attr('disabled', true); }else{ $('#btn_save').attr('disabled', false);}
             var obj_period=$('#cbo_period').find('option[value="' + data.meter_reading_period_id + '"]');
             $('#start_date').val(obj_period.data('start'));
             $('#end_date').val(obj_period.data('end'));
@@ -593,8 +594,13 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.meter_reading_input_id;
-             if(data.is_sent == '1'){  showNotification({title:"Cannot Delete!",stat:"error",msg:"Batch already sent to Accounting."});
-              }else{  $('#modal_confirmation').modal('show'); }
+            if(data.is_sent == '1'){ 
+                showNotification({title:"Cannot Delete!",stat:"error",msg:"Batch already sent to Accounting."});
+            }else if(data.is_closed == 1){  
+                showNotification({title:"Billing Period Closed !",stat:"info",msg:"You cannot delete this batch of inputs."}); 
+            } else {  
+                $('#modal_confirmation').modal('show'); 
+            }
         });
 
         $('#tbl_items tbody').on('keyup','input.numeric,input.number',function(){
