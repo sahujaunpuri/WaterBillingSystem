@@ -106,10 +106,10 @@
                                                             <table id="tbl_customer_receivables" class="table table-striped" cellspacing="0" width="100%">
                                                                 <thead class="">
                                                                 <tr>
-                                                                    <th>Account #</th>
+                                                                    <th width="15%">Account #</th>
                                                                     <th>Customer</th>
                                                                     <th>Address</th>
-                                                                    <th>Penalty</th>
+                                                                    <th style="text-align: right;">Penalty</th>
                                                                     <th style="text-align: right;">Fees</th>
                                                                     <th style="text-align: right;">Payments</th>
                                                                     <th style="text-align: right;">Balance</th>
@@ -262,13 +262,15 @@
                         $('td', row).eq(3).addClass('number');
                         $('td', row).eq(4).addClass('number');
                         $('td', row).eq(5).addClass('number');
-                        $('td', row).eq(5).addClass('bold');
+                        $('td', row).eq(6).addClass('number');
+                        $('td', row).eq(6).addClass('bold');
                     }else{
                         dt.column( 0 ).visible( false );   
                         $('td', row).eq(2).addClass('number');
                         $('td', row).eq(3).addClass('number');
                         $('td', row).eq(4).addClass('number');
-                        $('td', row).eq(4).addClass('bold');
+                        $('td', row).eq(5).addClass('number');
+                        $('td', row).eq(5).addClass('bold');
                     }
                 },
                 footerCallback: function ( row, data, start, end, display ) {

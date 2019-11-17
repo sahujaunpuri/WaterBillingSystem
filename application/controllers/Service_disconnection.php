@@ -109,7 +109,7 @@ class Service_disconnection extends CORE_Controller {
                         }else{
                         // IF LATEST IS BILLING
                             $check_previous_billing_if_paid = $this->Service_disconnection_model->check_previous_billing_if_paid($previous_billing_info[0]->billing_id,$before_date);
-                                if($check_previous_billing_if_paid[0]->amount_due > 0 &&  $before_date > $check_previous_billing_if_paid[0]->due_date ){
+                                if($check_previous_billing_if_paid[0]->amount_due > $check_previous_billing_if_paid[0]->meter_amount_due_comparison &&  $before_date > $check_previous_billing_if_paid[0]->due_date ){
                                     $get_penalty_for_last_billing = $this->Billing_model->get_list($check_previous_billing_if_paid[0]->billing_id,'penalty_amount')[0];
                                     $arrears_penalty_amount = $get_penalty_for_last_billing->penalty_amount;
                                 }
@@ -120,7 +120,7 @@ class Service_disconnection extends CORE_Controller {
 
                     if($previous_billing_info[0]->disconnection_id != 0) {  // IF LATEST IS DISCONNECTION
                         $check_previous_disconnection_if_paid = $this->Service_disconnection_model->check_previous_disconnection_if_paid($previous_billing_info[0]->disconnection_id,$before_date);
-                                if($check_previous_disconnection_if_paid[0]->amount_due > 0 &&  $before_date > $check_previous_disconnection_if_paid[0]->due_date ){
+                                if($check_previous_disconnection_if_paid[0]->amount_due > $check_previous_disconnection_if_paid[0]->meter_amount_due_comparison &&  $before_date > $check_previous_disconnection_if_paid[0]->due_date ){
                                     $get_penalty_for_last_disconnection = $this->Service_disconnection_model->get_list($check_previous_disconnection_if_paid[0]->disconnection_id,'penalty_amount')[0];
                                     $arrears_penalty_amount = $get_penalty_for_last_disconnection->penalty_amount;
                                 }
