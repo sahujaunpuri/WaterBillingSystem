@@ -22,9 +22,9 @@ class Billing_model extends CORE_Model{
 			    service_connection.account_no,
 			    ".($type_id==1?" service_connection.receipt_name ":" service_connection.customer_name ")." as customer_name,
 			    service_connection.address,
-			    (COALESCE(billing.billing_fee, 0) + COALESCE(disconnection.disconnection_fee, 0)) as fee,
+			    (COALESCE(billing.billing_fee, 0) + COALESCE(disconnection.disconnection_fee, 0) + COALESCE(dis_penalty.dis_penalty, 0) + COALESCE(bill_penalty.bill_penalty, 0)) as fee,
 			    COALESCE(payment.payment_fee, 0) AS payment,
-			    ((COALESCE(billing.billing_fee, 0) + COALESCE(disconnection.disconnection_fee, 0)) - COALESCE(payment.payment_fee, 0)) AS balance
+			    ((COALESCE(billing.billing_fee, 0) + COALESCE(disconnection.disconnection_fee, 0) + COALESCE(dis_penalty.dis_penalty, 0) + COALESCE(bill_penalty.bill_penalty, 0)) - COALESCE(payment.payment_fee, 0)) AS balance
 			FROM
 			    (SELECT 
 			        c.customer_id,
@@ -40,7 +40,7 @@ class Billing_model extends CORE_Model{
 			    (SELECT 
 			        sc.customer_id,
 			            sc.connection_id,
-			            COALESCE(SUM(b.grand_total_amount), 0) AS billing_fee
+			            COALESCE(SUM(b.amount_due + b.charges_amount), 0) AS billing_fee
 			    FROM
 			        billing b
 			    LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = b.meter_reading_period_id
@@ -54,7 +54,7 @@ class Billing_model extends CORE_Model{
 			    (SELECT 
 			        sc.customer_id,
 			            sc.connection_id,
-			            COALESCE(SUM(sd.grand_total_amount), 0) AS disconnection_fee
+			            COALESCE(SUM(sd.meter_amount_due + sd.charges_amount), 0) AS disconnection_fee
 			    FROM
 			        service_disconnection sd
 			    LEFT JOIN service_connection sc ON sc.connection_id = sd.connection_id
@@ -64,6 +64,96 @@ class Billing_model extends CORE_Model{
 			            AND sd.is_deleted = FALSE
 			    ".($type_id==1?" GROUP BY sc.connection_id":" GROUP BY sc.customer_id").") AS disconnection 
 			    ".($type_id==1?" ON billing.connection_id = disconnection.connection_id":" ON billing.customer_id = disconnection.customer_id")."
+				LEFT JOIN (
+				SELECT sd_main. *,COALESCE(SUM(sd_main.disconnection_penalty)) as dis_penalty 
+				FROM  (SELECT 
+						c.customer_id,
+                        sc.connection_id,
+						(CASE WHEN payment.date_paid IS NULL 
+						## check if now is less than the due,
+                        THEN 
+							(CASE WHEN DATE(NOW()) > sd.due_date 
+								THEN  # NO PAYMENT AND AFTER DUE DATE
+									 sd.penalty_amount #no payment with penalty 
+								ELSE 0 #no payment without penalty 
+                               
+                                END)
+						ELSE # IF THERE IS PAYMENT
+							(CASE WHEN DATE(payment.date_paid) > sd.due_date # MAX DATE
+								THEN # WITH PAYMENT AFTER DUE WITH PENALTY
+									sd.penalty_amount
+                                ELSE # WITH PAYMENT BEFORE DUE
+									(CASE WHEN DATE(NOW()) > DATE(sd.due_date)
+                                    THEN #'with payment before due and current date after  due'
+										(CASE WHEN payment.payment_amount >= sd.meter_amount_due
+											THEN 0 # NO PENALTY
+                                            ELSE sd.penalty_amount #WITH PENALTY
+                                            END)
+                                    ELSE #with payment before due and current date before due without penalty
+                                    0 
+                                    END )
+							END )
+                        END) as disconnection_penalty
+				    FROM
+				        service_disconnection sd
+						LEFT JOIN service_connection sc ON sc.connection_id = sd.connection_id
+                        LEFT JOIN customers c ON c.customer_id = sc.customer_id 
+						LEFT JOIN (SELECT bpi.disconnection_id,
+						MAX(date_paid) as date_paid, 
+						SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+						LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
+						WHERE bp.is_active = TRUE AND bp.is_deleted= FALSE
+						GROUP BY bpi.disconnection_id) as payment ON payment.disconnection_id = sd.disconnection_id
+							WHERE sd.is_active = TRUE
+				            AND sd.is_deleted = FALSE) as sd_main
+						".($type_id==1?" GROUP BY sd_main.connection_id":" GROUP BY sd_main.customer_id").") AS dis_penalty 
+						".($type_id==1?" ON billing.connection_id = dis_penalty.connection_id":" ON billing.customer_id = dis_penalty.customer_id")."
+
+
+
+					LEFT JOIN (SELECT bill_main. *,COALESCE(SUM(bill_main.billing_penalty)) as bill_penalty 
+					FROM  (SELECT 
+						c.customer_id,
+						sc.connection_id,
+						(CASE WHEN payment.date_paid IS NULL 
+						## check if now is less than the due,
+						THEN 
+							(CASE WHEN DATE(NOW()) > b.due_date 
+								THEN  # NO PAYMENT AND AFTER DUE DATE
+									 b.penalty_amount #no payment with penalty 
+								ELSE 0 #no payment without penalty 
+							   
+								END)
+						ELSE # IF THERE IS PAYMENT
+							(CASE WHEN DATE(payment.date_paid) > b.due_date # MAX DATE
+								THEN # WITH PAYMENT AFTER DUE WITH PENALTY
+									b.penalty_amount
+								ELSE # WITH PAYMENT BEFORE DUE
+									(CASE WHEN DATE(NOW()) > DATE(b.due_date)
+									THEN #'with payment before due and current date after  due'
+										(CASE WHEN payment.payment_amount >= b.amount_due
+											THEN 0 # NO PENALTY
+											ELSE b.penalty_amount #WITH PENALTY
+											END)
+									ELSE #with payment before due and current date before due without penalty
+									0 
+									END )
+							END )
+						END) as billing_penalty
+
+					FROM
+					billing b
+					LEFT JOIN (SELECT bpi.billing_id,
+					MAX(date_paid) as date_paid, 
+					SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+					LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
+					WHERE bp.is_active = TRUE AND bp.is_deleted= FALSE
+					GROUP BY bpi.billing_id) as payment ON payment.billing_id = b.billing_id
+					LEFT JOIN service_connection sc ON sc.connection_id = b.connection_id
+					LEFT JOIN customers c ON c.customer_id = sc.customer_id) as bill_main
+					".($type_id==1?" GROUP BY bill_main.connection_id":" GROUP BY bill_main.customer_id").") AS bill_penalty 
+						".($type_id==1?" ON billing.connection_id = bill_penalty.connection_id":" ON billing.customer_id = bill_penalty.customer_id")."
+
 
 			        LEFT JOIN
 			    (SELECT 
@@ -94,7 +184,7 @@ class Billing_model extends CORE_Model{
 				        b.control_no AS ref_no,
 				        CONCAT('Billing Statement (','',m.month_name,' ',mrp.meter_reading_year,')') as transaction,
 				            DATE_FORMAT(b.date_processed, '%m/%d/%Y') AS date_txn,
-				            b.grand_total_amount AS fee,
+				            (b.amount_due + b.charges_amount) AS fee,
 				            0 AS payment
 				    FROM
 				        billing b
@@ -108,7 +198,7 @@ class Billing_model extends CORE_Model{
 				        sd.disconnection_code AS ref_no,
 				        'Service Disconnection' as transaction,
 				            DATE_FORMAT(sd.service_date, '%m/%d/%Y') AS date_txn,
-				            sd.grand_total_amount AS fee,
+				            (sd.meter_amount_due + sd.charges_amount) AS fee,
 				            0 AS payment
 				    FROM
 				        service_disconnection sd
