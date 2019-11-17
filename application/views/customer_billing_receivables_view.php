@@ -109,6 +109,7 @@
                                                                     <th>Account #</th>
                                                                     <th>Customer</th>
                                                                     <th>Address</th>
+                                                                    <th>Penalty</th>
                                                                     <th style="text-align: right;">Fees</th>
                                                                     <th style="text-align: right;">Payments</th>
                                                                     <th style="text-align: right;">Balance</th>
@@ -118,7 +119,9 @@
                                                                 </tbody>
                                                                 <tfoot>
                                                                     <tr>
-                                                                        <td colspan="5" style="text-align: right"><b>Total:</b></td>
+                                                                        <td colspan="3" style="text-align: right"><b>Total:</b></td>
+                                                                        <td><input type="text"  class="form-control" name="tota_penalty_amount" style="font-weight: bold;border: 0px;background-color: transparent;padding: 0px;height: 18px;text-align: right;" readonly> </td>
+                                                                         <td><input type="text"  class="form-control" name="tota_fee_amount" style="font-weight: bold;border: 0px;background-color: transparent;padding: 0px;height: 18px;text-align: right;" readonly> </td> <td><input type="text"  class="form-control" name="tota_payment_amount" style="font-weight: bold;border: 0px;background-color: transparent;padding: 0px;height: 18px;text-align: right;" readonly> </td>
                                                                         <td><input type="text"  class="form-control" name="tota_receivables_amount" style="font-weight: bold;border: 0px;background-color: transparent;padding: 0px;height: 18px;text-align: right;" readonly> </td>
                                                                     </tr>
                                                                 </tfoot>
@@ -228,6 +231,12 @@
                     { targets:[1],data: "customer_name" },
                     { targets:[2],data: "address" },
                     {
+                        targets:[3],data: "total_penalty",
+                        render: function(data, type, full, meta){
+                            return accounting.formatNumber(data,2);
+                        }
+                    },
+                    {
                         targets:[3],data: "fee",
                         render: function(data, type, full, meta){
                             return accounting.formatNumber(data,2);
@@ -277,12 +286,45 @@
                     // Total over all pages
                 
                         totalAmount = api
+                        .column(6)
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                    var totalFee = 0;
+                    // Total over all pages
+                
+                        totalFee = api
+                        .column(4)
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                    var totalPay = 0;
+                    // Total over all pages
+                
+                        totalPay = api
                         .column(5)
                         .data()
                         .reduce( function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0 );
 
+                    var totalPenalty = 0;
+                    // Total over all pages
+                
+                        totalPenalty = api
+                        .column(3)
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                     $('input[name="tota_penalty_amount"]').val(accounting.formatNumber(totalPenalty,2));
+                     $('input[name="tota_fee_amount"]').val(accounting.formatNumber(totalFee,2));
+                     $('input[name="tota_payment_amount"]').val(accounting.formatNumber(totalPay,2));
                      $('input[name="tota_receivables_amount"]').val(accounting.formatNumber(totalAmount,2));
 
                 }

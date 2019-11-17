@@ -22,6 +22,7 @@ class Billing_model extends CORE_Model{
 			    service_connection.account_no,
 			    ".($type_id==1?" service_connection.receipt_name ":" service_connection.customer_name ")." as customer_name,
 			    service_connection.address,
+			   (COALESCE(dis_penalty.dis_penalty, 0) + COALESCE(bill_penalty.bill_penalty, 0)) as total_penalty,
 			    (COALESCE(billing.billing_fee, 0) + COALESCE(disconnection.disconnection_fee, 0) + COALESCE(dis_penalty.dis_penalty, 0) + COALESCE(bill_penalty.bill_penalty, 0)) as fee,
 			    COALESCE(payment.payment_fee, 0) AS payment,
 			    ((COALESCE(billing.billing_fee, 0) + COALESCE(disconnection.disconnection_fee, 0) + COALESCE(dis_penalty.dis_penalty, 0) + COALESCE(bill_penalty.bill_penalty, 0)) - COALESCE(payment.payment_fee, 0)) AS balance
@@ -172,7 +173,7 @@ class Billing_model extends CORE_Model{
 			    ".($type_id==1?" GROUP BY sc.connection_id":" GROUP BY sc.customer_id").") AS payment 
 			    ".($type_id==1?" ON billing.connection_id = payment.connection_id":" ON billing.customer_id = payment.customer_id")."
 				".($type_id==1?" GROUP BY service_connection.connection_id":" GROUP BY service_connection.customer_id").") main
-				WHERE main.balance > 0";
+				";
     	return $this->db->query($sql)->result();
     }
 
@@ -810,8 +811,9 @@ class Billing_model extends CORE_Model{
 				(SUM(bpi.payment_amount) + SUM(bpi.deposit_payment)) as paid_amount
 
 				FROM billing_payment_items bpi
+				LEFT JOIN billing b ON b.billing_id = bpi.billing_id
 				LEFT JOIN billing_payments bp on bp.billing_payment_id = bpi.billing_payment_id
-				WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE
+				WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE AND bp.date_paid <= b.due_date
 				
 
 				GROUP BY bpi.billing_id) as payment ON payment.billing_id = b.billing_id
@@ -841,7 +843,8 @@ class Billing_model extends CORE_Model{
 				(SUM(bpi.payment_amount) + SUM(bpi.deposit_payment)) as paid_amount
 				FROM billing_payment_items bpi
 				LEFT JOIN billing_payments bp on bp.billing_payment_id = bpi.billing_payment_id
-				WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE AND bpi.billing_id = 0
+				LEFT JOIN service_disconnection sd ON sd.disconnection_id = bpi.disconnection_id
+				WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE AND bpi.billing_id = 0 AND bp.date_paid <= sd.due_date
 				GROUP BY bpi.disconnection_id) as payment ON payment.disconnection_id= sd.disconnection_id
 			    
 			    WHERE sd.is_active = TRUE AND sd.is_deleted= FALSE
