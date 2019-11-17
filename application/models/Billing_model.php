@@ -102,7 +102,9 @@ class Billing_model extends CORE_Model{
 				        LEFT JOIN months m ON m.month_id = mrp.month_id
 				    WHERE
 				        ".($connection_id==null?" b.connection_id=0":" b.connection_id=".$connection_id)."
-				            AND b.date_processed BETWEEN '$startDate' AND '$endDate' UNION ALL SELECT 
+				            AND b.date_processed BETWEEN '$startDate' AND '$endDate' 
+
+				    UNION ALL SELECT 
 				        sd.disconnection_code AS ref_no,
 				        'Service Disconnection' as transaction,
 				            DATE_FORMAT(sd.service_date, '%m/%d/%Y') AS date_txn,
@@ -114,7 +116,106 @@ class Billing_model extends CORE_Model{
 				        ".($connection_id==null?" sd.connection_id=0":" sd.connection_id=".$connection_id)."
 				            AND sd.is_active = TRUE
 				            AND sd.is_deleted = FALSE
-				            AND sd.service_date BETWEEN '$startDate' AND '$endDate' UNION ALL SELECT 
+				            AND sd.service_date BETWEEN '$startDate' AND '$endDate' 
+
+				         UNION ALL
+
+					     SELECT penalties.* FROM (
+						     SELECT 
+								b.control_no AS ref_no,
+							    CONCAT('Penalty (','',m.month_name,' ',mrp.meter_reading_year,')') as transaction,
+								DATE_FORMAT(DATE_ADD(b.due_date, INTERVAL 1 DAY), '%m/%d/%Y') as date_txn,
+								(CASE WHEN payment.date_paid IS NULL 
+								## check if now is less than the due,
+                                THEN 
+									(CASE WHEN DATE(NOW()) > b.due_date 
+										THEN  # NO PAYMENT AND AFTER DUE DATE
+											 b.penalty_amount #no payment with penalty 
+										ELSE 0 #no payment without penalty 
+                                       
+                                        END)
+								ELSE # IF THERE IS PAYMENT
+									(CASE WHEN DATE(payment.date_paid) > b.due_date # MAX DATE
+										THEN # WITH PAYMENT AFTER DUE WITH PENALTY
+											b.penalty_amount
+                                        ELSE # WITH PAYMENT BEFORE DUE
+											(CASE WHEN DATE(NOW()) > DATE(b.due_date)
+                                            THEN #'with payment before due and current date after  due'
+												(CASE WHEN payment.payment_amount >= b.amount_due
+													THEN 0 # NO PENALTY
+                                                    ELSE b.penalty_amount #WITH PENALTY
+                                                    END)
+                                            ELSE #with payment before due and current date before due without penalty
+                                            0 
+                                            END )
+									END )
+                                END) as fee,
+							        0 as payment
+
+							FROM
+							billing b
+							LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = b.meter_reading_period_id
+							LEFT JOIN (SELECT bpi.billing_id,
+							MAX(date_paid) as date_paid, 
+							SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+							LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
+							WHERE connection_id = ".$connection_id." AND bp.is_active = TRUE AND bp.is_deleted= FALSE
+							GROUP BY bpi.billing_id) as payment ON payment.billing_id = b.billing_id
+							LEFT JOIN months m ON m.month_id = mrp.month_id
+							WHERE b.connection_id = ".$connection_id." 
+
+						GROUP BY b.billing_id) as penalties        	
+
+				        UNION ALL 
+
+					     SELECT sd_penalties.* FROM (
+								SELECT 
+								sd.disconnection_code AS ref_no,
+								'Disconnection Penalty' as transaction,
+								IF(sd.service_date > DATE(CONCAT(YEAR(sd.service_date),'-',MONTH(sd.service_date),'-15')), DATE_FORMAT(sd.service_date, '%m/%d/%Y'), DATE_FORMAT(DATE(CONCAT(YEAR(sd.service_date),'-',MONTH(sd.service_date),'-16')), '%m/%d/%Y')) as date_txn,
+								(CASE WHEN payment.date_paid IS NULL 
+								## check if now is less than the due,
+                                THEN 
+									(CASE WHEN DATE(NOW()) > sd.due_date 
+										THEN  # NO PAYMENT AND AFTER DUE DATE
+											 sd.penalty_amount #no payment with penalty 
+										ELSE 0 #no payment without penalty 
+                                       
+                                        END)
+								ELSE # IF THERE IS PAYMENT
+									(CASE WHEN DATE(payment.date_paid) > sd.due_date # MAX DATE
+										THEN # WITH PAYMENT AFTER DUE WITH PENALTY
+											sd.penalty_amount
+                                        ELSE # WITH PAYMENT BEFORE DUE
+											(CASE WHEN DATE(NOW()) > DATE(sd.due_date)
+                                            THEN #'with payment before due and current date after  due'
+												(CASE WHEN payment.payment_amount >= sd.meter_amount_due
+													THEN 0 # NO PENALTY
+                                                    ELSE sd.penalty_amount #WITH PENALTY
+                                                    END)
+                                            ELSE #with payment before due and current date before due without penalty
+                                            0 
+                                            END )
+									END )
+                                END) as fee,
+					0 AS payment
+				    FROM
+				        service_disconnection sd
+
+							LEFT JOIN (SELECT bpi.disconnection_id,
+						MAX(date_paid) as date_paid, 
+						SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+						LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
+						WHERE connection_id = ".$connection_id." AND bp.is_active = TRUE AND bp.is_deleted= FALSE
+						GROUP BY bpi.disconnection_id) as payment ON payment.disconnection_id = sd.disconnection_id
+							WHERE sd.connection_id = ".$connection_id." 
+				            AND sd.is_active = TRUE
+				            AND sd.is_deleted = FALSE
+						GROUP BY sd.disconnection_id) as sd_penalties
+
+				        UNION ALL
+
+				        SELECT 
 				        bp.receipt_no AS ref_no,
 				        'Payment' as transaction,
 				            DATE_FORMAT(bp.date_paid, '%m/%d/%Y') AS date_txn,
@@ -127,6 +228,7 @@ class Billing_model extends CORE_Model{
 				            AND bp.is_active = TRUE
 				            AND bp.is_deleted = FALSE
 				            AND bp.date_paid BETWEEN '$startDate' AND '$endDate' ) main
+				     WHERE main.fee > 0 OR main.payment > 0
 				ORDER BY main.date_txn ASC";
 		return $this->db->query($sql)->result();
     }

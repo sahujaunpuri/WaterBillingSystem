@@ -303,6 +303,7 @@
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "bPaginate":false,
+                "ordering": false,
                 "ajax": {
                     "url": "Customer_billing_subsidiary/transaction/get-customer-subsidiary",
                     "type": "GET",
