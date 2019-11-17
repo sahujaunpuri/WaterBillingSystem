@@ -33,7 +33,7 @@ class Meter_reading_input_model extends CORE_Model {
         $query = $this->db->query("SELECT main.* FROM (SELECT 
 			(SELECT receivable_account_id FROM account_integration) as account_id,
 			'' as memo,
-			SUM(IFNULL(grand_total_amount,0)) as dr_amount,
+			SUM(IFNULL(amount_due+charges_amount,0)) as dr_amount,
 			0 as cr_amount
 			 FROM  billing WHERE meter_reading_input_id = $meter_reading_input_id
 			 
@@ -44,14 +44,6 @@ class Meter_reading_input_model extends CORE_Model {
 			'' as memo,
 			0 as dr_amount,
 			SUM(IFNULL(amount_due,0)) as cr_amount FROM billing WHERE meter_reading_input_id = $meter_reading_input_id
-
-			UNION ALL
-
-			SELECT 
-			(SELECT billing_penalty_account_id FROM account_integration) as account_id,
-			'' as memo,
-			0 as dr_amount,
-			SUM(IFNULL(arrears_penalty_amount,0))  FROM billing WHERE meter_reading_input_id = $meter_reading_input_id
 
 			UNION ALL
 			SELECT charges.* FROM

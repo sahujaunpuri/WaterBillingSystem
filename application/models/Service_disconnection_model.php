@@ -141,9 +141,9 @@ class Service_disconnection_model extends CORE_Model {
             mrp.meter_reading_year,
             b.billing_id,
             0 as disconnection_id,
-            IF('$before_date' > b.due_date, (b.amount_due + b.penalty_amount + charges_amount),(b.amount_due + charges_amount)) receivable_amount,
+            IF('$before_date' > b.due_date AND IFNULL(payment.paid_amount,0) > b.amount_due, (b.amount_due + b.penalty_amount + charges_amount),(b.amount_due + charges_amount)) receivable_amount,
             IFNULL(payment.paid_amount,0) as paid_amount,
-            IF('$before_date' > b.due_date, ((b.amount_due + b.penalty_amount + charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
+            IF('$before_date' > b.due_date AND IFNULL(payment.paid_amount,0) > b.amount_due, ((b.amount_due + b.penalty_amount + charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
             0 as payment_amount
 
             FROM billing b
@@ -175,9 +175,9 @@ class Service_disconnection_model extends CORE_Model {
             'Service Disconnection' as description,
             0 as billing_id,
             sd.disconnection_id,
-            IF('$before_date' > sd.due_date, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
+            IF('$before_date' > sd.due_date AND IFNULL(payment.paid_amount,0) > sd.meter_amount_due, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
             IFNULL(payment.paid_amount,0) as paid_amount,
-            IF('$before_date' > sd.due_date, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
+            IF('$before_date' > sd.due_date AND IFNULL(payment.paid_amount,0) > sd.meter_amount_due, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
 
             0 as payment_amount
             FROM service_disconnection sd
@@ -205,9 +205,9 @@ class Service_disconnection_model extends CORE_Model {
             CONCAT(m.month_name, ' ', mrp.meter_reading_year) as description,
             b.billing_id,
             0 as disconnection_id,
-            IF('$before_date' > b.due_date, (b.amount_due + b.penalty_amount + charges_amount),(b.amount_due + charges_amount)) receivable_amount,
+            IF('$before_date' > b.due_date AND IFNULL(payment.paid_amount,0) > b.amount_due, (b.amount_due + b.penalty_amount + charges_amount),(b.amount_due + charges_amount)) receivable_amount,
             IFNULL(payment.paid_amount,0) as paid_amount,
-            IF('$before_date' > b.due_date, ((b.amount_due + b.penalty_amount + charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
+            IF('$before_date' > b.due_date AND IFNULL(payment.paid_amount,0) > b.amount_due, ((b.amount_due + b.penalty_amount + charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
             0 as payment_amount
 
             FROM billing b
@@ -238,9 +238,9 @@ class Service_disconnection_model extends CORE_Model {
             'Service Disconnection' as description,
             0 as billing_id,
             sd.disconnection_id,
-            IF('$before_date' > sd.due_date, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
+            IF('$before_date' > sd.due_date AND IFNULL(payment.paid_amount,0) > sd.meter_amount_due, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
             IFNULL(payment.paid_amount,0) as paid_amount,
-            IF('$before_date' > sd.due_date, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
+            IF('$before_date' > sd.due_date AND IFNULL(payment.paid_amount,0) > sd.meter_amount_due, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
 
             0 as payment_amount
             FROM service_disconnection sd

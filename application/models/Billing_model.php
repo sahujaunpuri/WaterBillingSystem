@@ -102,7 +102,8 @@ class Billing_model extends CORE_Model{
 						MAX(date_paid) as date_paid, 
 						SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
 						LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
-						WHERE bp.is_active = TRUE AND bp.is_deleted= FALSE
+						LEFT JOIN service_disconnection sd ON sd.disconnection_id = bpi.disconnection_id 
+						WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE AND bp.date_paid <= sd.due_date
 						GROUP BY bpi.disconnection_id) as payment ON payment.disconnection_id = sd.disconnection_id
 							WHERE sd.is_active = TRUE
 				            AND sd.is_deleted = FALSE) as sd_main
@@ -147,7 +148,8 @@ class Billing_model extends CORE_Model{
 					MAX(date_paid) as date_paid, 
 					SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
 					LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
-					WHERE bp.is_active = TRUE AND bp.is_deleted= FALSE
+					LEFT JOIN billing b ON b.billing_id = bpi.billing_id 
+					WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE AND bp.date_paid <= b.due_date
 					GROUP BY bpi.billing_id) as payment ON payment.billing_id = b.billing_id
 					LEFT JOIN service_connection sc ON sc.connection_id = b.connection_id
 					LEFT JOIN customers c ON c.customer_id = sc.customer_id) as bill_main
@@ -249,10 +251,11 @@ class Billing_model extends CORE_Model{
 							MAX(date_paid) as date_paid, 
 							SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
 							LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
-							WHERE connection_id = ".$connection_id." AND bp.is_active = TRUE AND bp.is_deleted= FALSE
+							LEFT JOIN billing b ON b.billing_id = bpi.billing_id 
+							WHERE bp.connection_id = ".$connection_id." AND bp.is_active = TRUE AND bp.is_deleted = FALSE AND bp.date_paid <= b.due_date
 							GROUP BY bpi.billing_id) as payment ON payment.billing_id = b.billing_id
 							LEFT JOIN months m ON m.month_id = mrp.month_id
-							WHERE b.connection_id = ".$connection_id." 
+							WHERE b.connection_id = ".$connection_id."  AND DATE(DATE_ADD(b.due_date, INTERVAL 1 DAY)) BETWEEN '$startDate' AND '$endDate' 
 
 						GROUP BY b.billing_id) as penalties        	
 
@@ -296,11 +299,13 @@ class Billing_model extends CORE_Model{
 						MAX(date_paid) as date_paid, 
 						SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
 						LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
-						WHERE connection_id = ".$connection_id." AND bp.is_active = TRUE AND bp.is_deleted= FALSE
+						LEFT JOIN service_disconnection sd ON sd.disconnection_id = bpi.disconnection_id 
+						WHERE bp.connection_id = ".$connection_id." AND bp.is_active = TRUE AND bp.is_deleted = FALSE AND bp.date_paid <= sd.due_date
 						GROUP BY bpi.disconnection_id) as payment ON payment.disconnection_id = sd.disconnection_id
 							WHERE sd.connection_id = ".$connection_id." 
 				            AND sd.is_active = TRUE
 				            AND sd.is_deleted = FALSE
+				            AND sd.service_date BETWEEN '$startDate' AND '$endDate' 
 						GROUP BY sd.disconnection_id) as sd_penalties
 
 				        UNION ALL
@@ -551,9 +556,9 @@ class Billing_model extends CORE_Model{
 						CONCAT(m.month_name, ' ', mrp.meter_reading_year) as description,
 						b.billing_id,
 						0 as disconnection_id,
-		                IF('$row->date_input' > b.due_date, (b.amount_due + b.penalty_amount + b.charges_amount),(b.amount_due + b.charges_amount)) receivable_amount,
+		                IF('$row->date_input' > b.due_date AND IFNULL(payment.paid_amount,0) > b.amount_due, (b.amount_due + b.penalty_amount + b.charges_amount),(b.amount_due + b.charges_amount)) receivable_amount,
 						IFNULL(payment.paid_amount,0) as paid_amount,
-		                IF('$row->date_input' > b.due_date, ((b.amount_due + b.penalty_amount + b.charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + b.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
+		                IF('$row->date_input' > b.due_date AND IFNULL(payment.paid_amount,0) > b.amount_due, ((b.amount_due + b.penalty_amount + b.charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + b.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
 						0 as payment_amount
 
 						FROM billing b
@@ -592,9 +597,9 @@ class Billing_model extends CORE_Model{
 				    'Service Disconnection' as description,
 				    0 as billing_id,
 				    sd.disconnection_id,
-				    IF('$row->date_input' > sd.due_date, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
+				    IF('$row->date_input' > sd.due_date AND IFNULL(payment.paid_amount,0) > sd.meter_amount_due, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
 				    IFNULL(payment.paid_amount,0) as paid_amount,
-	                IF('$row->date_input' > sd.due_date, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
+	                IF('$row->date_input' > sd.due_date AND IFNULL(payment.paid_amount,0) > sd.meter_amount_due, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
 
 				    0 as payment_amount
 				    FROM service_disconnection sd
@@ -627,9 +632,9 @@ class Billing_model extends CORE_Model{
 					CONCAT(m.month_name, ' ', mrp.meter_reading_year) as description,
 					b.billing_id,
 					0 as disconnection_id,
-	                IF('$row->date_input' > b.due_date, (b.amount_due + b.penalty_amount + b.charges_amount),(b.amount_due + b.charges_amount)) receivable_amount,
+	                IF('$row->date_input' > b.due_date AND IFNULL(payment.paid_amount,0) > b.amount_due, (b.amount_due + b.penalty_amount + b.charges_amount),(b.amount_due + b.charges_amount)) receivable_amount,
 					IFNULL(payment.paid_amount,0) as paid_amount,
-	                IF('$row->date_input' > b.due_date, ((b.amount_due + b.penalty_amount + b.charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + b.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
+	                IF('$row->date_input' > b.due_date AND IFNULL(payment.paid_amount,0) > b.amount_due, ((b.amount_due + b.penalty_amount + b.charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + b.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
 					0 as payment_amount
 
 					FROM billing b
@@ -661,9 +666,9 @@ class Billing_model extends CORE_Model{
 		            'Service Disconnection' as description,
 		            0 as billing_id,
 		            sd.disconnection_id,
-		            IF('$row->date_input' > sd.due_date, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
+		            IF('$row->date_input' > sd.due_date AND IFNULL(payment.paid_amount,0) > sd.meter_amount_due, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
 		            IFNULL(payment.paid_amount,0) as paid_amount,
-		            IF('$row->date_input' > sd.due_date, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
+		            IF('$row->date_input' > sd.due_date AND IFNULL(payment.paid_amount,0) > sd.meter_amount_due, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
 
 		            0 as payment_amount
 		            FROM service_disconnection sd
@@ -790,9 +795,9 @@ class Billing_model extends CORE_Model{
 				CONCAT(m.month_name, ' ', mrp.meter_reading_year) as description,
 				b.billing_id,
 				0 as disconnection_id,
-                IF('$filter_date' > b.due_date, (b.amount_due + b.penalty_amount + b.charges_amount),(b.amount_due + b.charges_amount)) receivable_amount,
+                IF('$filter_date' > b.due_date AND IFNULL(payment.paid_amount,0) < b.amount_due, (b.amount_due + b.penalty_amount + b.charges_amount),(b.amount_due + b.charges_amount)) receivable_amount,
 				IFNULL(payment.paid_amount,0) as paid_amount,
-                IF('$filter_date' > b.due_date, ((b.amount_due + b.penalty_amount + b.charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + b.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
+                IF('$filter_date' > b.due_date AND IFNULL(payment.paid_amount,0) < b.amount_due, ((b.amount_due + b.penalty_amount + b.charges_amount)  - IFNULL(payment.paid_amount,0)),((b.amount_due + b.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
 				0 as payment_amount
 
 				FROM billing b
@@ -823,9 +828,9 @@ class Billing_model extends CORE_Model{
 			    'Service Disconnection' as description,
 			    0 as billing_id,
 			    sd.disconnection_id,
-			    IF('$filter_date' > sd.due_date, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
+			    IF('$filter_date' > sd.due_date AND IFNULL(payment.paid_amount,0) < sd.meter_amount_due, (sd.meter_amount_due + sd.penalty_amount + sd.charges_amount),(sd.meter_amount_due + sd.charges_amount)) receivable_amount,
 			    IFNULL(payment.paid_amount,0) as paid_amount,
-                IF('$filter_date' > sd.due_date, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
+                IF('$filter_date' > sd.due_date AND IFNULL(payment.paid_amount,0) < sd.meter_amount_due, ((sd.meter_amount_due + sd.penalty_amount + sd.charges_amount)  - IFNULL(payment.paid_amount,0)),((sd.meter_amount_due + sd.charges_amount) - IFNULL(payment.paid_amount,0))) as amount_due,
 
 			    0 as payment_amount
 			    FROM service_disconnection sd

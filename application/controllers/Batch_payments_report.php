@@ -34,7 +34,12 @@ class Batch_payments_report extends CORE_Controller {
         switch ($txn) {
             case 'list':
                 $bpbid = $this->input->get('bpbid');
-                $response['data']=$this->response_rows($bpbid);
+                if($bpbid == 0){
+                    $response['data']=[];
+                }else {
+                    $response['data']=$this->response_rows($bpbid);
+                }
+                
                 echo json_encode($response);
                 break;
 
@@ -67,7 +72,7 @@ class Batch_payments_report extends CORE_Controller {
 
 
     function response_rows($billing_payment_batch_id=null){ 
-        return $this->Billing_payments_model->get_list(array('billing_payment_batch_id'=>$billing_payment_batch_id),
+        return $this->Billing_payments_model->get_list(array('billing_payment_batch_id'=>$billing_payment_batch_id,'billing_payments.is_active'=>TRUE,'billing_payments.is_deleted'=>FALSe),
             'billing_payments.*,payment_methods.payment_method,customers.customer_name,service_connection.account_no,service_connection.receipt_name,CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by_user
             ',
             array(array('payment_methods','payment_methods.payment_method_id = billing_payments.payment_method_id','left'),

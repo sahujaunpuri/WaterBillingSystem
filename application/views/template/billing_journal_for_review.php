@@ -141,7 +141,6 @@
             <th style="">Particular</th>
             <th>Consumption</th>
             <th class="right_align">Meter Charge</th>
-            <th class="right_align">Penalty</th>
             <th class="right_align">Other Charges</th>
             <th class="right_align">Total Receivables</th>
         </tr>
@@ -149,7 +148,6 @@
     <tbody>
     <?php $batch_total_amount=0;
     $batch_total_amount_due= 0;
-    $batch_total_penalty= 0;
     $batch_total_other_charges= 0;
      foreach ($billing_items as $b_item) { ?>
         <tr>
@@ -158,21 +156,18 @@
             <td><?php echo $b_item->receipt_name ?></td>
             <td><?php echo $b_item->total_consumption ?></td>
             <td class="right_align"><?php echo number_format($b_item->amount_due,2); ?></td>
-            <td class="right_align"><?php echo number_format($b_item->arrears_penalty_amount,2); ?></td>
             <td class="right_align"><?php echo number_format($b_item->charges_amount,2); ?></td>
-            <td class="right_align"><?php echo number_format($b_item->grand_total_amount,2); ?></td>
+            <td class="right_align"><?php echo number_format($b_item->amount_due +$b_item->charges_amount,2); ?></td>
         </tr>
     <?php
-    $batch_total_amount+= $b_item->grand_total_amount;
+    $batch_total_amount+= $b_item->amount_due +$b_item->charges_amount;
     $batch_total_amount_due+= $b_item->amount_due;
-    $batch_total_penalty+= $b_item->arrears_penalty_amount;
     $batch_total_other_charges+= $b_item->charges_amount; } ?>
     </tbody>
     <tfoot>
         <tr>
             <td colspan="4" style="text-align: right"><b>Total:</b></td>
             <td class="right_align"><b><?php echo number_format($batch_total_amount_due,2); ?><b></td>
-            <td class="right_align"><b><?php echo number_format($batch_total_penalty,2); ?><b></td>
             <td class="right_align"><b><?php echo number_format($batch_total_other_charges,2); ?><b></td>
             <td class="right_align"><b><?php echo number_format($batch_total_amount,2); ?><b></td>
         </tr>

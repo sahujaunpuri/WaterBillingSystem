@@ -153,11 +153,11 @@
                                                 <table id="tbl_billing" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
-                                                            <th>Control No</th>
-                                                            <th style="width: 100px;">Account No</th>
-                                                            <th style="width: 200px;">Particular</th>
-                                                            <th>Consumption</th>
-                                                            <th>Total Receivables</th>
+                                                            <th style="width: 15%">Control No</th>
+                                                            <th style="width: 25%;">Account No</th>
+                                                            <th style="width: 35%;">Particular</th>
+                                                            <th width="5%">Consumption</th>
+                                                            <th width="25%">Total Receivables</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody></tbody>
