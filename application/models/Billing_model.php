@@ -173,6 +173,7 @@ class Billing_model extends CORE_Model{
 			    ".($type_id==1?" GROUP BY sc.connection_id":" GROUP BY sc.customer_id").") AS payment 
 			    ".($type_id==1?" ON billing.connection_id = payment.connection_id":" ON billing.customer_id = payment.customer_id")."
 				".($type_id==1?" GROUP BY service_connection.connection_id":" GROUP BY service_connection.customer_id").") main
+				WHERE main.balance > 0
 				";
     	return $this->db->query($sql)->result();
     }
