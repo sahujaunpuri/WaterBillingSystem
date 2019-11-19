@@ -22,6 +22,7 @@ class Meter_reading_input extends CORE_Controller
         $this->load->model('Departments_model');
         $this->load->model('Account_integration_model');
         $this->load->model('Billing_model');
+        $this->load->model('Billing_payments_model');
 
 
     }
@@ -143,6 +144,14 @@ class Meter_reading_input extends CORE_Controller
 
                 break;
 
+            case 'check-meter-payment':
+
+                $m_payments = $this->Billing_payments_model;
+                $meter_reading_input_id = $this->input->post('meter_reading_input_id', TRUE);
+                $response['data']=$m_payments->get_meter_reading_payments($meter_reading_input_id);
+                echo json_encode($response);
+
+                break;
 
 
             case 'create-batch':

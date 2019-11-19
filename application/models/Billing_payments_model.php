@@ -37,4 +37,27 @@ class Billing_payments_model extends CORE_Model{
     	return $query->result();
     }
 
+
+    function get_meter_reading_payments($meter_reading_input_id){
+    	$query = $this->db->query("SELECT 
+			    bpi.*,
+			    mri.meter_reading_input_id,
+			    mrii.meter_reading_input_item_id
+			FROM
+			    billing_payment_items bpi
+			        LEFT JOIN
+			    billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
+			        LEFT JOIN
+			    billing ON billing.billing_id = bpi.billing_id
+			        LEFT JOIN
+			    meter_reading_input mri ON mri.meter_reading_input_id = billing.meter_reading_input_id
+			        LEFT JOIN
+			    meter_reading_input_items mrii ON mrii.meter_reading_input_id = mri.meter_reading_input_id
+			WHERE
+			    mri.meter_reading_input_id = $meter_reading_input_id
+			        AND bp.is_active = TRUE
+			        AND bp.is_deleted = FALSE"); 
+			    	return $query->result();
+    }
+
  }

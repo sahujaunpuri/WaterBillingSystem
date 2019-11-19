@@ -261,7 +261,13 @@ $(document).ready(function(){
                     targets:[4],data: null,
                     render: function (data, type, full, meta){
                         var checkbox='<input type="checkbox" class="css-checkbox btch_chckbx" name="meter_reading_input_id[]" value="'+data.meter_reading_input_id+'" id="'+data.meter_reading_input_id+'"><label for="'+data.meter_reading_input_id+'" class="css-label "></label> ';
-                        return '<center>'+checkbox+'</center>';
+                        
+                        if(data.payment_count <= 0){
+                            return '<center>'+checkbox+'</center>';
+                        }else{
+                            return '<center><label class="label label-success">Active Payment</label></center>';
+                        }
+
                     }
                 }
             ]

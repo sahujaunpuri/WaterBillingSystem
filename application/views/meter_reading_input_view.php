@@ -534,6 +534,19 @@ $(document).ready(function(){
             $('#start_date').val(obj_period.data('start'));
             $('#end_date').val(obj_period.data('end'));
             _cboPeriod.select2("enable",false);
+
+            check_meter_reading_payments(data.meter_reading_input_id).done(function(response){
+                var data = response.data;
+            
+                if(data.length > 0){
+                    showNotification({title:"Active Payment !",stat:"info",msg:"There is an active payment for this Meter Reading."});
+                    $('#btn_save').attr('disabled', true);
+                }else{
+                    $('#btn_save').attr('disabled', false);
+                }
+
+            });
+
             $.ajax({
                 url : 'Meter_reading_input/transaction/items-input/'+data.meter_reading_input_id,
                 type : "GET",
@@ -547,7 +560,9 @@ $(document).ready(function(){
                 success : function(response){
                     var rows=response.data;
                     $('#tbl_items > tbody').html('');
+
                     $.each(rows,function(i,value){
+
                         $('#tbl_items > tbody').append(newRowItem({
                             connection_id : value.connection_id,
                             account_no : value.account_no,
@@ -558,7 +573,11 @@ $(document).ready(function(){
                             current_reading : value.current_reading,
                             total_consumption : value.total_consumption
                         }));
+
                     });
+
+
+
                    reInitializeNumeric();
                 }
 
@@ -594,10 +613,13 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.meter_reading_input_id;
+
             if(data.is_sent == '1'){ 
                 showNotification({title:"Cannot Delete!",stat:"error",msg:"Batch already sent to Accounting."});
             }else if(data.is_closed == 1){  
                 showNotification({title:"Billing Period Closed !",stat:"info",msg:"You cannot delete this batch of inputs."}); 
+            }else if(data.is_processed == 1){  
+                showNotification({title:"Billing Period Already Processed !",stat:"info",msg:"You cannot delete this batch of inputs."}); 
             } else {  
                 $('#modal_confirmation').modal('show'); 
             }
@@ -713,6 +735,17 @@ $(document).ready(function(){
                 }
            }
       });
+    };
+
+    var check_meter_reading_payments=function(meter_reading_input_id){
+        var _data=$('#').serializeArray();
+        _data.push({name : "meter_reading_input_id" ,value : meter_reading_input_id});
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Meter_reading_input/transaction/check-meter-payment", // edit this
+            "data":_data
+        });
     };
 
     var createMeterInput=function(){

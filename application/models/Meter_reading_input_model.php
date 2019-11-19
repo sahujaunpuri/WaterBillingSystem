@@ -14,7 +14,23 @@ class Meter_reading_input_model extends CORE_Model {
 			    mrp.*,
 			    DATE_FORMAT(mri.date_input, '%m/%d/%Y') AS date_input,
 			    m.month_name,
-			    CONCAT_WS(' ', user.user_fname, user.user_lname) AS posted_by
+			    CONCAT_WS(' ', user.user_fname, user.user_lname) AS posted_by,
+				(SELECT 
+						count(*)
+				FROM
+				    billing_payment_items bpi
+				        LEFT JOIN
+				    billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
+				        LEFT JOIN
+				    billing ON billing.billing_id = bpi.billing_id
+				        LEFT JOIN
+				    meter_reading_input ON meter_reading_input.meter_reading_input_id = billing.meter_reading_input_id
+				        LEFT JOIN
+				    meter_reading_input_items mrii ON mrii.meter_reading_input_id = meter_reading_input.meter_reading_input_id
+				WHERE
+				    meter_reading_input.meter_reading_input_id = mri.meter_reading_input_id
+				        AND bp.is_active = 1
+				        AND bp.is_deleted = 0) as payment_count
 			FROM
 			    meter_reading_input mri
 			        LEFT JOIN
