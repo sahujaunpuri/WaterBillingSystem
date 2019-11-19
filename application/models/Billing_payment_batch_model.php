@@ -142,14 +142,14 @@ class Billing_payment_batch_model extends CORE_Model {
                         
 						INNER JOIN (SELECT bpi.billing_id,
 						MAX(date_paid) as date_paid, 
-						SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+						(SUM(payment_amount) + SUM(deposit_payment)) as payment_amount FROM billing_payment_items bpi
 						LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
 						WHERE bp.is_active = TRUE AND bp.is_deleted= FALSE AND bp.billing_payment_batch_id = $billing_payment_batch_id AND bp.billing_payment_batch_id != 0
 						GROUP BY bpi.billing_id) as payment ON payment.billing_id = b.billing_id
 						
 						LEFT JOIN (SELECT bpi.billing_id,
 						MAX(date_paid) as date_paid, 
-						SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+						(SUM(payment_amount) + SUM(deposit_payment)) as payment_amount FROM billing_payment_items bpi
 						LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
 						WHERE bp.is_active = TRUE AND bp.is_deleted= FALSE AND bp.billing_payment_batch_id != $billing_payment_batch_id AND bp.billing_payment_batch_id != 0
 						GROUP BY bpi.billing_id) as prev_payment ON prev_payment.billing_id = b.billing_id
@@ -243,14 +243,14 @@ class Billing_payment_batch_model extends CORE_Model {
 
 						INNER JOIN (SELECT bpi.disconnection_id,
 						MAX(date_paid) as date_paid, 
-						SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+						(SUM(payment_amount) + SUM(deposit_payment)) as payment_amount FROM billing_payment_items bpi
 						LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
 						WHERE bp.is_active = TRUE AND bp.is_deleted= FALSE AND bp.billing_payment_batch_id = $billing_payment_batch_id AND bp.billing_payment_batch_id != 0
 						GROUP BY bpi.disconnection_id) as payment ON payment.disconnection_id = sd.disconnection_id
 
 						LEFT JOIN (SELECT bpi.disconnection_id,
 						MAX(date_paid) as date_paid, 
-						SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+						(SUM(payment_amount) + SUM(deposit_payment)) as payment_amount FROM billing_payment_items bpi
 						LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
 						WHERE bp.is_active = TRUE AND bp.is_deleted= FALSE AND bp.billing_payment_batch_id != $billing_payment_batch_id AND bp.billing_payment_batch_id != 0
 						GROUP BY bpi.disconnection_id) as prev_payment ON prev_payment.disconnection_id = sd.disconnection_id

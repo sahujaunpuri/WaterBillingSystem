@@ -101,7 +101,7 @@ class Billing_model extends CORE_Model{
                         LEFT JOIN customers c ON c.customer_id = sc.customer_id 
 						LEFT JOIN (SELECT bpi.disconnection_id,
 						MAX(date_paid) as date_paid, 
-						SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+						(SUM(payment_amount) + SUM(deposit_payment)) as payment_amount FROM billing_payment_items bpi
 						LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
 						LEFT JOIN service_disconnection sd ON sd.disconnection_id = bpi.disconnection_id 
 						WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE AND bp.date_paid <= sd.due_date
@@ -147,7 +147,7 @@ class Billing_model extends CORE_Model{
 					billing b
 					LEFT JOIN (SELECT bpi.billing_id,
 					MAX(date_paid) as date_paid, 
-					SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+					(SUM(payment_amount) + SUM(deposit_payment)) as payment_amount FROM billing_payment_items bpi
 					LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
 					LEFT JOIN billing b ON b.billing_id = bpi.billing_id 
 					WHERE bp.is_active = TRUE AND bp.is_deleted = FALSE AND bp.date_paid <= b.due_date
@@ -251,7 +251,7 @@ class Billing_model extends CORE_Model{
 							LEFT JOIN meter_reading_period mrp ON mrp.meter_reading_period_id = b.meter_reading_period_id
 							LEFT JOIN (SELECT bpi.billing_id,
 							MAX(date_paid) as date_paid, 
-							SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+							(SUM(payment_amount) + SUM(deposit_payment)) as payment_amount FROM billing_payment_items bpi
 							LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
 							LEFT JOIN billing b ON b.billing_id = bpi.billing_id 
 							WHERE bp.connection_id = ".$connection_id." AND bp.is_active = TRUE AND bp.is_deleted = FALSE AND bp.date_paid <= b.due_date
@@ -299,7 +299,7 @@ class Billing_model extends CORE_Model{
 
 							LEFT JOIN (SELECT bpi.disconnection_id,
 						MAX(date_paid) as date_paid, 
-						SUM(payment_amount) as payment_amount FROM billing_payment_items bpi
+						(SUM(payment_amount) + SUM(deposit_payment)) as payment_amount FROM billing_payment_items bpi
 						LEFT JOIN billing_payments bp ON bp.billing_payment_id = bpi.billing_payment_id
 						LEFT JOIN service_disconnection sd ON sd.disconnection_id = bpi.disconnection_id 
 						WHERE bp.connection_id = ".$connection_id." AND bp.is_active = TRUE AND bp.is_deleted = FALSE AND bp.date_paid <= sd.due_date
@@ -572,7 +572,7 @@ class Billing_model extends CORE_Model{
 						(SELECT 
 						bpi.billing_id,
 						bp.date_paid,
-						SUM(bpi.payment_amount) as paid_amount
+						(SUM(bpi.payment_amount) + SUM(bpi.deposit_payment)) as paid_amount
 
 						FROM billing_payment_items bpi
 						LEFT JOIN billing_payments bp on bp.billing_payment_id = bpi.billing_payment_id
@@ -648,7 +648,7 @@ class Billing_model extends CORE_Model{
 					LEFT JOIN
 					(SELECT 
 					bpi.billing_id,
-					SUM(bpi.payment_amount) as paid_amount
+					(SUM(bpi.payment_amount) + SUM(bpi.deposit_payment)) as paid_amount
 
 					FROM billing_payment_items bpi
 					LEFT JOIN billing_payments bp on bp.billing_payment_id = bpi.billing_payment_id

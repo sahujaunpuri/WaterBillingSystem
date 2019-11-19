@@ -219,7 +219,7 @@ class Service_disconnection_model extends CORE_Model {
             LEFT JOIN
             (SELECT 
             bpi.billing_id,
-            SUM(bpi.payment_amount) as paid_amount
+            (SUM(bpi.payment_amount) + SUM(bpi.deposit_payment)) as paid_amount
 
             FROM billing_payment_items bpi
             LEFT JOIN billing_payments bp on bp.billing_payment_id = bpi.billing_payment_id
