@@ -775,7 +775,7 @@ class Journal_info_model extends CORE_Model{
 
 
             AND date_txn BETWEEN '$startDate' AND '$endDate'
-            ORDER BY date_txn,journal_id ASC) as m";
+            ORDER BY ji.date_txn ASC,ji.date_created ASC,journal_id ASC) as m";
 
             return $this->db->query($sql)->result();
     }
